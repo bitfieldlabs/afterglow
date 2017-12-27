@@ -34,7 +34,6 @@
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
  *  | LED      | LED           | A0        | DDRC, 0       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
- *  | DBG      | DEBUG         | A2        | DDRC, 2       | Output       |
  *  | CFG0     | DIP CFG 0     | D10       | DDRB, 2       | Input Pullup |
  *  | CFG1     | DIP CFG 1     | D11       | DDRB, 3       | Input Pullup |
  *  | CFG2     | DIP CFG 2     | D12       | DDRB, 4       | Input Pullup |
@@ -48,10 +47,8 @@
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 1
 
-// turn debug output via GPIO on/off
-#define DEBUG_GPIO 0
-
-// if set to 1, input samples are filtered over original interval duration
+// If set to 1, input samples are filtered over original interval duration.
+// This should only needed for shaky original matrix signals.
 #define FILTER_SAMPLES 0
 
 // local time interval (us)
@@ -232,25 +229,10 @@ ISR(TIMER1_COMPA_vect)
             sBadColCounter++;
             sLastBadCol = inColMask;
 #endif
-            inCol = 0xff;
+            inCol = 0xff; // no matrix update
         }
         break;
     }
-
-#if DEBUG_GPIO
-    if (inCol == 6)
-    {
-        // toggle A2 to represent C6, R6 sample state
-        if (inRowMask & B0010000)
-        {
-            PORTC |= B00000100;
-        }
-        else
-        {
-            PORTC &= B11111011;
-        }
-    }
-#endif
 
     // update only with a valid column reading
     if (inCol < NUM_COL)
@@ -260,7 +242,7 @@ ISR(TIMER1_COMPA_vect)
         inRowMask = filterSamples(inCol, inRowMask);
 #endif
 
-        // update the current column (only once)
+        // update the current column
         updateCol(inCol, inRowMask);
 
 #ifdef DEBUG_SERIAL
@@ -304,12 +286,12 @@ void loop()
     debugInputs(sLastColMask, sLastRowMask);
     debugOutput(sLastOutColMask, sLastOutRowMask);
     // dump the full matrix
-    for (uint32_t c=0; c<8; c++)
+    for (uint32_t c=0; c<NUM_COL; c++)
     {
         Serial.print("C");
         Serial.print(c);
         Serial.print(" + ");
-        for (uint32_t r=0; r<8; r++)
+        for (uint32_t r=0; r<NUM_ROW; r++)
         {
             Serial.print(sMatrixState[c][r]);
             Serial.print(" ");
@@ -363,10 +345,10 @@ void updateCol(uint32_t col, byte rowMask)
     uint16_t glowStep = ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL);
 
     // get the row configuration
-    byte rowCfg = (byte)(sLampCfg >> (col * 8));
+    byte rowCfg = (byte)(sLampCfg >> (col * NUM_ROW));
 
     // update all row values
-    for (uint32_t r=0; r<8; r++)
+    for (uint32_t r=0; r<NUM_ROW; r++)
     {
         // determine the step size based on configuration
         // todo: make a lookup table for this
@@ -451,18 +433,18 @@ void driveLampMatrix()
     dataOutput(0x00, 0x00);
 
     // check which column we're currently updating
-    uint32_t outCol = (sTtag % 8);
+    uint32_t outCol = (sTtag % NUM_COL);
 
     // The original cycle is divided into ORIG_CYCLES column sub cycles.
     // These cycles are used to do PWM in order to adjust the lamp brightness.
-    uint32_t colCycle = (sTtag / 8) % ORIG_CYCLES;
+    uint32_t colCycle = (sTtag / NUM_COL) % ORIG_CYCLES;
 
     // prepare the data
     // LSB is row/col 0, MSB is row/col 7
     byte colData = (1 << outCol);
     byte rowData = 0;
     uint16_t *pMx = &sMatrixState[outCol][0];
-    for (uint32_t r=0; r<8; r++)
+    for (uint32_t r=0; r<NUM_ROW; r++)
     {
         // make room for the next bit
         rowData >>= 1;
@@ -590,9 +572,6 @@ uint16_t testModeInput(void)
     {
         rowMask = (1 << (lampIx % NUM_COL));
     }
-    
-    // ALL LAMPS
-    //rowMask = 0xff;
 
     // invert the row mask as in the original input HIGH means off
     rowMask = ~rowMask;
