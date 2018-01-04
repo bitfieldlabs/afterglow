@@ -1,9 +1,10 @@
 /***********************************************************************
  *  afterglow:
- *      Copyright (c) 2017 Christoph Schmid
+ *      Copyright (c) 2018 Christoph Schmid
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
+ *  https://github.com/smyp/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -137,12 +138,12 @@ static byte const skBitsInByte[256] =
 //------------------------------------------------------------------------------
 void setup()
 {
-    // Use Timer1 to create an interrupt every 500us.
+    // Use Timer1 to create an interrupt every TTAG_INT us.
     // This will be the heartbeat of our realtime task.
     noInterrupts(); // disable all interrupts
     TCCR1A = 0;
     TCCR1B = 0;
-    // set compare match register for 500us increments
+    // set compare match register for TTAG_INT us increments
     // prescaler is at 1, so counting real clock cycles
     OCR1A = (TTAG_INT * 16);  // [16MHz clock cycles]
     // turn on CTC mode
@@ -177,7 +178,7 @@ void setup()
 #if DEBUG_SERIAL
     // enable serial output at 115200 baudrate
     Serial.begin(115200);
-    Serial.println("afterglow 1.0 (c) 2017 morbid cornflakes");
+    Serial.println("afterglow 1.1 (c) 2018 morbid cornflakes");
 #endif
 }
 
