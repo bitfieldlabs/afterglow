@@ -33,7 +33,7 @@
  *  | OUT_DATA | 74HC595 SER   | D5        | DDRD, 5       | Output       |
  *  | OUT_CLK  | 74LS595 SRCLK | D6        | DDRD, 6       | Output       |
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
- *  | LED      | LED           | A0        | DDRC, 0       | Output       |
+ *  | LED      | LED           | D8        | DDRB, 1       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
  *  | CFG0     | DIP CFG 0     | D10       | DDRB, 2       | Input Pullup |
  *  | CFG1     | DIP CFG 1     | D11       | DDRB, 3       | Input Pullup |
@@ -72,7 +72,7 @@
 #define GLOWDUR_STEP (50)
 
 // afterglow LED glow duration [ms]
-#define AFTERGLOW_LED_DUR (1000)
+#define AFTERGLOW_LED_DUR (2000)
 
 // test mode lamp switch interval [ms]
 #define TESTMODE_INT (500)
@@ -157,12 +157,12 @@ void setup()
     // 74LS165 LOAD and CLK are output, DATA is input
     // 74HC595 LOAD, CLK and DATA are output
     DDRD = B11111001;
-    // configuration input on pins 10-13
-    DDRB = 0x00;
+    // LED output on pin 8, configuration input on pins 10-13
+    DDRB = B00000001;
     // activate the pullups for the configuration pins
-    PORTB |= 0xff;
-    // LED output on A0, OE on A1, DBG on A2
-    DDRC = B00000111;
+    PORTB |= 0xfe;
+    // OE on A1, DBG on A2
+    DDRC = B00000110;
     // turn the LED on, keep OE high
     PORTC |= B00000011;
 
@@ -549,13 +549,13 @@ void afterglowLED(uint32_t ttag)
     if (dttag >= dutyCycle)
     {
         // turn the LED on
-        PORTC |= B00000001;
+        PORTB |= B00000001;
         dttag = 0;
     }
     else
     {
         // turn the LED off
-        PORTC &= B11111110;
+        PORTB &= B11111110;
     }
 }
 
@@ -599,3 +599,4 @@ void debugOutput(byte outColMask, byte outRowMask)
     Serial.print(msg);
 }
 #endif
+
