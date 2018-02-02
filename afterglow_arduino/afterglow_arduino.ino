@@ -226,6 +226,10 @@ ISR(TIMER1_COMPA_vect)
         case 0x80: inCol = 7; break;
         default:
         {
+            // This may happen if the sample is taken in between column transition.
+            // Depending on the pinball ROM version the duration of this transition varies.
+            // On a Whitewater with Home ROM LH6 (contains anti ghisting updates) this
+            // gap was measured to be around 30us long.
 #ifdef DEBUG_SERIAL
             sBadColCounter++;
             sLastBadCol = inColMask;
