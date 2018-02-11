@@ -35,10 +35,10 @@
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
  *  | LED      | LED           | D8        | DDRB, 1       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
- *  | CFG0     | DIP CFG 0     | D10       | DDRB, 2       | Input Pullup |
- *  | CFG1     | DIP CFG 1     | D11       | DDRB, 3       | Input Pullup |
- *  | CFG2     | DIP CFG 2     | D12       | DDRB, 4       | Input Pullup |
- *  | CFG3     | DIP CFG 3     | D13       | DDRB, 5       | Input Pullup |
+ *  | CFG0     | DIP CFG 0     | D10       | DDRB, 3       | Input Pullup |
+ *  | CFG1     | DIP CFG 1     | D11       | DDRB, 4       | Input Pullup |
+ *  | CFG2     | DIP CFG 2     | D12       | DDRB, 5       | Input Pullup |
+ *  | CFG3     | DIP CFG 3     | D13       | DDRB, 6       | Input Pullup |
  *  +----------+---------------+-----------+---------------+--------------+
 */
 
