@@ -1,4 +1,4 @@
-update=Son 24 Dez 2017 15:02:25 CET
+update=Fre 16 Feb 2018 09:45:36 CET
 version=1
 last_client=kicad
 [cvpcb]
@@ -44,16 +44,6 @@ LibName31=contrib
 LibName32=valves
 LibName33=arduino_shieldsNCL
 LibName34=arduino_nano/arduino_nano_richtig
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=60
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -73,3 +63,13 @@ SolderMaskMinWidth=0
 DrawSegmentWidth=0.2
 BoardOutlineThickness=0.09999999999999999
 ModuleOutlineThickness=0.15
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
