@@ -234,7 +234,7 @@ ISR(TIMER1_COMPA_vect)
         {
             // This may happen if the sample is taken in between column transition.
             // Depending on the pinball ROM version the duration of this transition varies.
-            // On a Whitewater with Home ROM LH6 (contains anti ghisting updates) this
+            // On a Whitewater with Home ROM LH6 (contains anti ghosting updates) this
             // gap was measured to be around 30us long.
             // Machines with anti-ghosting firmware will show a gap with no column enabled
             // for a while during the transition while older firmwares might have two
