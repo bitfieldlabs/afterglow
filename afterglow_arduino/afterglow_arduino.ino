@@ -48,6 +48,9 @@
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 1
 
+// turn WPC anti-ghosting handling on/off
+#define WPC_GHOST_BUSTING 1
+
 // If set to 1, input samples are filtered over original interval duration.
 // This should only needed for shaky original matrix signals.
 #define FILTER_SAMPLES 0
@@ -93,10 +96,11 @@ static uint32_t sTtag = 0;
 // maximum interrupt runtime counter [cycles]
 static uint16_t sMaxIntTime = 0;
 
-#if DEBUG_SERIAL
 // remember the last column and row samples
 static byte sLastColMask = 0;
 static byte sLastRowMask = 0;
+
+#if DEBUG_SERIAL
 static byte sLastOutColMask = 0;
 static byte sLastOutRowMask = 0;
 static uint32_t sBadColCounter = 0;
@@ -196,6 +200,7 @@ ISR(TIMER1_COMPA_vect)
     
     // 74HC165 16bit sampling
     uint16_t inData = sampleInput();
+    bool validInput = true;
 
     // testmode input simulation (CFG3 active)
     if ((PINB & B00000100) == 0)
@@ -205,11 +210,14 @@ ISR(TIMER1_COMPA_vect)
     }
     byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
-#if DEBUG_SERIAL
+
+#if WPC_GHOST_BUSTING
+    validInput &= wpcGhostBusting(inColMask, inRowMask);
+#endif
+
     // remember the last column and row samples
     sLastColMask = inColMask;
     sLastRowMask = inRowMask;
-#endif
 
     // evaluate the column reading
     // only one bit should be set as only one column can be active at a time
@@ -230,17 +238,21 @@ ISR(TIMER1_COMPA_vect)
             // Depending on the pinball ROM version the duration of this transition varies.
             // On a Whitewater with Home ROM LH6 (contains anti ghisting updates) this
             // gap was measured to be around 30us long.
+            // Machines with anti-ghosting firmware will show a gap with no column enabled
+            // for a while during the transition while older firmwares might have two
+            // columns enabled at the same time due to slow transistor deactivation. Both
+            // cases are caught here.
 #ifdef DEBUG_SERIAL
             sBadColCounter++;
             sLastBadCol = inColMask;
 #endif
-            inCol = 0xff; // no matrix update
+            validInput = false;
         }
         break;
     }
 
-    // update only with a valid column reading
-    if (inCol < NUM_COL)
+    // update only with a valid input
+    if (validInput)
     {
 #if FILTER_SAMPLES
         // filter the input samples
@@ -583,6 +595,25 @@ uint16_t testModeInput(void)
     
     return ((colMask << 8) | rowMask);
 }
+
+#if WPC_GHOST_BUSTING
+//------------------------------------------------------------------------------
+bool wpcGhostBusting(byte inColMask, byte inRowMask)
+{
+    // WPC ghost busting according to information from
+    // https://emmytech.com/arcade/led_ghost_busting/index.html
+
+    // Watch out for brief full row activation, it might be a glitch in the
+    // WPC data latching. We should not see more than one erroneous sample in
+    // such a case.
+    if ((inRowMask == 0xff) && (sLastRowMask != 0xff))
+    {
+        return false;
+    }
+
+    return true;
+}
+#endif
 
 #if DEBUG_SERIAL
 //------------------------------------------------------------------------------
