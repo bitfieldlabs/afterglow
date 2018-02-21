@@ -194,9 +194,6 @@ ISR(TIMER1_COMPA_vect)
     // time is running
     uint16_t startCnt = TCNT1;
     sTtag++;
-
-    // update the funky afterglow LED
-    afterglowLED(sTtag);
     
     // 74HC165 16bit sampling
     uint16_t inData = sampleInput();
@@ -212,6 +209,7 @@ ISR(TIMER1_COMPA_vect)
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
 
 #if WPC_GHOST_BUSTING
+    // basic WPC ghost busting
     validInput &= wpcGhostBusting(inColMask, inRowMask);
 #endif
 
@@ -251,7 +249,8 @@ ISR(TIMER1_COMPA_vect)
         break;
     }
 
-    // update only with a valid input
+    // Update only with a valid input. If the input is invalid the current
+    // matrix state is left unchanged.
     if (validInput)
     {
 #if FILTER_SAMPLES
@@ -269,6 +268,9 @@ ISR(TIMER1_COMPA_vect)
 
     // drive the lamp matrix
     driveLampMatrix();
+
+    // update the funky afterglow LED
+    afterglowLED(sTtag);
 
     // how long did it take?
     uint16_t dt = (TCNT1 - startCnt);
@@ -454,6 +456,21 @@ void driveLampMatrix()
 
     // The original cycle is divided into ORIG_CYCLES column sub cycles.
     // These cycles are used to do PWM in order to adjust the lamp brightness.
+    //
+    // Illustration with ORIG_CYCLES==4 and four brightness steps B1-B4 and off (B0):
+    //
+    // * = Lamp on
+    //                       2ms
+    //        +-------------------------------+
+    //        |                               |        Original lamp duty cycle
+    //        |                               |
+    //  ------+         500us                 +-------
+    //        ^       ^       ^       ^       ^        Afterglow duty cycles
+    //  B0                                             Lamp matrix value == 0
+    //  B1    ********                                 Lamp matrix value < 16384
+    //  B2    ****************                         Lamp matrix value < 32768
+    //  B3    ************************                 Lamp matrix value < 49152
+    //  B4    ********************************         Lamp matrix value < 65536
     uint32_t colCycle = (sTtag / NUM_COL) % ORIG_CYCLES;
 
     // prepare the data
@@ -487,6 +504,8 @@ void driveLampMatrix()
 //------------------------------------------------------------------------------
 void dataOutput(byte colData, byte rowData)
 {
+    // This writes the 16bit column and row data to the two 74595 shift registers
+    
     // pull RCLK (OUT_LOAD) and CLK low to start sending data
     PORTD &= B00111111;
 
