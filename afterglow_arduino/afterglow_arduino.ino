@@ -76,7 +76,7 @@
 #define NUM_ROW 8
 
 // if set to true, a hardcoded glow duration will be used instead of evaluating the configuration pins
-#define HARDCODED_GLODUR 1
+#define HARDCODED_GLOWDUR 1
 
 #if HARDCODED_GLOWDUR
 // Glow duration [ms]
