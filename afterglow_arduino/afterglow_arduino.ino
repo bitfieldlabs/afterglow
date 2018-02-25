@@ -361,10 +361,12 @@ void updateCol(uint32_t col, byte rowMask)
 
 #if SINGLE_UPDATE
     // brightness step per lamp matrix update (assumes one update per original matrix step)
-    uint16_t glowStep = ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL);
+    uint16_t glowStep = (glowDur > 0) ?
+        ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL) : 0xffff;
 #else
     // brightness step per lamp matrix update (assumes ORIG_CYCLES updates per original matrix step)
-    uint16_t glowStep = ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL);
+    uint16_t glowStep = (glowDur > 0) ?
+        ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL) : 0xffff;
 #endif
 
     // get the row configuration
