@@ -38,8 +38,11 @@
  *  | CFG0     | DIP CFG 0     | D10       | DDRB, 3       | Input Pullup |
  *  | CFG1     | DIP CFG 1     | D11       | DDRB, 4       | Input Pullup |
  *  | CFG2     | DIP CFG 2     | D12       | DDRB, 5       | Input Pullup |
- *  | CFG3     | DIP CFG 3     | D13       | DDRB, 6       | Input Pullup |
+ *  | CFG3**   | DIP CFG 3     | D13       | DDRB, 6       | Input Pullup |
  *  +----------+---------------+-----------+---------------+--------------+
+
+** CFG3 not working on boards revision <= 1.1 as it's connected to D13 (LED) 
+
 */
 
 //------------------------------------------------------------------------------
@@ -48,12 +51,14 @@
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 1
 
-// turn WPC anti-ghosting handling on/off
-#define WPC_GHOST_BUSTING 1
+// Do one single matrix update per original cycle only.
+// This is more robust against all sorts of input noise. 
+#define SINGLE_UPDATE 1
 
-// If set to 1, input samples are filtered over original interval duration.
-// This should only needed for shaky original matrix signals.
-#define FILTER_SAMPLES 0
+// Number of consistent data samples required in single update mode
+#if SINGLE_UPDATE
+#define SINGLE_UPDATE_CONS 2
+#endif
 
 // local time interval (us)
 #define TTAG_INT (250)
@@ -70,9 +75,17 @@
 // number of rows in the lamp matrix
 #define NUM_ROW 8
 
+// if set to true, a hardcoded glow duration will be used instead of evaluating the configuration pins
+#define HARDCODED_GLODUR 1
+
+#if HARDCODED_GLOWDUR
+// Glow duration [ms]
+#define GLOWDUR (200)
+#else
 // afterglow duration step size [ms]
 // glow duration = glowCfg * GLOWDUR_STEP
-#define GLOWDUR_STEP (50)
+#define GLOWDUR_STEP (100)
+#endif
 
 // afterglow LED glow duration [ms]
 #define AFTERGLOW_LED_DUR (2000)
@@ -113,31 +126,6 @@ static byte sLastGoodCol = 0;
 // 0=LED, 1=incandescent
 static uint64_t sLampCfg = 0;
 
-#if FILTER_SAMPLES
-// individual lamp filter
-static byte sLampFilter[NUM_COL][NUM_ROW];
-
-// bits set in byte lookup table
-static byte const skBitsInByte[256] =
-{
-    0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
-    1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-    3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-    4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
-};
-#endif
 
 //------------------------------------------------------------------------------
 void setup()
@@ -164,7 +152,7 @@ void setup()
     // LED output on pin 8, configuration input on pins 10-13
     DDRB = B00000001;
     // activate the pullups for the configuration pins
-    PORTB |= 0xfe;
+    PORTB |= B00011100;
     // OE on A1, DBG on A2
     DDRC = B00000110;
     // turn the LED on, keep OE high
@@ -172,9 +160,6 @@ void setup()
 
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
-#if FILTER_SAMPLES
-    memset(sLampFilter, 0, sizeof(sLampFilter));
-#endif
 
     // enable all interrupts
     interrupts();
@@ -208,18 +193,9 @@ ISR(TIMER1_COMPA_vect)
     byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
 
-#if WPC_GHOST_BUSTING
-    // basic WPC ghost busting
-    validInput &= wpcGhostBusting(inColMask, inRowMask);
-#endif
-
-    // remember the last column and row samples
-    sLastColMask = inColMask;
-    sLastRowMask = inRowMask;
-
     // evaluate the column reading
     // only one bit should be set as only one column can be active at a time
-    uint32_t inCol;
+    uint32_t inCol = NUM_COL;
     switch (inColMask)
     {
         case 0x01: inCol = 0; break;
@@ -240,6 +216,7 @@ ISR(TIMER1_COMPA_vect)
             // for a while during the transition while older firmwares might have two
             // columns enabled at the same time due to slow transistor deactivation. Both
             // cases are caught here.
+            // See also https://emmytech.com/arcade/led_ghost_busting/index.html for details.
 #ifdef DEBUG_SERIAL
             sBadColCounter++;
             sLastBadCol = inColMask;
@@ -249,15 +226,17 @@ ISR(TIMER1_COMPA_vect)
         break;
     }
 
+#if SINGLE_UPDATE
+    // In single update mode the matrix is updated only once per original
+    // column cycle. The code waits for a number of consecutive consistent
+    // information before updating the matrix.
+    validInput &= singleUpdateValid(inColMask, inRowMask);
+#endif
+
     // Update only with a valid input. If the input is invalid the current
     // matrix state is left unchanged.
     if (validInput)
     {
-#if FILTER_SAMPLES
-        // filter the input samples
-        inRowMask = filterSamples(inCol, inRowMask);
-#endif
-
         // update the current column
         updateCol(inCol, inRowMask);
 
@@ -268,6 +247,10 @@ ISR(TIMER1_COMPA_vect)
 
     // drive the lamp matrix
     driveLampMatrix();
+
+    // remember the last column and row samples
+    sLastColMask = inColMask;
+    sLastRowMask = inRowMask;
 
     // update the funky afterglow LED
     afterglowLED(sTtag);
@@ -292,6 +275,8 @@ void loop()
     {
         Serial.println("TESTMODE!");
     }
+    Serial.print("DUR ");
+    Serial.println((PINB & B00011000) >> 3);
     Serial.print("INT dt max ");
     Serial.print(sMaxIntTime / 16);
     Serial.println("us");
@@ -324,10 +309,10 @@ void loop()
 //------------------------------------------------------------------------------
 inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 {
-   
     if (on)
     {
-        if (*pMx < (0xffff - step))
+        // increase the stored brightness value
+        if (*pMx < (65535 - step))
         {
             *pMx += step;
         }
@@ -338,6 +323,7 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     }
     else
     {
+        // decrease the stored brightness value
         if (*pMx > step)
         {
             *pMx -= step;
@@ -352,16 +338,34 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 //------------------------------------------------------------------------------
 void updateCol(uint32_t col, byte rowMask)
 {
+    // paranoia check
+    if (col >= NUM_COL)
+    {
+        return;
+    }
+    
     // get a pointer to the matrix column
     uint16_t *pMx = &sMatrixState[col][0];
 
-    // evaluate the glow configuration (CFG0-2)
+    // evaluate the glow configuration (CFG0-1)
     // brightness filter from dark to full [ms]
-    uint32_t glowCfg = ((PINB & B00111000) >> 3);
-    uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
 
+#if (HARDCODED_GLOWDUR==0)
+    // TODO: Glow duration configuration causes flickering for some weird reason.
+    uint32_t glowCfg = ((PINB & B00011000) >> 3);
+    uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
+#else
+    // TODO: replace hard coded glow duration with configuration
+    uint32_t glowDur = GLOWDUR;
+#endif
+
+#if SINGLE_UPDATE
+    // brightness step per lamp matrix update (assumes one update per original matrix step)
+    uint16_t glowStep = ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL);
+#else
     // brightness step per lamp matrix update (assumes ORIG_CYCLES updates per original matrix step)
     uint16_t glowStep = ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL);
+#endif
 
     // get the row configuration
     byte rowCfg = (byte)(sLampCfg >> (col * NUM_ROW));
@@ -400,6 +404,8 @@ uint16_t sampleInput(void)
     
     // wait some time
     uint16_t data = 0;
+    data+= 17;
+    data-= 3;
     
     // drive LOAD high to save pin states
     PORTD |= B00010000;
@@ -414,35 +420,6 @@ uint16_t sampleInput(void)
     }
     return data;
 }
-
-#if FILTER_SAMPLES
-//------------------------------------------------------------------------------
-byte filterSamples(byte inCol, byte inMask)
-{
-    byte outMask = 0;
-    byte *pF = &sLampFilter[inCol][0];
-    for (uint32_t r=0; r<NUM_ROW; r++)
-    {
-        // next row
-        outMask <<= 1;
-
-        // update the filter
-        *pF >>= 1;
-        if (inMask & 0x80)
-        {
-            *pF |= (1 << (ORIG_CYCLES-1));
-        }
-        inMask <<= 1;
-
-        // evaluate the filter
-        if (skBitsInByte[*pF] >= (ORIG_CYCLES >> 1))
-        {
-            outMask |= 0x01;
-        }
-    }
-    return outMask;
-}
-#endif
 
 //------------------------------------------------------------------------------
 void driveLampMatrix()
@@ -615,22 +592,39 @@ uint16_t testModeInput(void)
     return ((colMask << 8) | rowMask);
 }
 
-#if WPC_GHOST_BUSTING
-//------------------------------------------------------------------------------
-bool wpcGhostBusting(byte inColMask, byte inRowMask)
+#if SINGLE_UPDATE
+bool singleUpdateValid(byte inColMask, byte inRowMask)
 {
-    // WPC ghost busting according to information from
-    // https://emmytech.com/arcade/led_ghost_busting/index.html
+    static byte sConsistentSamples = 0;
+    static byte sLastUpdColMask = 0x00;
+    bool valid = false;
 
-    // Watch out for brief full row activation, it might be a glitch in the
-    // WPC data latching. We should not see more than one erroneous sample in
-    // such a case.
-    if ((inRowMask == 0xff) && (sLastRowMask != 0xff))
+    // check if the current column has not been handled already
+    if (inColMask != sLastUpdColMask)
     {
-        return false;
-    }
+        // reset the counter when the data changes
+        if ((inColMask != sLastColMask) || (inRowMask != sLastRowMask))
+        {
+            sConsistentSamples = 0;
+        }
+        // count number of consecutive samples with consistent data
+        else if (sConsistentSamples < 255)
+        {
+            sConsistentSamples++;
+        }
 
-    return true;
+        // In single update mode the matrix is updated only once per original
+        // column cycle. The code waits for a number of consecutive consistent
+        // information before updating the matrix.
+        // This also avoids ghosting issues, see
+        // https://emmytech.com/arcade/led_ghost_busting/index.html for details.
+        if (sConsistentSamples >= (SINGLE_UPDATE_CONS-1))
+        {
+            sLastUpdColMask = inColMask;
+            valid = true;
+        }
+    }
+    return valid;
 }
 #endif
 
