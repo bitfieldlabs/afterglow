@@ -171,7 +171,12 @@ ISR(TIMER1_COMPA_vect)
     // time is running
     uint16_t startCnt = TCNT1;
     sTtag++;
-    
+
+    // Drive the lamp matrix
+    // This is done before updating the matrix to avoid having an irregular update
+    // frequency due to varying update calculation times.
+    driveLampMatrix();
+
     // 74HC165 16bit sampling
     uint16_t inData = sampleInput();
     bool validInput = true;
@@ -236,9 +241,6 @@ ISR(TIMER1_COMPA_vect)
         sLastGoodCol = inCol;
 #endif
     }
-
-    // drive the lamp matrix
-    driveLampMatrix();
 
     // remember the last column and row samples
     sLastColMask = inColMask;
