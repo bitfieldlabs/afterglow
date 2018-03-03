@@ -51,14 +51,8 @@
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
 
-// Do one single matrix update per original cycle only.
-// This is more robust against all sorts of input noise. 
-#define SINGLE_UPDATE 1
-
-// Number of consistent data samples required in single update mode
-#if SINGLE_UPDATE
+// Number of consistent data samples required for matrix update
 #define SINGLE_UPDATE_CONS 2
-#endif
 
 // local time interval (us)
 #define TTAG_INT (250)
@@ -223,12 +217,9 @@ ISR(TIMER1_COMPA_vect)
         break;
     }
 
-#if SINGLE_UPDATE
-    // In single update mode the matrix is updated only once per original
-    // column cycle. The code waits for a number of consecutive consistent
-    // information before updating the matrix.
-    validInput &= singleUpdateValid(inColMask, inRowMask);
-#endif
+    // The matrix is updated only once per original column cycle. The code
+    // waits for a number of consecutive consistent information before updating the matrix.
+    validInput &= updateValid(inColMask, inRowMask);
 
     // Update only with a valid input. If the input is invalid the current
     // matrix state is left unchanged.
@@ -353,15 +344,9 @@ void updateCol(uint32_t col, byte rowMask)
     {
         uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
 
-#if SINGLE_UPDATE
         // brightness step per lamp matrix update (assumes one update per original matrix step)
         glowStep = (glowDur > 0) ?
             ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL) : 0xffff;
-#else
-        // brightness step per lamp matrix update (assumes ORIG_CYCLES updates per original matrix step)
-        glowStep = (glowDur > 0) ?
-            ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL) : 0xffff;
-#endif
         sLastGlowCfg = glowCfg;
     }
 
@@ -590,8 +575,8 @@ uint16_t testModeInput(void)
     return ((colMask << 8) | rowMask);
 }
 
-#if SINGLE_UPDATE
-bool singleUpdateValid(byte inColMask, byte inRowMask)
+//------------------------------------------------------------------------------
+bool updateValid(byte inColMask, byte inRowMask)
 {
     static byte sConsistentSamples = 0;
     static byte sLastUpdColMask = 0x00;
@@ -611,9 +596,9 @@ bool singleUpdateValid(byte inColMask, byte inRowMask)
             sConsistentSamples++;
         }
 
-        // In single update mode the matrix is updated only once per original
-        // column cycle. The code waits for a number of consecutive consistent
-        // information before updating the matrix.
+        // The matrix is updated only once per original column cycle.
+        // The code waits for a number of consecutive consistent information
+        // before updating the matrix.
         // This also avoids ghosting issues, see
         // https://emmytech.com/arcade/led_ghost_busting/index.html for details.
         if (sConsistentSamples >= (SINGLE_UPDATE_CONS-1))
@@ -624,7 +609,6 @@ bool singleUpdateValid(byte inColMask, byte inRowMask)
     }
     return valid;
 }
-#endif
 
 #if DEBUG_SERIAL
 //------------------------------------------------------------------------------
