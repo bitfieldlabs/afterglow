@@ -77,7 +77,7 @@
 
 // afterglow duration step size [ms]
 // glow duration = glowCfg * GLOWDUR_STEP
-#define GLOWDUR_STEP (100)
+#define GLOWDUR_STEP (75)
 
 // afterglow LED glow duration [ms]
 #define AFTERGLOW_LED_DUR (2000)
@@ -344,7 +344,8 @@ void updateCol(uint32_t col, byte rowMask)
     // evaluate the glow configuration (CFG0-1)
     // brightness filter from dark to full [ms]
     static byte sLastGlowCfg = 0xff;
-    uint32_t glowCfg = ((PINB & B00011000) >> 3);
+    uint32_t glowCfg = ((~PINB & B00011000) >> 3); // invert as a closed switch means 0
+
     // Update the glow step when the configuration changes only as this is an
     // expensive calculation
     static uint16_t glowStep = 0xffff;
