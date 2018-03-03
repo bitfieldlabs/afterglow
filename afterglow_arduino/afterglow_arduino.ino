@@ -49,7 +49,7 @@
 // Setup
 
 // turn debug output via serial on/off
-#define DEBUG_SERIAL 1
+#define DEBUG_SERIAL 0
 
 // Do one single matrix update per original cycle only.
 // This is more robust against all sorts of input noise. 
@@ -75,17 +75,9 @@
 // number of rows in the lamp matrix
 #define NUM_ROW 8
 
-// if set to true, a hardcoded glow duration will be used instead of evaluating the configuration pins
-#define HARDCODED_GLOWDUR 1
-
-#if HARDCODED_GLOWDUR
-// Glow duration [ms]
-#define GLOWDUR (200)
-#else
 // afterglow duration step size [ms]
 // glow duration = glowCfg * GLOWDUR_STEP
 #define GLOWDUR_STEP (100)
-#endif
 
 // afterglow LED glow duration [ms]
 #define AFTERGLOW_LED_DUR (2000)
@@ -217,7 +209,7 @@ ISR(TIMER1_COMPA_vect)
             // columns enabled at the same time due to slow transistor deactivation. Both
             // cases are caught here.
             // See also https://emmytech.com/arcade/led_ghost_busting/index.html for details.
-#ifdef DEBUG_SERIAL
+#if DEBUG_SERIAL
             sBadColCounter++;
             sLastBadCol = inColMask;
 #endif
@@ -240,7 +232,7 @@ ISR(TIMER1_COMPA_vect)
         // update the current column
         updateCol(inCol, inRowMask);
 
-#ifdef DEBUG_SERIAL
+#if DEBUG_SERIAL
         sLastGoodCol = inCol;
 #endif
     }
@@ -350,14 +342,8 @@ void updateCol(uint32_t col, byte rowMask)
     // evaluate the glow configuration (CFG0-1)
     // brightness filter from dark to full [ms]
 
-#if (HARDCODED_GLOWDUR==0)
-    // TODO: Glow duration configuration causes flickering for some weird reason.
     uint32_t glowCfg = ((PINB & B00011000) >> 3);
     uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
-#else
-    // TODO: replace hard coded glow duration with configuration
-    uint32_t glowDur = GLOWDUR;
-#endif
 
 #if SINGLE_UPDATE
     // brightness step per lamp matrix update (assumes one update per original matrix step)
