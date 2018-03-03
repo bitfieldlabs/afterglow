@@ -341,19 +341,26 @@ void updateCol(uint32_t col, byte rowMask)
 
     // evaluate the glow configuration (CFG0-1)
     // brightness filter from dark to full [ms]
-
+    static byte sLastGlowCfg = 0xff;
     uint32_t glowCfg = ((PINB & B00011000) >> 3);
-    uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
+    // Update the glow step when the configuration changes only as this is an
+    // expensive calculation
+    static uint16_t glowStep = 0xffff;
+    if (glowCfg != sLastGlowCfg)
+    {
+        uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
 
 #if SINGLE_UPDATE
-    // brightness step per lamp matrix update (assumes one update per original matrix step)
-    uint16_t glowStep = (glowDur > 0) ?
-        ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL) : 0xffff;
+        // brightness step per lamp matrix update (assumes one update per original matrix step)
+        glowStep = (glowDur > 0) ?
+            ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL) : 0xffff;
 #else
-    // brightness step per lamp matrix update (assumes ORIG_CYCLES updates per original matrix step)
-    uint16_t glowStep = (glowDur > 0) ?
-        ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL) : 0xffff;
+        // brightness step per lamp matrix update (assumes ORIG_CYCLES updates per original matrix step)
+        glowStep = (glowDur > 0) ?
+            ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)TTAG_INT)) * NUM_COL) : 0xffff;
 #endif
+        sLastGlowCfg = glowCfg;
+    }
 
     // get the row configuration
     byte rowCfg = (byte)(sLampCfg >> (col * NUM_ROW));
