@@ -45,6 +45,8 @@
 
 */
 
+#include <EEPROM.h>
+
 //------------------------------------------------------------------------------
 // Setup
 
@@ -119,8 +121,11 @@ static byte sLastGoodCol = 0;
 // afterglow configuration data definition
 typedef struct AFTERGLOW_CFG_s
 {
+    uint16_t version;                      // afterglow version of the configuration
+    uint16_t res;                          // reserved bytes
     byte lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
     byte lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+    uint32_t crc;                          // data checksum
 } AFTERGLOW_CFG_t;
 
 // afterglow configuration
@@ -167,17 +172,11 @@ void setup()
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
 
-    // set default configuration
-    memset(&sCfg, 0, sizeof(sCfg));
-    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
-    byte *pBrightness = &sCfg.lampBrightness[0][0];
-    for (byte c=0; c<NUM_COL; c++)
+    // load the configuration from EEPROM
+    if (loadCfg() == false)
     {
-        for (byte r=0; r<NUM_ROW; r++)
-        {
-            *pGlowDur++ = (DEFAULT_GLOWDUR / GLOWDUR_CFG_SCALE);
-            *pBrightness++ = DEFAULT_BRIGHTNESS;
-        }
+        // set default configuration
+        setDefaultCfg();
     }
 
     // Apply the configuration
@@ -288,8 +287,11 @@ ISR(TIMER1_COMPA_vect)
 //------------------------------------------------------------------------------
 void loop()
 {
-    // debug output only - wait for interrupts
-    // all the fun stuff happens in the timer interrupt
+    // The main loop is used for low priority serial communication only.
+    // All the lamp matrix fun happens in the timer interrupt.
+
+    // check for serial data
+    
 
 #if DEBUG_SERIAL
     // print the maximum interrupt runtime
@@ -297,8 +299,6 @@ void loop()
     {
         Serial.println("TESTMODE!");
     }
-    Serial.print("DUR ");
-    Serial.println((PINB & B00011000) >> 3);
     Serial.print("INT dt max ");
     Serial.print(sMaxIntTime / 16);
     Serial.print("us last ");
@@ -646,6 +646,76 @@ void applyCfg()
             *pMaxSubCycle++ = (*pBrightness >> (8/ORIG_CYCLES-1));
         }
     }
+}
+
+//------------------------------------------------------------------------------
+void setDefaultCfg()
+{
+    // initialize configuration to default values
+    memset(&sCfg, 0, sizeof(sCfg));
+    sCfg.version = AFTERGLOW_VERSION;
+    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
+    byte *pBrightness = &sCfg.lampBrightness[0][0];
+    for (byte c=0; c<NUM_COL; c++)
+    {
+        for (byte r=0; r<NUM_ROW; r++)
+        {
+            *pGlowDur++ = (DEFAULT_GLOWDUR / GLOWDUR_CFG_SCALE);
+            *pBrightness++ = DEFAULT_BRIGHTNESS;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+bool loadCfg()
+{
+    bool valid = false;
+
+    // load the configuration from the EEPROM
+    uint16_t cfgSize = sizeof(sCfg);
+    uint8_t *pCfg = (uint8_t*)&sCfg;
+    for (uint16_t i=0; i<cfgSize; i++)
+    {
+        *pCfg++ = EEPROM.read(i);
+    }
+
+    // check the version
+    if (sCfg.version == AFTERGLOW_VERSION)
+    {
+        // check the CRC of the data
+        // it is the 4 bytes located directly after the configuration structure
+        uint32_t crc = calculateCRC32((uint8_t*)&sCfg, cfgSize);
+        if (crc == sCfg.crc)
+        {
+            valid = true;
+        }
+    }
+
+    return valid;
+}
+
+//------------------------------------------------------------------------------
+uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
+{
+    uint32_t crc = 0xffffffff;
+    while (length--)
+    {
+        uint8_t c = *data++;
+        for (uint32_t i = 0x80; i > 0; i >>= 1)
+        {
+            bool bit = crc & 0x80000000;
+            if (c & i)
+            {
+                bit = !bit;
+            }
+            crc <<= 1;
+            if (bit)
+            {
+                crc ^= 0x04c11db7;
+            }
+        }
+    }
+    return crc;
 }
 
 #if DEBUG_SERIAL
