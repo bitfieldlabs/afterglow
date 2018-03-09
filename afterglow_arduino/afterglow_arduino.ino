@@ -53,6 +53,9 @@
 // afterglow version number
 #define AFTERGLOW_VERSION 100
 
+// afterglow configuration version
+#define AFTERGLOW_CFG_VERSION 1
+
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
 
@@ -189,7 +192,10 @@ void setup()
 #if DEBUG_SERIAL
     // enable serial output at 115200 baudrate
     Serial.begin(115200);
-    Serial.println("afterglow 1.1 (c) 2018 morbid cornflakes");
+    Serial.print("afterglow v");
+    Serial.print(AFTERGLOW_VERSION);
+    Serial.println(" (c) 2018 morbid cornflakes");
+    Serial.println("-----------------------------------------------");
 #endif
 }
 
@@ -680,11 +686,10 @@ bool loadCfg()
     }
 
     // check the version
-    if (sCfg.version == AFTERGLOW_VERSION)
+    if (sCfg.version == AFTERGLOW_CFG_VERSION)
     {
         // check the CRC of the data
-        // it is the 4 bytes located directly after the configuration structure
-        uint32_t crc = calculateCRC32((uint8_t*)&sCfg, cfgSize);
+        uint32_t crc = calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
         if (crc == sCfg.crc)
         {
             valid = true;
