@@ -189,14 +189,12 @@ void setup()
     // enable all interrupts
     interrupts();
 
-#if DEBUG_SERIAL
     // enable serial output at 115200 baudrate
     Serial.begin(115200);
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
     Serial.println(" (c) 2018 morbid cornflakes");
     Serial.println("-----------------------------------------------");
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -296,44 +294,97 @@ void loop()
     // The main loop is used for low priority serial communication only.
     // All the lamp matrix fun happens in the timer interrupt.
 
+    // count the loops (used for debug output below)
+    static uint32_t loopCounter = 0;
+    loopCounter++;
+
     // check for serial data
-    
+    static String cmd = "";
+    static bool complete = false;
+    while(Serial.available())
+    {
+        char character = Serial.read();
+        if (character != ':')
+        {
+            // add the character and wait for the command terminator
+            cmd.concat(character);
+        }
+        else
+        {
+            // command complete
+            complete = true;
+        }
+    }
+
+    // handle complete commands
+    if (complete)
+    {
+        // version poll
+        if (cmd == "AGV")
+        {
+            // Output the version numbers
+            Serial.print("AGV ");
+            Serial.print(AFTERGLOW_VERSION);
+            Serial.print(" ");
+            Serial.println(AFTERGLOW_CFG_VERSION);
+        }
+
+        // configuration poll
+        else if (cmd == "AGCP")
+        {
+            
+        }
+
+        // configuration write
+        else if (cmd == "AGCS")
+        {
+            
+        }
+
+        cmd = "";
+        complete = false;
+    }
 
 #if DEBUG_SERIAL
-    // print the maximum interrupt runtime
-    if ((PINB & B00000100) == 0)
+    if ((loopCounter % 10) == 0)
     {
-        Serial.println("TESTMODE!");
-    }
-    Serial.print("INT dt max ");
-    Serial.print(sMaxIntTime / 16);
-    Serial.print("us last ");
-    Serial.print(sLastIntTime / 16);
-    Serial.println("us");
-    Serial.print("Bad col: # ");
-    Serial.print(sBadColCounter);
-    Serial.print(" col ");
-    Serial.print(sLastBadCol);
-    Serial.print(" last good: ");
-    Serial.println(sLastGoodCol);
-    // data debugging
-    debugInputs(sLastColMask, sLastRowMask);
-    debugOutput(sLastOutColMask, sLastOutRowMask);
-    // dump the full matrix
-    for (uint32_t c=0; c<NUM_COL; c++)
-    {
-        Serial.print("C");
-        Serial.print(c);
-        Serial.print(" + ");
-        for (uint32_t r=0; r<NUM_ROW; r++)
+        // print the maximum interrupt runtime
+        if ((PINB & B00000100) == 0)
         {
-            Serial.print(sMatrixState[c][r]);
-            Serial.print(" ");
+            Serial.println("TESTMODE!");
         }
-        Serial.println("");
+        Serial.print("INT dt max ");
+        Serial.print(sMaxIntTime / 16);
+        Serial.print("us last ");
+        Serial.print(sLastIntTime / 16);
+        Serial.println("us");
+        Serial.print("Bad col: # ");
+        Serial.print(sBadColCounter);
+        Serial.print(" col ");
+        Serial.print(sLastBadCol);
+        Serial.print(" last good: ");
+        Serial.println(sLastGoodCol);
+        // data debugging
+        debugInputs(sLastColMask, sLastRowMask);
+        debugOutput(sLastOutColMask, sLastOutRowMask);
+        // dump the full matrix
+        for (uint32_t c=0; c<NUM_COL; c++)
+        {
+            Serial.print("C");
+            Serial.print(c);
+            Serial.print(" + ");
+            for (uint32_t r=0; r<NUM_ROW; r++)
+            {
+                Serial.print(sMatrixState[c][r]);
+                Serial.print(" ");
+            }
+            Serial.println("");
+        }
     }
-    delay(5000);
 #endif
+
+    // wait 500ms
+    delay(500);
 }
 
 //------------------------------------------------------------------------------
