@@ -37,9 +37,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
 
-    // deactivate load and save buttons by default
+    // deactivate some GUI elements by default
     ui->saveButton->setEnabled(false);
     ui->loadButton->setEnabled(false);
+    ui->connectButton->setEnabled(false);
+    ui->lampMatrix->setEnabled(false);
+
+    // connect everything
+    connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
 
     // format the lamp matrix list
     prepareLampMatrix();
@@ -179,11 +184,15 @@ void MainWindow::prepareLampMatrix()
 
 void MainWindow::enumSerialPorts()
 {
+    int numPorts = 0;
     const auto infos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &info : infos)
     {
         QString s = info.portName();
         ui->serialPortSelection->addItem(s);
+        numPorts++;
     }
 
+    // enable the connect button
+    ui->connectButton->setEnabled(numPorts>0);
 }

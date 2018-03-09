@@ -25,13 +25,17 @@
 #define SERIALCOMMUNICATOR_H
 
 #include <QSerialPort>
-#include <QSerialPortInfo>
 
 
 class SerialCommunicator
 {
 public:
     SerialCommunicator();
+
+    bool openPort();
+
+private:
+    QSerialPort mSerialPort;
 };
 
 #endif // SERIALCOMMUNICATOR_H

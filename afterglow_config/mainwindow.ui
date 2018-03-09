@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>876</width>
-    <height>928</height>
+    <height>872</height>
    </rect>
   </property>
   <property name="palette">
@@ -502,10 +502,10 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>0</y>
+      <x>110</x>
+      <y>20</y>
       <width>661</width>
-      <height>121</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="text">
@@ -513,6 +513,9 @@
     </property>
     <property name="pixmap">
      <pixmap resource="resources.qrc">:/images/images/afterglow.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -532,7 +535,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>250</y>
+      <y>450</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -542,7 +545,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>210</y>
+      <y>410</y>
       <width>131</width>
       <height>27</height>
      </rect>
@@ -581,7 +584,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>330</y>
+      <y>210</y>
       <width>131</width>
       <height>27</height>
      </rect>
@@ -594,30 +597,51 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>370</y>
+      <y>250</y>
       <width>141</width>
       <height>41</height>
      </rect>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>876</width>
-     <height>39</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
+   <widget class="QPushButton" name="connectButton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>660</y>
+      <width>141</width>
+      <height>43</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="parameterSelection">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>350</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>310</y>
+      <width>131</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Parameter</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
@@ -625,24 +649,7 @@
  <resources>
   <include location="resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>gameSelection</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>gameChanged(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>125</x>
-     <y>439</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>106</x>
-     <y>509</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>gameChanged(int)</slot>
  </slots>
