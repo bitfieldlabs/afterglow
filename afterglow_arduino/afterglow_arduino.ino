@@ -72,9 +72,14 @@
 // number of rows in the lamp matrix
 #define NUM_ROW 8
 
-// afterglow duration step size [ms]
-// glow duration = glowCfg * GLOWDUR_STEP
-#define GLOWDUR_STEP (75)
+// default glow duration [ms]
+#define DEFAULT_GLOWDUR 180
+
+// glow duration scaling in the configuration
+#define GLOWDUR_CFG_SCALE 10
+
+// default maximum lamp brightness 0-7
+#define DEFAULT_BRIGHTNESS 7
 
 // afterglow LED glow duration [ms]
 #define AFTERGLOW_LED_DUR (2000)
@@ -110,15 +115,6 @@ static uint32_t sBadColCounter = 0;
 static byte sLastBadCol = 0;
 static byte sLastGoodCol = 0;
 #endif
-
-// default glow duration [ms]
-#define DEFAULT_GLOWDUR 180
-
-// glow duration scaling in the configuration
-#define GLOWDUR_CFG_SCALE 10
-
-// default maximum lamp brightness 0-7
-#define DEFAULT_BRIGHTNESS 7
 
 // afterglow configuration data definition
 typedef struct AFTERGLOW_CFG_s
