@@ -26,6 +26,7 @@
 #include <QFile>
 #include <QJsonObject>
 #include <QSerialPortInfo>
+#include <QThread>
 
 // default glow duration [ms]
 #define DEFAULT_GLOWDUR 180
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // connect everything
     connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
+    connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
 
     // format the lamp matrix list
     prepareLampMatrix();
@@ -61,10 +63,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // enumerate the serial ports
     enumSerialPorts();
+    mConnected = false;
 }
 
 MainWindow::~MainWindow()
 {
+    mSerialCommunicator.disconnect();
     delete ui;
 }
 
@@ -82,6 +86,41 @@ void MainWindow::readGames(void)
     QJsonParseError err;
     mGamesDoc = QJsonDocument::fromJson(bla, &err);
     mGamesList = mGamesDoc.array();
+}
+
+void MainWindow::connectAG()
+{
+    // connect to the selected port
+    mConnected = false;
+    if (!mSerialCommunicator.openPort(ui->serialPortSelection->currentText()))
+    {
+        QString warning = "Failed to open port ";
+        warning += ui->serialPortSelection->currentText();
+        ui->statusBar->showMessage(warning);
+    }
+    else
+    {
+        // the connection will reset the arduino - allow some time for startup
+        ui->statusBar->showMessage("Rebooting the arduino...");
+        QThread::sleep(2);
+
+        // poll the afterglow version to verify the connection
+        ui->statusBar->showMessage("Polling the afterglow version...");
+        int version = mSerialCommunicator.pollVersion();
+        if (version != 0)
+        {
+            QString connectStr = "Connected to afterglow revision ";
+            connectStr += QString::number(version, 10);
+            ui->statusBar->showMessage(connectStr);
+            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+            setConnected(true);
+        }
+        else
+        {
+            ui->statusBar->showMessage("No afterglow board detected on this port!");
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        }
+    }
 }
 
 void MainWindow::gameChanged(int ix)
@@ -180,6 +219,13 @@ void MainWindow::prepareLampMatrix()
             }
         }
     }
+}
+
+void MainWindow::setConnected(bool connected)
+{
+    mConnected = connected;
+    ui->loadButton->setEnabled(connected);
+    ui->saveButton->setEnabled(connected);
 }
 
 void MainWindow::enumSerialPorts()

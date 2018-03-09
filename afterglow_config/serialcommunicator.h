@@ -32,7 +32,9 @@ class SerialCommunicator
 public:
     SerialCommunicator();
 
-    bool openPort();
+    bool openPort(const QString &portName);
+    void disconnect();
+    int pollVersion();
 
 private:
     QSerialPort mSerialPort;

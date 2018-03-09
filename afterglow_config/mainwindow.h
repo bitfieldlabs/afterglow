@@ -27,6 +27,7 @@
 #include <QMainWindow>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include "serialcommunicator.h"
 
 namespace Ui {
 class MainWindow;
@@ -42,17 +43,21 @@ public:
 
 public slots:
     void gameChanged(int ix);
+    void connectAG();
 
 private:
     void createGameList();
     void prepareLampMatrix();
     void updateGameDesc(int ix);
     void enumSerialPorts();
+    void setConnected(bool connected);
 
     Ui::MainWindow *ui;
     void readGames(void);
     QJsonDocument mGamesDoc;
     QJsonArray mGamesList;
+    SerialCommunicator mSerialCommunicator;
+    bool mConnected;
 };
 
 #endif // MAINWINDOW_H

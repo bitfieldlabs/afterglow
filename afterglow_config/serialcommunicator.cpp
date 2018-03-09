@@ -22,8 +22,74 @@
  ***********************************************************************/
 
 #include "serialcommunicator.h"
+#include <QRegularExpression>
+
+// timeout for serial communication [ms]
+#define AG_SERIAL_TIMEOUT 2000
+
+// version poll command string
+#define AG_CMD_VERSION_POLL "AGV:"
 
 SerialCommunicator::SerialCommunicator()
 {
 
+}
+
+bool SerialCommunicator::openPort(const QString &portName)
+{
+    bool res = true;
+
+    // close previous connections
+    disconnect();
+
+    // port setup
+    mSerialPort.setPortName(portName);
+    mSerialPort.setBaudRate(115200);
+
+    // open the port
+    if (mSerialPort.open(QIODevice::ReadWrite) == false)
+    {
+        res = false;
+    }
+    return res;
+}
+
+void SerialCommunicator::disconnect()
+{
+    mSerialPort.close();
+}
+
+int SerialCommunicator::pollVersion()
+{
+    int version = 0;
+
+    // clear the port
+    mSerialPort.clear();
+
+    // send the request
+    mSerialPort.write(AG_CMD_VERSION_POLL);
+
+    // check the response
+    if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
+    {
+        // read response
+        if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
+        {
+            QByteArray responseData = mSerialPort.readAll();
+            while (mSerialPort.waitForReadyRead(10))
+            {
+                responseData += mSerialPort.readAll();
+            }
+
+            // parse the version
+            const QString response = QString::fromUtf8(responseData);
+            QRegularExpression re("AGV\\s(\\d+)\\s(\\d+)");
+            QRegularExpressionMatch match = re.match(response);
+            if (match.hasMatch())
+            {
+                version = match.captured(1).toInt();
+            }
+        }
+    }
+    return version;
 }
