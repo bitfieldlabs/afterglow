@@ -48,6 +48,9 @@
 //------------------------------------------------------------------------------
 // Setup
 
+// afterglow version number
+#define AFTERGLOW_VERSION 100
+
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
 
@@ -92,7 +95,8 @@ static uint16_t sMatrixState[NUM_COL][NUM_ROW];
 // local time
 static uint32_t sTtag = 0;
 
-// maximum interrupt runtime counter [cycles]
+// interrupt runtime counters [cycles]
+static uint16_t sLastIntTime = 0;
 static uint16_t sMaxIntTime = 0;
 
 // remember the last column and row samples
@@ -107,10 +111,30 @@ static byte sLastBadCol = 0;
 static byte sLastGoodCol = 0;
 #endif
 
-// Lamp matrix configuration
-// Bit 0-7=column 1, row 1-8
-// 0=LED, 1=incandescent
-static uint64_t sLampCfg = 0;
+// default glow duration [ms]
+#define DEFAULT_GLOWDUR 180
+
+// glow duration scaling in the configuration
+#define GLOWDUR_CFG_SCALE 10
+
+// default maximum lamp brightness 0-7
+#define DEFAULT_BRIGHTNESS 7
+
+// afterglow configuration data definition
+typedef struct AFTERGLOW_CFG_s
+{
+    byte lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    byte lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+} AFTERGLOW_CFG_t;
+
+// afterglow configuration
+static AFTERGLOW_CFG_t sCfg;
+
+// precalculated glow steps for each lamp
+static uint16_t sGlowSteps[NUM_COL][NUM_ROW];
+
+// precalculated maximum subcycle for lamp activation (brightness)
+static byte sMaxSubcycle[NUM_COL][NUM_ROW];
 
 
 //------------------------------------------------------------------------------
@@ -146,6 +170,23 @@ void setup()
 
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
+
+    // set default configuration
+    memset(&sCfg, 0, sizeof(sCfg));
+    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
+    byte *pBrightness = &sCfg.lampBrightness[0][0];
+    for (byte c=0; c<NUM_COL; c++)
+    {
+        for (byte r=0; r<NUM_ROW; r++)
+        {
+            *pGlowDur++ = (DEFAULT_GLOWDUR / GLOWDUR_CFG_SCALE);
+            *pBrightness++ = DEFAULT_BRIGHTNESS;
+        }
+    }
+
+    // Apply the configuration
+    // This will prepare all values for the interrupt handlers.
+    applyCfg();
 
     // enable all interrupts
     interrupts();
@@ -238,13 +279,13 @@ ISR(TIMER1_COMPA_vect)
     sLastRowMask = inRowMask;
 
     // update the funky afterglow LED
-    afterglowLED(sTtag);
+    //afterglowLED(sTtag);
 
     // how long did it take?
-    uint16_t dt = (TCNT1 - startCnt);
-    if (dt > sMaxIntTime)
+    sLastIntTime = (TCNT1 - startCnt);
+    if (sLastIntTime > sMaxIntTime)
     {
-        sMaxIntTime = dt;
+        sMaxIntTime = sLastIntTime;
     }
 }
 
@@ -264,6 +305,8 @@ void loop()
     Serial.println((PINB & B00011000) >> 3);
     Serial.print("INT dt max ");
     Serial.print(sMaxIntTime / 16);
+    Serial.print("us last ");
+    Serial.print(sLastIntTime / 16);
     Serial.println("us");
     Serial.print("Bad col: # ");
     Serial.print(sBadColCounter);
@@ -331,50 +374,17 @@ void updateCol(uint32_t col, byte rowMask)
     
     // get a pointer to the matrix column
     uint16_t *pMx = &sMatrixState[col][0];
-
-    // evaluate the glow configuration (CFG0-1)
-    // brightness filter from dark to full [ms]
-    static byte sLastGlowCfg = 0xff;
-    uint32_t glowCfg = ((~PINB & B00011000) >> 3); // invert as a closed switch means 0
-
-    // Update the glow step when the configuration changes only as this is an
-    // expensive calculation
-    static uint16_t glowStep = 0xffff;
-    if (glowCfg != sLastGlowCfg)
-    {
-        uint32_t glowDur = (glowCfg * GLOWDUR_STEP);
-
-        // brightness step per lamp matrix update (assumes one update per original matrix step)
-        glowStep = (glowDur > 0) ?
-            ((uint16_t)((uint32_t)65536 / (glowDur * 1000 / (uint32_t)ORIG_INT)) * NUM_COL) : 0xffff;
-        sLastGlowCfg = glowCfg;
-    }
-
-    // get the row configuration
-    byte rowCfg = (byte)(sLampCfg >> (col * NUM_ROW));
+    const uint16_t *pkStep = &sGlowSteps[col][0];
 
     // update all row values
     for (uint32_t r=0; r<NUM_ROW; r++)
     {
-        // determine the step size based on configuration
-        // todo: make a lookup table for this
-        uint16_t step;
-        if ((rowCfg & (1 << r)) == 0)
-        {
-            // LEDs glow :-)
-            step = glowStep;
-        }
-        else
-        {
-            // incandescents turn on immediately
-            step = 0xffff;
-        }
-        
         // update the matrix value
-        updateMx(pMx, (rowMask & 0x01), step);
+        updateMx(pMx, (rowMask & 0x01), *pkStep);
 
         // next row
         pMx++;
+        pkStep++;
         rowMask >>= 1;
     }
 }
@@ -426,11 +436,7 @@ void driveLampMatrix()
     //        |                               |
     //  ------+         500us                 +-------
     //        ^       ^       ^       ^       ^        Afterglow duty cycles
-    //  B0                                             Lamp matrix value == 0
-    //  B1    ********                                 Lamp matrix value < 16384
-    //  B2    ****************                         Lamp matrix value < 32768
-    //  B3    ************************                 Lamp matrix value < 49152
-    //  B4    ********************************         Lamp matrix value < 65536
+
     uint32_t colCycle = (sTtag / NUM_COL) % ORIG_CYCLES;
 
     // prepare the data
@@ -438,19 +444,32 @@ void driveLampMatrix()
     byte colData = (1 << outCol);
     byte rowData = 0;
     uint16_t *pMx = &sMatrixState[outCol][0];
+    byte *pMaxSubCycle = &sMaxSubcycle[outCol][0];
     for (uint32_t r=0; r<NUM_ROW; r++)
     {
         // make room for the next bit
         rowData >>= 1;
         
-        // LEDs are turned on when the value in the matrix is not zero
-        // and when the value is high enough for the current sub cycle.
-        if ((*pMx) &&
-            ((*pMx / (65536 / ORIG_CYCLES)) >= colCycle))
+        // nothing to do if the matrix value is zero (off)
+        if (*pMx)
         {
-            rowData |= 0x80;
+            uint16_t subCycle = (*pMx / (65535 / ORIG_CYCLES));
+
+            // limit to the configured maximum brightness
+            if (subCycle > *pMaxSubCycle)
+            {
+                subCycle = *pMaxSubCycle;
+            }
+
+            // Lamps are turned on when the value in the matrix is not zero
+            // and when the value is high enough for the current sub cycle.
+            if (subCycle >= colCycle)
+            {
+                rowData |= 0x80;
+            }
         }
         pMx++;
+        pMaxSubCycle++;
     }
 
     // output the data
@@ -608,6 +627,29 @@ bool updateValid(byte inColMask, byte inRowMask)
         }
     }
     return valid;
+}
+
+//------------------------------------------------------------------------------
+void applyCfg()
+{
+    // calculate the glow steps and maximum subcycles
+    uint16_t *pGS = &sGlowSteps[0][0];
+    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
+    byte *pBrightness = &sCfg.lampBrightness[0][0];
+    byte *pMaxSubCycle = &sMaxSubcycle[0][0];
+    for (byte c=0; c<NUM_COL; c++)
+    {
+        for (byte r=0; r<NUM_COL; r++)
+        {
+            // brightness step per lamp matrix update (assumes one update per original matrix step)
+            uint32_t glowDur = (*pGlowDur * GLOWDUR_CFG_SCALE);
+            *pGS++ = (glowDur > 0) ?
+                ((uint16_t)(0xffff / ((glowDur * 1000) / ORIG_INT)) * NUM_COL) : 0xffff;
+
+            // translate maximum brightness into maximum lamp driving subcycle
+            *pMaxSubCycle++ = (*pBrightness >> (8/ORIG_CYCLES-1));
+        }
+    }
 }
 
 #if DEBUG_SERIAL
