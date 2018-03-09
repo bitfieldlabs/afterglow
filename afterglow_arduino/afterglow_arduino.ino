@@ -449,7 +449,7 @@ void driveLampMatrix()
         // nothing to do if the matrix value is zero (off)
         if (*pMx)
         {
-            uint16_t subCycle = (*pMx / (65535 / ORIG_CYCLES));
+            uint16_t subCycle = (*pMx / (65536 / ORIG_CYCLES));
 
             // limit to the configured maximum brightness
             if (subCycle > *pMaxSubCycle)
@@ -640,7 +640,7 @@ void applyCfg()
             // brightness step per lamp matrix update (assumes one update per original matrix step)
             uint32_t glowDur = (*pGlowDur * GLOWDUR_CFG_SCALE);
             *pGS++ = (glowDur > 0) ?
-                ((uint16_t)(0xffff / ((glowDur * 1000) / ORIG_INT)) * NUM_COL) : 0xffff;
+                ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_COL) : 0xffff;
 
             // translate maximum brightness into maximum lamp driving subcycle
             *pMaxSubCycle++ = (*pBrightness >> (8/ORIG_CYCLES-1));
