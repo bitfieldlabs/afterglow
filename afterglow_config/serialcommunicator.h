@@ -25,7 +25,7 @@
 #define SERIALCOMMUNICATOR_H
 
 #include <QSerialPort>
-
+#include "agconfig.h"
 
 class SerialCommunicator
 {
@@ -34,9 +34,12 @@ public:
 
     bool openPort(const QString &portName);
     void disconnect();
-    int pollVersion();
+    int pollVersion(int *pCfgVersion);
+    bool loadCfg(AFTERGLOW_CFG_t *pCfg);
 
 private:
+    uint32_t calculateCRC32(const uint8_t *data, uint16_t length);
+
     QSerialPort mSerialPort;
 };
 

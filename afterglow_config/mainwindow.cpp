@@ -28,8 +28,6 @@
 #include <QSerialPortInfo>
 #include <QThread>
 
-// default glow duration [ms]
-#define DEFAULT_GLOWDUR 180
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,16 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
+    ui->statusBar->setStyleSheet("");
 
     // deactivate some GUI elements by default
     ui->saveButton->setEnabled(false);
     ui->loadButton->setEnabled(false);
     ui->connectButton->setEnabled(false);
     ui->lampMatrix->setEnabled(false);
-
-    // connect everything
-    connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
-    connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
 
     // format the lamp matrix list
     prepareLampMatrix();
@@ -61,9 +56,23 @@ MainWindow::MainWindow(QWidget *parent) :
         updateGameDesc(ui->gameSelection->currentIndex());
     }
 
+    // add the parameters
+    ui->parameterSelection->addItem("Glow dur");
+    ui->parameterSelection->addItem("Brightness");
+
     // enumerate the serial ports
     enumSerialPorts();
     mConnected = false;
+
+    // connect everything
+    connect(ui->parameterSelection, SIGNAL(currentIndexChanged(int)), SLOT(updateTable(int)));
+    connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
+    connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
+    connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
+
+    mAGVersion = 0;
+    mAGCfgVersion = 0;
+    memset(&mCfg, 0, sizeof(mCfg));
 }
 
 MainWindow::~MainWindow()
@@ -78,6 +87,7 @@ void MainWindow::readGames(void)
     if (!file.exists())
     {
         ui->statusBar->showMessage("Games list not present! Put games.json into root folder.");
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
         return;
     }
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -90,27 +100,35 @@ void MainWindow::readGames(void)
 
 void MainWindow::connectAG()
 {
-    // connect to the selected port
     mConnected = false;
+    setCursor(Qt::WaitCursor);
+
+    // connect to the selected port
     if (!mSerialCommunicator.openPort(ui->serialPortSelection->currentText()))
     {
         QString warning = "Failed to open port ";
         warning += ui->serialPortSelection->currentText();
         ui->statusBar->showMessage(warning);
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
     else
     {
         // the connection will reset the arduino - allow some time for startup
         ui->statusBar->showMessage("Rebooting the arduino...");
+        ui->statusBar->setStyleSheet("");
         QThread::sleep(2);
 
         // poll the afterglow version to verify the connection
         ui->statusBar->showMessage("Polling the afterglow version...");
-        int version = mSerialCommunicator.pollVersion();
-        if (version != 0)
+        ui->statusBar->setStyleSheet("");
+
+        mAGVersion = mSerialCommunicator.pollVersion(&mAGCfgVersion);
+        if (mAGVersion != 0)
         {
-            QString connectStr = "Connected to afterglow revision ";
-            connectStr += QString::number(version, 10);
+            QString connectStr = "ConnectedAG to afterglow revision ";
+            connectStr += QString::number(mAGVersion, 10);
+            connectStr += " cfg ";
+            connectStr += QString::number(mAGCfgVersion, 10);
             ui->statusBar->showMessage(connectStr);
             ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
             setConnected(true);
@@ -121,6 +139,63 @@ void MainWindow::connectAG()
             ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         }
     }
+    setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::loadAG()
+{
+    if (mConnected)
+    {
+        setCursor(Qt::WaitCursor);
+        if (mSerialCommunicator.loadCfg(&mCfg))
+        {
+            ui->statusBar->showMessage("Configuration successfully loaded");
+            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+        }
+        else
+        {
+            ui->statusBar->showMessage("Configuration poll failed!");
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        }
+        setCursor(Qt::ArrowCursor);
+
+        // update the GUI with the new configuration
+        updateTable(ui->parameterSelection->currentIndex());
+    }
+    else
+    {
+        ui->statusBar->showMessage("Not connected to afterglow!");
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+    }
+}
+
+void MainWindow::updateTable(int parameter)
+{
+    // populate the table with the values from the configuration
+    for (int c=0; c<8; c++)
+    {
+        for (int r=0; r<8; r++)
+        {
+            // pick the right parameter
+            uint32_t v;
+            switch (parameter)
+            {
+                case 0:  v=(uint32_t)mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE; break;
+                case 1:  v=(uint32_t)mCfg.lampBrightness[c][r]; break;
+                default: v=0; break;
+            }
+
+            // update the table item
+            QTableWidgetItem *pWI = ui->lampMatrix->item(r*2+1, c);
+            if (pWI)
+            {
+                pWI->setText(QString::number(v, 10));
+            }
+        }
+    }
+
+    // activate table
+    ui->lampMatrix->setEnabled(true);
 }
 
 void MainWindow::gameChanged(int ix)
@@ -189,7 +264,7 @@ void MainWindow::prepareLampMatrix()
                     header->setText(QString::number(r/2+1));
                     ui->lampMatrix->setVerticalHeaderItem(r,header);
                 }
-                ui->lampMatrix->setItem(r, c, new QTableWidgetItem(QString::number(DEFAULT_GLOWDUR, 10)));
+                ui->lampMatrix->setItem(r, c, new QTableWidgetItem(""));
                 QTableWidgetItem *pWI = ui->lampMatrix->item(r, c);
                 if (pWI)
                 {

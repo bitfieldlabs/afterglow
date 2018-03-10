@@ -28,6 +28,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "serialcommunicator.h"
+#include "agconfig.h"
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,8 @@ public:
 public slots:
     void gameChanged(int ix);
     void connectAG();
+    void loadAG();
+    void updateTable(int parameter);
 
 private:
     void createGameList();
@@ -58,6 +61,9 @@ private:
     QJsonArray mGamesList;
     SerialCommunicator mSerialCommunicator;
     bool mConnected;
+    int mAGVersion;
+    int mAGCfgVersion;
+    AFTERGLOW_CFG_t mCfg;
 };
 
 #endif // MAINWINDOW_H

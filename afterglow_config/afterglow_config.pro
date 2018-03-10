@@ -31,7 +31,8 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    serialcommunicator.h
+    serialcommunicator.h \
+    agconfig.h
 
 FORMS += \
         mainwindow.ui
