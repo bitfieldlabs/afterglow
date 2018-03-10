@@ -126,8 +126,8 @@ typedef struct AFTERGLOW_CFG_s
 {
     uint16_t version;                      // afterglow version of the configuration
     uint16_t res;                          // reserved bytes
-    byte lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
-    byte lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
     uint32_t crc;                          // data checksum
 } AFTERGLOW_CFG_t;
 
@@ -169,8 +169,8 @@ void setup()
     PORTB |= B00011100;
     // OE on A1, DBG on A2
     DDRC = B00000110;
-    // turn the LED on, keep OE high
-    PORTC |= B00000011;
+    // keep OE high
+    PORTC |= B00000010;
 
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
@@ -195,6 +195,23 @@ void setup()
     Serial.print(AFTERGLOW_VERSION);
     Serial.println(" (c) 2018 morbid cornflakes");
     Serial.println("-----------------------------------------------");
+}
+
+//------------------------------------------------------------------------------
+void start()
+{
+    // enable the timer compare interrupt
+    TIMSK1 |= (1 << OCIE1A);
+}
+
+//------------------------------------------------------------------------------
+void stop()
+{
+    // disable the timer compare interrupt
+    TIMSK1 &= ~(1 << OCIE1A);
+
+    // pull OE high to disable all outputs
+    PORTC |= B00000010;
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +349,8 @@ void loop()
         // configuration poll
         else if (cmd == "AGCP")
         {
-            
+            // send the full confiuration
+            sendCfg();
         }
 
         // configuration write
@@ -687,8 +705,8 @@ void applyCfg()
 {
     // calculate the glow steps and maximum subcycles
     uint16_t *pGS = &sGlowSteps[0][0];
-    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
-    byte *pBrightness = &sCfg.lampBrightness[0][0];
+    uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
+    uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
     byte *pMaxSubCycle = &sMaxSubcycle[0][0];
     for (byte c=0; c<NUM_COL; c++)
     {
@@ -711,8 +729,8 @@ void setDefaultCfg()
     // initialize configuration to default values
     memset(&sCfg, 0, sizeof(sCfg));
     sCfg.version = AFTERGLOW_VERSION;
-    byte *pGlowDur = &sCfg.lampGlowDur[0][0];
-    byte *pBrightness = &sCfg.lampBrightness[0][0];
+    uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
+    uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
     for (byte c=0; c<NUM_COL; c++)
     {
         for (byte r=0; r<NUM_ROW; r++)
@@ -721,6 +739,10 @@ void setDefaultCfg()
             *pBrightness++ = DEFAULT_BRIGHTNESS;
         }
     }
+
+    // calculate the crc
+    uint16_t cfgSize = sizeof(sCfg);
+    sCfg.crc = calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
 }
 
 //------------------------------------------------------------------------------
@@ -772,6 +794,15 @@ uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
         }
     }
     return crc;
+}
+
+//------------------------------------------------------------------------------
+void sendCfg()
+{
+    // send the whole configuration structure via serial port
+    uint16_t cfgSize = sizeof(sCfg);
+    const byte *pkCfg = (const byte*)&sCfg;
+    Serial.write(pkCfg, cfgSize);
 }
 
 #if DEBUG_SERIAL
