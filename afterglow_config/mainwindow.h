@@ -27,6 +27,7 @@
 #include <QMainWindow>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QTableWidgetItem>
 #include "serialcommunicator.h"
 #include "agconfig.h"
 
@@ -42,11 +43,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
+private slots:
     void gameChanged(int ix);
     void connectAG();
     void loadAG();
     void updateTable(int parameter);
+    void tableChanged(QTableWidgetItem *item);
 
 private:
     void createGameList();

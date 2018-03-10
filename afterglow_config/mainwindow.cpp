@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
     connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
     connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
+    connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
 
     mAGVersion = 0;
     mAGCfgVersion = 0;
@@ -167,35 +168,6 @@ void MainWindow::loadAG()
         ui->statusBar->showMessage("Not connected to afterglow!");
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
-}
-
-void MainWindow::updateTable(int parameter)
-{
-    // populate the table with the values from the configuration
-    for (int c=0; c<8; c++)
-    {
-        for (int r=0; r<8; r++)
-        {
-            // pick the right parameter
-            uint32_t v;
-            switch (parameter)
-            {
-                case 0:  v=(uint32_t)mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE; break;
-                case 1:  v=(uint32_t)mCfg.lampBrightness[c][r]; break;
-                default: v=0; break;
-            }
-
-            // update the table item
-            QTableWidgetItem *pWI = ui->lampMatrix->item(r*2+1, c);
-            if (pWI)
-            {
-                pWI->setText(QString::number(v, 10));
-            }
-        }
-    }
-
-    // activate table
-    ui->lampMatrix->setEnabled(true);
 }
 
 void MainWindow::gameChanged(int ix)
@@ -316,4 +288,96 @@ void MainWindow::enumSerialPorts()
 
     // enable the connect button
     ui->connectButton->setEnabled(numPorts>0);
+}
+
+void MainWindow::updateTable(int parameter)
+{
+    // populate the table with the values from the configuration
+    for (int c=0; c<8; c++)
+    {
+        for (int r=0; r<8; r++)
+        {
+            // pick the right parameter
+            uint32_t v;
+            switch (parameter)
+            {
+                case 0:  v=(uint32_t)mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE; break;
+                case 1:  v=(uint32_t)mCfg.lampBrightness[c][r]; break;
+                default: v=0; break;
+            }
+
+            // update the table item
+            QTableWidgetItem *pWI = ui->lampMatrix->item(r*2+1, c);
+            if (pWI)
+            {
+                pWI->setText(QString::number(v, 10));
+            }
+        }
+    }
+
+    // activate table
+    ui->lampMatrix->setEnabled(true);
+}
+
+void MainWindow::tableChanged(QTableWidgetItem *item)
+{
+    // get the data
+    bool ok = true;
+    uint32_t v = item->text().toInt(&ok);
+    int param = ui->parameterSelection->currentIndex();
+
+    // verify the value
+    if (ok)
+    {
+        switch (param)
+        {
+        case 0: // glow duration
+        {
+            if ((v>65530) || (v%10))
+            {
+                ok = false;
+                ui->statusBar->showMessage("Glow duration must be between 0 and 65530 and a multiple of 10!");
+                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+            }
+        }
+        break;
+        case 1: // brightness
+        {
+            if (v>8)
+            {
+                ok = false;
+                ui->statusBar->showMessage("Brightness must be between 0 and 8!");
+                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+            }
+        }
+        break;
+        default: ok = false; break;
+        }
+    }
+    else
+    {
+        ui->statusBar->showMessage("Only numerical values allowed!");
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+    }
+
+    if (ok)
+    {
+        // apply the changes to the configuration
+        int r = item->row()/2;
+        int c = item->column();
+        switch (param)
+        {
+        case 0: mCfg.lampGlowDur[c][r] = (v / GLOWDUR_CFG_SCALE); break;
+        case 1: mCfg.lampBrightness[c][r] = v; break;
+        default: break;
+        }
+
+        ui->statusBar->showMessage("Value changed.");
+        ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+    }
+    else
+    {
+        // revert
+        updateTable(param);
+    }
 }
