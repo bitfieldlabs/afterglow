@@ -763,6 +763,10 @@ void applyCfg()
 
             // translate maximum brightness into maximum lamp driving subcycle
             *pMaxSubCycle++ = (*pBrightness >> (8/ORIG_CYCLES-1));
+
+            // next
+            pGlowDur++;
+            pBrightness++;
         }
     }
 }
