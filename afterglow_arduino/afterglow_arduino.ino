@@ -544,14 +544,16 @@ void driveLampMatrix()
     //
     // Illustration with ORIG_CYCLES==4 and four brightness steps B1-B4 and off (B0):
     //
-    // * = Lamp on
-    //                       2ms
-    //        +-------------------------------+
-    //        |                               |        Original lamp duty cycle
-    //        |                               |
-    //  ------+         500us                 +-------
-    //        ^       ^       ^       ^       ^        Afterglow duty cycles
-
+    // * Lamp on
+    //                      2ms 2ms ...
+    // Orig col            1   2   3   4   5   6   7   8   1   2   3   4   5   6
+    // afterglow col       12345678123456781234567812345678123456781234567812345
+    // col cycle           1       2       3       4       1       2       3
+    //
+    // Brightness 1        *                               *
+    // Brightness 2        *       *                       *       *
+    // Brightness 3        *       *       *               *       *       *
+    // Brightness 4        *       *       *       *       *       *       *
     uint32_t colCycle = (sTtag / NUM_COL) % ORIG_CYCLES;
 
     // prepare the data
