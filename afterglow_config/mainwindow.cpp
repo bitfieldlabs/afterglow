@@ -371,10 +371,10 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         break;
         case 1: // brightness
         {
-            if (v>8)
+            if (v>7)
             {
                 ok = false;
-                ui->statusBar->showMessage("Brightness must be between 0 and 8!");
+                ui->statusBar->showMessage("Brightness must be between 0 and 7!");
                 ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
             }
         }
