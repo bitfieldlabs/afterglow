@@ -29,11 +29,26 @@
 // timeout for serial communication [ms]
 #define AG_SERIAL_TIMEOUT 2000
 
+// write buffer size [bytes]
+#define AG_CMD_WRITE_BUF 32
+
 // version poll command string
 #define AG_CMD_VERSION_POLL "AGV:"
 
 // configuration poll command string
 #define AG_CMD_CFG_POLL "AGCP:"
+
+// configuration save command string
+#define AG_CMD_CFG_SAVE "AGCS:"
+
+// data ready string
+#define AG_CMD_CFG_DATA_READY "AGDR"
+
+// configuration save acknowledge string
+#define AG_CMD_CFG_SAVE_ACK "AGCACK"
+
+// configuration save NOT acknowledge string
+#define AG_CMD_CFG_SAVE_NACK "AGCNACK"
 
 
 SerialCommunicator::SerialCommunicator()
@@ -83,7 +98,7 @@ int SerialCommunicator::pollVersion(int *pCfgVersion)
         if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
         {
             QByteArray responseData = mSerialPort.readAll();
-            while (mSerialPort.waitForReadyRead(10))
+            while (mSerialPort.waitForReadyRead(100))
             {
                 responseData += mSerialPort.readAll();
             }
@@ -119,7 +134,7 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
         if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
         {
             QByteArray responseData = mSerialPort.readAll();
-            while (mSerialPort.waitForReadyRead(10))
+            while (mSerialPort.waitForReadyRead(100))
             {
                 responseData += mSerialPort.readAll();
             }
@@ -138,6 +153,76 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
                 {
                     res = true;
                 }
+            }
+        }
+    }
+
+    return res;
+}
+
+bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
+{
+    bool res = false;
+
+    // update the crc
+    int cfgSize = sizeof(AFTERGLOW_CFG_t);
+    uint32_t crc = calculateCRC32((const uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));
+    pCfg->crc = qToLittleEndian(crc);
+
+    // clear the port
+    mSerialPort.clear();
+
+    // send the request
+    mSerialPort.write(AG_CMD_CFG_SAVE);
+
+    // send the configuration in small chunks
+    int size = 0;
+    const char *pkData = (const char*)pCfg;
+    while (size < cfgSize)
+    {
+        // wait for the data to be written
+        if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
+        {
+            // wait for the data ready signal
+            if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
+            {
+                QByteArray responseData = mSerialPort.readAll();
+                while (mSerialPort.waitForReadyRead(10))
+                {
+                    responseData += mSerialPort.readAll();
+                }
+
+                // parse the version
+                const QString response = QString::fromUtf8(responseData);
+                if (response.contains(AG_CMD_CFG_DATA_READY))
+                {
+                    // send data
+                    uint32_t wb = ((cfgSize-size) < AG_CMD_WRITE_BUF) ? (cfgSize-size) : AG_CMD_WRITE_BUF;
+                    mSerialPort.write(pkData, wb);
+                    pkData += wb;
+                    size += wb;
+                }
+            }
+        }
+    }
+
+    // wait for the data to be written
+    if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
+    {
+        // wait for the final acknowledge
+        if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
+        {
+            QByteArray responseData = mSerialPort.readAll();
+            while (mSerialPort.waitForReadyRead(10))
+            {
+                responseData += mSerialPort.readAll();
+            }
+
+            // parse the version
+            const QString response = QString::fromUtf8(responseData);
+            if (response.contains(AG_CMD_CFG_SAVE_ACK))
+            {
+                res = true;
             }
         }
     }

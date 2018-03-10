@@ -47,6 +47,7 @@ private slots:
     void gameChanged(int ix);
     void connectAG();
     void loadAG();
+    void saveAG();
     void updateTable(int parameter);
     void tableChanged(QTableWidgetItem *item);
 

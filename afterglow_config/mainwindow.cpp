@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
     connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
     connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
+    connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
 
     mAGVersion = 0;
@@ -139,6 +140,9 @@ void MainWindow::connectAG()
             ui->statusBar->showMessage("No afterglow board detected on this port!");
             ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         }
+
+        // load the data
+        loadAG();
     }
     setCursor(Qt::ArrowCursor);
 }
@@ -162,6 +166,30 @@ void MainWindow::loadAG()
 
         // update the GUI with the new configuration
         updateTable(ui->parameterSelection->currentIndex());
+    }
+    else
+    {
+        ui->statusBar->showMessage("Not connected to afterglow!");
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+    }
+}
+
+void MainWindow::saveAG()
+{
+    if (mConnected)
+    {
+        setCursor(Qt::WaitCursor);
+        if (mSerialCommunicator.saveCfg(&mCfg))
+        {
+            ui->statusBar->showMessage("Configuration successfully saved");
+            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+        }
+        else
+        {
+            ui->statusBar->showMessage("Configuration save failed!");
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        }
+        setCursor(Qt::ArrowCursor);
     }
     else
     {

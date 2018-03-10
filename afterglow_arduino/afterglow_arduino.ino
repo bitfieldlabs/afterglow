@@ -97,6 +97,31 @@
 
 
 //------------------------------------------------------------------------------
+// serial port protocol definition
+
+// write buffer size [bytes]
+#define AG_CMD_WRITE_BUF 32
+
+// version poll command string
+#define AG_CMD_VERSION_POLL "AGV"
+
+// configuration poll command string
+#define AG_CMD_CFG_POLL "AGCP"
+
+// configuration save command string
+#define AG_CMD_CFG_SAVE "AGCS"
+
+// data ready string
+#define AG_CMD_CFG_DATA_READY "AGDR"
+
+// configuration save acknowledge string
+#define AG_CMD_CFG_SAVE_ACK "AGCACK"
+
+// configuration save NOT acknowledge string
+#define AG_CMD_CFG_SAVE_NACK "AGCNACK"
+
+
+//------------------------------------------------------------------------------
 // global variables
 
 // Lamp matrix 'memory'
@@ -176,7 +201,9 @@ void setup()
     memset(sMatrixState, 0, sizeof(sMatrixState));
 
     // load the configuration from EEPROM
-    if (loadCfg() == false)
+    int err;
+    bool cfgLoaded = loadCfg(&err);
+    if (cfgLoaded == false)
     {
         // set default configuration
         setDefaultCfg();
@@ -195,6 +222,16 @@ void setup()
     Serial.print(AFTERGLOW_VERSION);
     Serial.println(" (c) 2018 morbid cornflakes");
     Serial.println("-----------------------------------------------");
+#if DEBUG_SERIAL
+    Serial.print("CFG from ");
+    Serial.print(cfgLoaded ? "EEPROM" : "DEFAULT");
+    if (err)
+    {
+        Serial.print(" err ");
+        Serial.print(err);
+    }
+    Serial.println("");
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +355,7 @@ void loop()
     // check for serial data
     static String cmd = "";
     static bool complete = false;
-    while(Serial.available())
+    while (Serial.available() && (complete == false))
     {
         char character = Serial.read();
         if (character != ':')
@@ -337,7 +374,7 @@ void loop()
     if (complete)
     {
         // version poll
-        if (cmd == "AGV")
+        if (cmd == AG_CMD_VERSION_POLL)
         {
             // Output the version numbers
             Serial.print("AGV ");
@@ -347,16 +384,23 @@ void loop()
         }
 
         // configuration poll
-        else if (cmd == "AGCP")
+        else if (cmd == AG_CMD_CFG_POLL)
         {
             // send the full confiuration
             sendCfg();
         }
 
         // configuration write
-        else if (cmd == "AGCS")
+        else if (cmd == AG_CMD_CFG_SAVE)
         {
-            
+            // stop the matrix updates
+            stop();
+
+            // receive a new configuration
+            receiveCfg();
+
+            // resume operation
+            start();
         }
 
         cmd = "";
@@ -728,7 +772,7 @@ void setDefaultCfg()
 {
     // initialize configuration to default values
     memset(&sCfg, 0, sizeof(sCfg));
-    sCfg.version = AFTERGLOW_VERSION;
+    sCfg.version = AFTERGLOW_CFG_VERSION;
     uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
     uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
     for (byte c=0; c<NUM_COL; c++)
@@ -746,9 +790,10 @@ void setDefaultCfg()
 }
 
 //------------------------------------------------------------------------------
-bool loadCfg()
+int loadCfg(int *pErr)
 {
     bool valid = false;
+    *pErr = 0;
 
     // load the configuration from the EEPROM
     uint16_t cfgSize = sizeof(sCfg);
@@ -767,6 +812,14 @@ bool loadCfg()
         {
             valid = true;
         }
+        else
+        {
+            *pErr = 2;
+        }
+    }
+    else
+    {
+        *pErr = 1;
     }
 
     return valid;
@@ -803,6 +856,82 @@ void sendCfg()
     uint16_t cfgSize = sizeof(sCfg);
     const byte *pkCfg = (const byte*)&sCfg;
     Serial.write(pkCfg, cfgSize);
+}
+
+//------------------------------------------------------------------------------
+void receiveCfg()
+{
+    // wait for the full configuration data
+    bool res = false;
+    AFTERGLOW_CFG_t cfg;
+    uint8_t *pCfg = (uint8_t*)&cfg;
+    uint16_t cfgSize = sizeof(cfg);
+    uint16_t size = 0;
+
+    // read all data
+    while (size < cfgSize)
+    {
+        // send data ready signal and wait for data
+        Serial.print(AG_CMD_CFG_DATA_READY);
+        delay(200);
+
+        // read data
+        uint32_t readBytes = 0;
+        while ((Serial.available()) && (readBytes < AG_CMD_WRITE_BUF) && (size < cfgSize))
+        {
+            *pCfg++ = Serial.read();
+            readBytes++;
+            size++;
+        }
+    }
+
+    if (size == sizeof(cfg))
+    {
+        // check the crc
+        uint32_t crc = calculateCRC32((uint8_t*)&cfg, size-sizeof(cfg.crc));
+        if (crc == cfg.crc)
+        {
+             // set the new configuration and apply it
+            memcpy(&sCfg, &cfg, size);
+            applyCfg();
+
+            // store the configuration to EEPROM
+            saveCfgToEEPROM();
+
+            res = true;
+        }
+#if DEBUG_SERIAL
+        else
+        {
+            Serial.print("CRC FAIL ");
+            Serial.print(crc);
+            Serial.print(" ");
+            Serial.println(cfg.crc);
+        }
+#endif
+    }
+#if DEBUG_SERIAL
+    else
+    {
+            Serial.print("SIZE MISMATCH: ");
+            Serial.println(size);
+    }
+#endif
+
+    // send ACK/NACK
+    Serial.print(res ? AG_CMD_CFG_SAVE_ACK : AG_CMD_CFG_SAVE_NACK);
+}
+
+//------------------------------------------------------------------------------
+void saveCfgToEEPROM()
+{
+    const uint8_t *pkCfg = (const uint8_t*)&sCfg;
+    for (uint16_t i=0; i<sizeof(sCfg); i++)
+    {
+        EEPROM.write(i, *pkCfg++);
+    }
+    Serial.print("EEPROM write ");
+    Serial.println(sizeof(sCfg));
 }
 
 #if DEBUG_SERIAL

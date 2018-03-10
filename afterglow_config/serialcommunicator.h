@@ -36,6 +36,7 @@ public:
     void disconnect();
     int pollVersion(int *pCfgVersion);
     bool loadCfg(AFTERGLOW_CFG_t *pCfg);
+    bool saveCfg(AFTERGLOW_CFG_t *pCfg);
 
 private:
     uint32_t calculateCRC32(const uint8_t *data, uint16_t length);
