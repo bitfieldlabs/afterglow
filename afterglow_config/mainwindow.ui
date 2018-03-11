@@ -610,7 +610,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>660</y>
+      <y>510</y>
       <width>141</width>
       <height>43</height>
      </rect>
@@ -640,6 +640,19 @@
     </property>
     <property name="text">
      <string>Parameter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="defaultButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>660</y>
+      <width>141</width>
+      <height>43</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Default</string>
     </property>
    </widget>
   </widget>

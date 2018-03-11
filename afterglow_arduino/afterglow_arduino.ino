@@ -102,6 +102,9 @@
 // write buffer size [bytes]
 #define AG_CMD_WRITE_BUF 32
 
+// command terminator character
+#define AG_CMD_TERMINATOR ':'
+
 // version poll command string
 #define AG_CMD_VERSION_POLL "AGV"
 
@@ -111,14 +114,17 @@
 // configuration save command string
 #define AG_CMD_CFG_SAVE "AGCS"
 
+// configuration reset to default command string
+#define AG_CMD_CFG_DEFAULT "AGCD"
+
 // data ready string
 #define AG_CMD_CFG_DATA_READY "AGDR"
 
-// configuration save acknowledge string
-#define AG_CMD_CFG_SAVE_ACK "AGCACK"
+// acknowledge string
+#define AG_CMD_ACK "AGCACK"
 
-// configuration save NOT acknowledge string
-#define AG_CMD_CFG_SAVE_NACK "AGCNACK"
+// NOT acknowledge string
+#define AG_CMD_NACK "AGCNACK"
 
 
 //------------------------------------------------------------------------------
@@ -358,7 +364,7 @@ void loop()
     while (Serial.available() && (complete == false))
     {
         char character = Serial.read();
-        if (character != ':')
+        if (character != AG_CMD_TERMINATOR)
         {
             // add the character and wait for the command terminator
             cmd.concat(character);
@@ -388,6 +394,13 @@ void loop()
         {
             // send the full confiuration
             sendCfg();
+        }
+
+        // configuration reset
+        else if (cmd == AG_CMD_CFG_DEFAULT)
+        {
+            // reset the configuration to default
+            defaultCfg();
         }
 
         // configuration write
@@ -796,6 +809,16 @@ void setDefaultCfg()
 }
 
 //------------------------------------------------------------------------------
+void defaultCfg()
+{
+    // set the default configuration
+    setDefaultCfg();
+
+    // send the acknowledge
+    Serial.print(AG_CMD_ACK);
+}
+
+//------------------------------------------------------------------------------
 int loadCfg(int *pErr)
 {
     bool valid = false;
@@ -925,7 +948,7 @@ void receiveCfg()
 #endif
 
     // send ACK/NACK
-    Serial.print(res ? AG_CMD_CFG_SAVE_ACK : AG_CMD_CFG_SAVE_NACK);
+    Serial.print(res ? AG_CMD_ACK : AG_CMD_NACK);
 }
 
 //------------------------------------------------------------------------------

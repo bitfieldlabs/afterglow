@@ -48,8 +48,10 @@ private slots:
     void connectAG();
     void loadAG();
     void saveAG();
+    void defaultAG();
     void updateTable(int parameter);
     void tableChanged(QTableWidgetItem *item);
+    void editSelected();
 
 private:
     void createGameList();

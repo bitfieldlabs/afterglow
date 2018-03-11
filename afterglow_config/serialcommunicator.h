@@ -36,6 +36,7 @@ public:
     void disconnect();
     int pollVersion(int *pCfgVersion);
     bool loadCfg(AFTERGLOW_CFG_t *pCfg);
+    bool defaultCfg();
     bool saveCfg(AFTERGLOW_CFG_t *pCfg);
 
 private:

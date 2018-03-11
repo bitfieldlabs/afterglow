@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->saveButton->setEnabled(false);
     ui->loadButton->setEnabled(false);
     ui->connectButton->setEnabled(false);
+    ui->defaultButton->setEnabled(false);
     ui->lampMatrix->setEnabled(false);
 
     // format the lamp matrix list
@@ -70,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
     connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
     connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
+    connect(ui->defaultButton, SIGNAL(clicked()), SLOT(defaultAG()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
 
     mAGVersion = 0;
@@ -134,15 +136,15 @@ void MainWindow::connectAG()
             ui->statusBar->showMessage(connectStr);
             ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
             setConnected(true);
+
+            // load the current configuration
+            loadAG();
         }
         else
         {
             ui->statusBar->showMessage("No afterglow board detected on this port!");
             ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         }
-
-        // load the data
-        loadAG();
     }
     setCursor(Qt::ArrowCursor);
 }
@@ -160,6 +162,36 @@ void MainWindow::loadAG()
         else
         {
             ui->statusBar->showMessage("Configuration poll failed!");
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        }
+        setCursor(Qt::ArrowCursor);
+
+        // update the GUI with the new configuration
+        updateTable(ui->parameterSelection->currentIndex());
+    }
+    else
+    {
+        ui->statusBar->showMessage("Not connected to afterglow!");
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+    }
+}
+
+void MainWindow::defaultAG()
+{
+    if (mConnected)
+    {
+        setCursor(Qt::WaitCursor);
+        if (mSerialCommunicator.defaultCfg())
+        {
+            ui->statusBar->showMessage("Configuration successfully reset");
+            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+
+            // load the new configuration from AG
+            loadAG();
+        }
+        else
+        {
+            ui->statusBar->showMessage("Configuration reset failed!");
             ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         }
         setCursor(Qt::ArrowCursor);
@@ -294,6 +326,15 @@ void MainWindow::prepareLampMatrix()
             }
         }
     }
+
+    // add a context menu to the table
+    ui->lampMatrix->setContextMenuPolicy(Qt::ActionsContextMenu);
+    QAction* selectByValueAction = new QAction("Select by value");
+    QAction* editSelectedAction = new QAction("Edit selected");
+    ui->lampMatrix->addAction(selectByValueAction);
+    ui->lampMatrix->addAction(editSelectedAction);
+    connect(selectByValueAction, SIGNAL(triggered()), this, SLOT(doSomethingFoo()));
+    connect(editSelectedAction, SIGNAL(triggered()), this, SLOT(editSelected()));
 }
 
 void MainWindow::setConnected(bool connected)
@@ -301,6 +342,7 @@ void MainWindow::setConnected(bool connected)
     mConnected = connected;
     ui->loadButton->setEnabled(connected);
     ui->saveButton->setEnabled(connected);
+    ui->defaultButton->setEnabled(connected);
 }
 
 void MainWindow::enumSerialPorts()
@@ -408,4 +450,9 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         // revert
         updateTable(param);
     }
+}
+
+void MainWindow::editSelected()
+{
+    ui->lampMatrix->editItem(ui->lampMatrix->currentItem());
 }

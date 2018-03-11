@@ -25,30 +25,35 @@
 #include <QRegularExpression>
 #include <QtEndian>
 
-
 // timeout for serial communication [ms]
 #define AG_SERIAL_TIMEOUT 2000
 
 // write buffer size [bytes]
 #define AG_CMD_WRITE_BUF 32
 
+// command terminator character
+#define AG_CMD_TERMINATOR ':'
+
 // version poll command string
-#define AG_CMD_VERSION_POLL "AGV:"
+#define AG_CMD_VERSION_POLL "AGV"
 
 // configuration poll command string
-#define AG_CMD_CFG_POLL "AGCP:"
+#define AG_CMD_CFG_POLL "AGCP"
 
 // configuration save command string
-#define AG_CMD_CFG_SAVE "AGCS:"
+#define AG_CMD_CFG_SAVE "AGCS"
+
+// configuration reset to default command string
+#define AG_CMD_CFG_DEFAULT "AGCD"
 
 // data ready string
 #define AG_CMD_CFG_DATA_READY "AGDR"
 
-// configuration save acknowledge string
-#define AG_CMD_CFG_SAVE_ACK "AGCACK"
+// acknowledge string
+#define AG_CMD_ACK "AGCACK"
 
-// configuration save NOT acknowledge string
-#define AG_CMD_CFG_SAVE_NACK "AGCNACK"
+// NOT acknowledge string
+#define AG_CMD_NACK "AGCNACK"
 
 
 SerialCommunicator::SerialCommunicator()
@@ -89,7 +94,9 @@ int SerialCommunicator::pollVersion(int *pCfgVersion)
     mSerialPort.clear();
 
     // send the request
-    mSerialPort.write(AG_CMD_VERSION_POLL);
+    QString cmd(AG_CMD_VERSION_POLL);
+    cmd += AG_CMD_TERMINATOR;
+    mSerialPort.write(cmd.toUtf8());
 
     // check the response
     if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
@@ -125,7 +132,9 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     mSerialPort.clear();
 
     // send the request
-    mSerialPort.write(AG_CMD_CFG_POLL);
+    QString cmd(AG_CMD_CFG_POLL);
+    cmd += AG_CMD_TERMINATOR;
+    mSerialPort.write(cmd.toUtf8());
 
     // check the response
     if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
@@ -160,6 +169,41 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     return res;
 }
 
+bool SerialCommunicator::defaultCfg()
+{
+    bool res = false;
+
+    // clear the port
+    mSerialPort.clear();
+
+    // send the request
+    QString cmd(AG_CMD_CFG_DEFAULT);
+    cmd += AG_CMD_TERMINATOR;
+    mSerialPort.write(cmd.toUtf8());
+
+    // check the response
+    if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
+    {
+        // read response
+        if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
+        {
+            QByteArray responseData = mSerialPort.readAll();
+            while (mSerialPort.waitForReadyRead(100))
+            {
+                responseData += mSerialPort.readAll();
+            }
+            // check for the ACK
+            const QString response = QString::fromUtf8(responseData);
+            if (response.contains(AG_CMD_ACK))
+            {
+                res = true;
+            }
+        }
+    }
+
+    return res;
+}
+
 bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
 {
     bool res = false;
@@ -173,7 +217,9 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
     mSerialPort.clear();
 
     // send the request
-    mSerialPort.write(AG_CMD_CFG_SAVE);
+    QString cmd(AG_CMD_CFG_SAVE);
+    cmd += AG_CMD_TERMINATOR;
+    mSerialPort.write(cmd.toUtf8());
 
     // send the configuration in small chunks
     int size = 0;
@@ -192,7 +238,7 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
                     responseData += mSerialPort.readAll();
                 }
 
-                // parse the version
+                // check for the data ready signal
                 const QString response = QString::fromUtf8(responseData);
                 if (response.contains(AG_CMD_CFG_DATA_READY))
                 {
@@ -218,9 +264,9 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
                 responseData += mSerialPort.readAll();
             }
 
-            // parse the version
+            // check for the ACK
             const QString response = QString::fromUtf8(responseData);
-            if (response.contains(AG_CMD_CFG_SAVE_ACK))
+            if (response.contains(AG_CMD_ACK))
             {
                 res = true;
             }
