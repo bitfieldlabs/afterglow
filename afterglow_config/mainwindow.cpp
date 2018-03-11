@@ -393,7 +393,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
 {
     // get the data
     bool ok = true;
-    uint32_t v = item->text().toInt(&ok);
+    int32_t v = item->text().toInt(&ok);
     int param = ui->parameterSelection->currentIndex();
 
     // verify the value
@@ -405,8 +405,10 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         {
             if ((v>65530) || (v%10))
             {
-                ok = false;
-                ui->statusBar->showMessage("Glow duration must be between 0 and 65530 and a multiple of 10!");
+                if (v<0) v=0;
+                if (v>65535) v= 65535;
+                if (v%10) v=(v/10)*10;
+                ui->statusBar->showMessage("Glow duration must be between 0 and 65535 and a multiple of 10!");
                 ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
             }
         }
@@ -415,7 +417,8 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         {
             if (v>7)
             {
-                ok = false;
+                if (v<0) v=0;
+                if (v>7) v=7;
                 ui->statusBar->showMessage("Brightness must be between 0 and 7!");
                 ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
             }
@@ -432,18 +435,30 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
 
     if (ok)
     {
-        // apply the changes to the configuration
-        int r = item->row()/2;
-        int c = item->column();
-        switch (param)
+        // apply to all selected cells
+        for (uint32_t c=0; c<8; c++)
         {
-        case 0: mCfg.lampGlowDur[c][r] = (v / GLOWDUR_CFG_SCALE); break;
-        case 1: mCfg.lampBrightness[c][r] = v; break;
-        default: break;
-        }
+            for (uint32_t r=0; r<8; r++)
+            {
+                QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
+                if (pWI)
+                {
+                    if (pWI->isSelected())
+                    {
+                        // set the cell content
+                        pWI->setText(QString::number(v,10));
 
-        ui->statusBar->showMessage("Value changed.");
-        ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+                        // apply the changes to the configuration
+                        switch (param)
+                        {
+                        case 0: mCfg.lampGlowDur[c][r] = (v / GLOWDUR_CFG_SCALE); break;
+                        case 1: mCfg.lampBrightness[c][r] = v; break;
+                        default: break;
+                        }
+                    }
+                }
+            }
+        }
     }
     else
     {
