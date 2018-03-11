@@ -52,6 +52,7 @@ private slots:
     void updateTable(int parameter);
     void tableChanged(QTableWidgetItem *item);
     void editSelected();
+    void selectByValue();
 
 private:
     void createGameList();

@@ -333,7 +333,7 @@ void MainWindow::prepareLampMatrix()
     QAction* editSelectedAction = new QAction("Edit selected");
     ui->lampMatrix->addAction(selectByValueAction);
     ui->lampMatrix->addAction(editSelectedAction);
-    connect(selectByValueAction, SIGNAL(triggered()), this, SLOT(doSomethingFoo()));
+    connect(selectByValueAction, SIGNAL(triggered()), this, SLOT(selectByValue()));
     connect(editSelectedAction, SIGNAL(triggered()), this, SLOT(editSelected()));
 }
 
@@ -470,4 +470,32 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
 void MainWindow::editSelected()
 {
     ui->lampMatrix->editItem(ui->lampMatrix->currentItem());
+}
+
+void MainWindow::selectByValue()
+{
+    QTableWidgetItem *pCWI =ui->lampMatrix->currentItem();
+    if (pCWI)
+    {
+        // select all cells with the same value as the currently selected one
+        for (uint32_t c=0; c<8; c++)
+        {
+            for (uint32_t r=0; r<8; r++)
+            {
+                QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
+                if (pWI)
+                {
+                    if (pWI->text() == pCWI->text())
+                    {
+                        // select the cell
+                        pWI->setSelected(true);
+                    }
+                    else
+                    {
+                        pWI->setSelected(false);
+                    }
+                }
+            }
+        }
+    }
 }
