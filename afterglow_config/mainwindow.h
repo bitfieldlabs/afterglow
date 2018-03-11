@@ -28,6 +28,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QTableWidgetItem>
+#include <QTimer>
 #include "serialcommunicator.h"
 #include "agconfig.h"
 
@@ -53,12 +54,12 @@ private slots:
     void tableChanged(QTableWidgetItem *item);
     void editSelected();
     void selectByValue();
+    void enumSerialPorts();
 
 private:
     void createGameList();
     void prepareLampMatrix();
     void updateGameDesc(int ix);
-    void enumSerialPorts();
     void setConnected(bool connected);
 
     Ui::MainWindow *ui;
@@ -70,6 +71,7 @@ private:
     int mAGVersion;
     int mAGCfgVersion;
     AFTERGLOW_CFG_t mCfg;
+    QTimer mTimer;
 };
 
 #endif // MAINWINDOW_H

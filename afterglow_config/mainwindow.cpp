@@ -28,9 +28,13 @@
 #include <QSerialPortInfo>
 #include <QThread>
 
+// interval for port enumeration [ms]
+#define ENUMERATION_INTERVAL 2000
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    mTimer(this),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -73,10 +77,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
     connect(ui->defaultButton, SIGNAL(clicked()), SLOT(defaultAG()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
+    connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
 
     mAGVersion = 0;
     mAGCfgVersion = 0;
     memset(&mCfg, 0, sizeof(mCfg));
+
+    // start the port enumeration timer
+    mTimer.start(ENUMERATION_INTERVAL);
 }
 
 MainWindow::~MainWindow()
@@ -347,17 +355,23 @@ void MainWindow::setConnected(bool connected)
 
 void MainWindow::enumSerialPorts()
 {
-    int numPorts = 0;
-    const auto infos = QSerialPortInfo::availablePorts();
-    for (const QSerialPortInfo &info : infos)
+    // no enumeration while connected
+    if (mConnected == false)
     {
-        QString s = info.portName();
-        ui->serialPortSelection->addItem(s);
-        numPorts++;
-    }
+        // clear the current items
+        ui->serialPortSelection->clear();
 
-    // enable the connect button
-    ui->connectButton->setEnabled(numPorts>0);
+        // add new items
+        const auto infos = QSerialPortInfo::availablePorts();
+        for (const QSerialPortInfo &info : infos)
+        {
+            QString s = info.portName();
+            ui->serialPortSelection->addItem(s);
+        }
+
+        // enable the connect button
+        ui->connectButton->setEnabled(ui->serialPortSelection->count()>0);
+    }
 }
 
 void MainWindow::updateTable(int parameter)
