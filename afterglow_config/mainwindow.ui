@@ -436,7 +436,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>150</y>
+      <y>130</y>
       <width>503</width>
       <height>463</height>
      </rect>
@@ -535,7 +535,7 @@
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>100</y>
+      <y>90</y>
       <width>211</width>
       <height>27</height>
      </rect>
@@ -548,12 +548,15 @@
     <property name="text">
      <string>Configuration Tool v0.1</string>
     </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QComboBox" name="serialPortSelection">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>320</y>
+      <y>280</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -568,7 +571,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>290</y>
+      <y>250</y>
       <width>131</width>
       <height>27</height>
      </rect>
@@ -586,7 +589,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>570</y>
+      <y>540</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -604,7 +607,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>530</y>
+      <y>500</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -622,7 +625,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>130</y>
       <width>81</width>
       <height>27</height>
      </rect>
@@ -640,7 +643,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>160</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -657,9 +660,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>360</y>
-      <width>111</width>
+      <x>9</x>
+      <y>320</y>
+      <width>112</width>
       <height>23</height>
      </rect>
     </property>
@@ -676,7 +679,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>260</y>
+      <y>220</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -691,7 +694,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
+      <y>190</y>
       <width>131</width>
       <height>27</height>
      </rect>
@@ -709,7 +712,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>490</y>
+      <y>460</y>
       <width>111</width>
       <height>23</height>
      </rect>
