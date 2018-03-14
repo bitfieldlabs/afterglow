@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>876</width>
-    <height>872</height>
+    <width>697</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="palette">
@@ -436,10 +436,15 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>170</y>
-      <width>681</width>
-      <height>664</height>
+      <y>150</y>
+      <width>503</width>
+      <height>463</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="frameShape">
      <enum>QFrame::NoFrame</enum>
@@ -469,10 +474,13 @@
      <number>8</number>
     </property>
     <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>80</number>
+     <number>60</number>
+    </attribute>
+    <attribute name="horizontalHeaderMinimumSectionSize">
+     <number>31</number>
     </attribute>
     <attribute name="verticalHeaderDefaultSectionSize">
-     <number>39</number>
+     <number>26</number>
     </attribute>
     <row/>
     <row/>
@@ -502,11 +510,16 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>20</y>
-      <width>471</width>
-      <height>51</height>
+      <x>20</x>
+      <y>10</y>
+      <width>661</width>
+      <height>82</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>
@@ -521,11 +534,16 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>80</y>
+      <x>520</x>
+      <y>100</y>
       <width>211</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Configuration Tool v0.1</string>
@@ -535,20 +553,30 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
+      <y>320</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>290</y>
       <width>131</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Serial Port</string>
@@ -558,10 +586,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>640</y>
+      <y>570</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Save</string>
@@ -571,10 +604,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>600</y>
+      <y>530</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Load</string>
@@ -584,10 +622,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>210</y>
+      <y>170</y>
       <width>81</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Game</string>
@@ -597,10 +640,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>250</y>
+      <y>200</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QPushButton" name="connectButton">
@@ -610,10 +658,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>510</y>
+      <y>360</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Connect</string>
@@ -623,20 +676,30 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>260</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>230</y>
       <width>131</width>
       <height>27</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Parameter</string>
@@ -646,10 +709,15 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>560</y>
+      <y>490</y>
       <width>111</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Default</string>

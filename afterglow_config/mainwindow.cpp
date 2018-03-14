@@ -34,8 +34,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    mTimer(this),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mTimer(this)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // add the parameters
-    ui->parameterSelection->addItem("Glow dur");
+    ui->parameterSelection->addItem("Glow duration");
     ui->parameterSelection->addItem("Brightness");
 
     // enumerate the serial ports
@@ -293,7 +293,7 @@ void MainWindow::prepareLampMatrix()
         {
             if (c==0)
             {
-                ui->lampMatrix->setRowHeight(r,(r%2)?30:48);
+                ui->lampMatrix->setRowHeight(r,(r%2)?20:32);
             }
             if (r%2)
             {
