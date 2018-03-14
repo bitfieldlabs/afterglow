@@ -293,7 +293,7 @@ void MainWindow::prepareLampMatrix()
         {
             if (c==0)
             {
-                ui->lampMatrix->setRowHeight(r,(r%2)?20:32);
+                ui->lampMatrix->setRowHeight(r,(r%2)?20:42);
             }
             if (r%2)
             {
