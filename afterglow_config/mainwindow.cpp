@@ -410,6 +410,12 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
     int32_t v = item->text().toInt(&ok);
     int param = ui->parameterSelection->currentIndex();
 
+    // skip header rows
+    if ((item->row() % 2) == 0)
+    {
+        return;
+    }
+
     // verify the value
     if (ok)
     {
