@@ -155,11 +155,11 @@ static byte sLastGoodCol = 0;
 // afterglow configuration data definition
 typedef struct AFTERGLOW_CFG_s
 {
-    uint16_t version;                      // afterglow version of the configuration
-    uint16_t res;                          // reserved bytes
+    uint16_t version;                         // afterglow version of the configuration
+    uint16_t res;                             // reserved bytes
     uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
     uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
-    uint32_t crc;                          // data checksum
+    uint32_t crc;                             // data checksum
 } AFTERGLOW_CFG_t;
 
 // afterglow configuration
@@ -383,7 +383,8 @@ void loop()
         if (cmd == AG_CMD_VERSION_POLL)
         {
             // Output the version numbers
-            Serial.print("AGV ");
+            Serial.print(AG_CMD_VERSION_POLL);
+            Serial.print(" ");
             Serial.print(AFTERGLOW_VERSION);
             Serial.print(" ");
             Serial.println(AFTERGLOW_CFG_VERSION);
