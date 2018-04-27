@@ -29,6 +29,9 @@
 #include <QJsonArray>
 #include <QTableWidgetItem>
 #include <QTimer>
+#include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include "serialcommunicator.h"
 #include "agconfig.h"
 
@@ -55,6 +58,9 @@ private slots:
     void editSelected();
     void selectByValue();
     void enumSerialPorts();
+    void fetchGameList();
+    void httpReadyRead();
+    void httpDownloadFinished();
 
 private:
     void createGameList();
@@ -72,6 +78,9 @@ private:
     int mAGCfgVersion;
     AFTERGLOW_CFG_t mCfg;
     QTimer mTimer;
+    QNetworkAccessManager *mpNm;
+    QNetworkReply *mpReply;
+    QFile *mpFile;
 };
 
 #endif // MAINWINDOW_H

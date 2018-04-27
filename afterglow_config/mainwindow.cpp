@@ -27,15 +27,26 @@
 #include <QJsonObject>
 #include <QSerialPortInfo>
 #include <QThread>
+#include <QNetworkRequest>
+#include <QUrl>
 
 // interval for port enumeration [ms]
 #define ENUMERATION_INTERVAL 2000
+
+// github games list URL
+#define GITHUB_GAMES_LIST_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_config/games.json"
+
+// local games list file name
+#define LOCAL_GAMES_LIST_FILE "games.json"
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    mTimer(this)
+    mTimer(this),
+    mpReply(NULL),
+    mpNm(NULL),
+    mpFile(NULL)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
@@ -72,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // connect everything
     connect(ui->parameterSelection, SIGNAL(currentIndexChanged(int)), SLOT(updateTable(int)));
     connect(ui->gameSelection, SIGNAL(currentIndexChanged(int)), SLOT(gameChanged(int)));
+    connect(ui->gameListFetchButton, SIGNAL(clicked()), SLOT(fetchGameList()));
     connect(ui->connectButton, SIGNAL(clicked()), SLOT(connectAG()));
     connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
     connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
@@ -245,6 +257,10 @@ void MainWindow::gameChanged(int ix)
 
 void MainWindow::createGameList()
 {
+    // delete all existing items first
+    ui->gameSelection->clear();
+
+    // populate the list
     QJsonArray::const_iterator it;
     for (it=mGamesList.begin(); it!=mGamesList.end(); it++)
     {
@@ -518,4 +534,77 @@ void MainWindow::selectByValue()
             }
         }
     }
+}
+
+void MainWindow::fetchGameList()
+{
+    // download the latest games.json from github
+    ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+    ui->statusBar->showMessage("Connecting to github...");
+
+    mpNm = new QNetworkAccessManager();
+    if (mpNm)
+    {
+        QUrl url(GITHUB_GAMES_LIST_URL);
+        mpReply = mpNm->get(QNetworkRequest(url));
+        if (mpReply)
+        {
+            connect(mpReply, SIGNAL(readyRead()), SLOT(httpReadyRead()));
+            connect(mpReply, SIGNAL(finished()), SLOT(httpDownloadFinished()));
+        }
+    }
+}
+
+void MainWindow::httpReadyRead()
+{
+    // open the destination file
+    QString fileName = LOCAL_GAMES_LIST_FILE;
+    mpFile = new QFile(fileName);
+    if (QFile::exists(fileName))
+    {
+        // remove the current file
+        QFile::remove(fileName);
+    }
+    mpFile = new QFile(fileName);
+    if (!mpFile->open(QIODevice::WriteOnly))
+    {
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        QString str = "Unable to save the games list file: ";
+        str += mpFile->errorString();
+        ui->statusBar->showMessage(str);
+        delete mpFile;
+        mpFile = NULL;
+    }
+
+    // write the received data to the file
+    if (mpFile)
+    {
+        mpFile->write(mpReply->readAll());
+    }
+}
+
+void MainWindow::httpDownloadFinished()
+{
+    if (mpFile)
+    {
+        mpFile->flush();
+        mpFile->close();
+    }
+    if (mpReply->error())
+    {
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        QString errStr = "Update failed: ";
+        errStr += mpReply->errorString();
+        ui->statusBar->showMessage(errStr);
+    }
+    else
+    {
+        ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+        ui->statusBar->showMessage("Update completed.");
+    }
+    mpReply->deleteLater();
+
+    // update the games list
+    readGames();
+    createGameList();
 }
