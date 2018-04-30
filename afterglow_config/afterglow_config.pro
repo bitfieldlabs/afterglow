@@ -28,12 +28,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    serialcommunicator.cpp
+    serialcommunicator.cpp \
+    fwupdate.cpp \
+    filedownload.cpp
 
 HEADERS += \
         mainwindow.h \
     serialcommunicator.h \
-    agconfig.h
+    agconfig.h \
+    fwupdate.h \
+    filedownload.h
 
 FORMS += \
         mainwindow.ui

@@ -23,6 +23,8 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "fwupdate.h"
+#include "filedownload.h"
 #include <QFile>
 #include <QJsonObject>
 #include <QSerialPortInfo>
@@ -43,10 +45,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    mTimer(this),
-    mpReply(NULL),
-    mpNm(NULL),
-    mpFile(NULL)
+    mTimer(this)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
@@ -57,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->loadButton->setEnabled(false);
     ui->connectButton->setEnabled(false);
     ui->defaultButton->setEnabled(false);
+    ui->updateFWButton->setEnabled(false);
     ui->lampMatrix->setEnabled(false);
 
     // format the lamp matrix list
@@ -91,9 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
 
-    mAGVersion = 0;
-    mAGCfgVersion = 0;
-    memset(&mCfg, 0, sizeof(mCfg));
+    initData();
 
     // start the port enumeration timer
     mTimer.start(ENUMERATION_INTERVAL);
@@ -103,6 +101,13 @@ MainWindow::~MainWindow()
 {
     mSerialCommunicator.disconnect();
     delete ui;
+}
+
+void MainWindow::initData()
+{
+    mAGVersion = 0;
+    mAGCfgVersion = 0;
+    memset(&mCfg, 0, sizeof(mCfg));
 }
 
 void MainWindow::readGames(void)
@@ -124,49 +129,61 @@ void MainWindow::readGames(void)
 
 void MainWindow::connectAG()
 {
-    mConnected = false;
-    setCursor(Qt::WaitCursor);
-
-    // connect to the selected port
-    if (!mSerialCommunicator.openPort(ui->serialPortSelection->currentText()))
+    if (mConnected)
     {
-        QString warning = "Failed to open port ";
-        warning += ui->serialPortSelection->currentText();
-        ui->statusBar->showMessage(warning);
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        // disconnect
+        mSerialCommunicator.disconnect();
+        initData();
+        prepareLampMatrix();
+        updateGameDesc(ui->gameSelection->currentIndex());
+        setConnected(false);
     }
     else
     {
-        // the connection will reset the arduino - allow some time for startup
-        ui->statusBar->showMessage("Rebooting the arduino...");
-        ui->statusBar->setStyleSheet("");
-        QThread::sleep(2);
+        // connect
+        setCursor(Qt::WaitCursor);
 
-        // poll the afterglow version to verify the connection
-        ui->statusBar->showMessage("Polling the afterglow version...");
-        ui->statusBar->setStyleSheet("");
-
-        mAGVersion = mSerialCommunicator.pollVersion(&mAGCfgVersion);
-        if (mAGVersion != 0)
+        // connect to the selected port
+        if (!mSerialCommunicator.openPort(ui->serialPortSelection->currentText()))
         {
-            QString connectStr = "ConnectedAG to afterglow revision ";
-            connectStr += QString::number(mAGVersion, 10);
-            connectStr += " cfg ";
-            connectStr += QString::number(mAGCfgVersion, 10);
-            ui->statusBar->showMessage(connectStr);
-            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
-            setConnected(true);
-
-            // load the current configuration
-            loadAG();
+            QString warning = "Failed to open port ";
+            warning += ui->serialPortSelection->currentText();
+            ui->statusBar->showMessage(warning);
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         }
         else
         {
-            ui->statusBar->showMessage("No afterglow board detected on this port!");
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            // the connection will reset the arduino - allow some time for startup
+            ui->statusBar->showMessage("Rebooting the arduino...");
+            ui->statusBar->setStyleSheet("");
+            QThread::sleep(2);
+
+            // poll the afterglow version to verify the connection
+            ui->statusBar->showMessage("Polling the afterglow version...");
+            ui->statusBar->setStyleSheet("");
+
+            mAGVersion = mSerialCommunicator.pollVersion(&mAGCfgVersion);
+            if (mAGVersion != 0)
+            {
+                QString connectStr = "ConnectedAG to afterglow revision ";
+                connectStr += QString::number(mAGVersion, 10);
+                connectStr += " cfg ";
+                connectStr += QString::number(mAGCfgVersion, 10);
+                ui->statusBar->showMessage(connectStr);
+                ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+                setConnected(true);
+
+                // load the current configuration
+                loadAG();
+            }
+            else
+            {
+                ui->statusBar->showMessage("No afterglow board detected on this port!");
+                ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            }
         }
+        setCursor(Qt::ArrowCursor);
     }
-    setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::loadAG()
@@ -367,6 +384,8 @@ void MainWindow::setConnected(bool connected)
     ui->loadButton->setEnabled(connected);
     ui->saveButton->setEnabled(connected);
     ui->defaultButton->setEnabled(connected);
+    ui->updateFWButton->setEnabled(connected);
+    ui->connectButton->setText(connected ? "Disconnect" : "Connect");
 }
 
 void MainWindow::enumSerialPorts()
@@ -541,70 +560,26 @@ void MainWindow::fetchGameList()
     // download the latest games.json from github
     ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
     ui->statusBar->showMessage("Connecting to github...");
-
-    mpNm = new QNetworkAccessManager();
-    if (mpNm)
-    {
-        QUrl url(GITHUB_GAMES_LIST_URL);
-        mpReply = mpNm->get(QNetworkRequest(url));
-        if (mpReply)
-        {
-            connect(mpReply, SIGNAL(readyRead()), SLOT(httpReadyRead()));
-            connect(mpReply, SIGNAL(finished()), SLOT(httpDownloadFinished()));
-        }
-    }
-}
-
-void MainWindow::httpReadyRead()
-{
-    // open the destination file
-    QString fileName = LOCAL_GAMES_LIST_FILE;
-    mpFile = new QFile(fileName);
-    if (QFile::exists(fileName))
-    {
-        // remove the current file
-        QFile::remove(fileName);
-    }
-    mpFile = new QFile(fileName);
-    if (!mpFile->open(QIODevice::WriteOnly))
-    {
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
-        QString str = "Unable to save the games list file: ";
-        str += mpFile->errorString();
-        ui->statusBar->showMessage(str);
-        delete mpFile;
-        mpFile = NULL;
-    }
-
-    // write the received data to the file
-    if (mpFile)
-    {
-        mpFile->write(mpReply->readAll());
-    }
-}
-
-void MainWindow::httpDownloadFinished()
-{
-    if (mpFile)
-    {
-        mpFile->flush();
-        mpFile->close();
-    }
-    if (mpReply->error())
+    FileDownloader fd;
+    if (!fd.download(QUrl(GITHUB_GAMES_LIST_URL), LOCAL_GAMES_LIST_FILE))
     {
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         QString errStr = "Update failed: ";
-        errStr += mpReply->errorString();
+        errStr = fd.errorStr();
         ui->statusBar->showMessage(errStr);
     }
     else
     {
         ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
         ui->statusBar->showMessage("Update completed.");
-    }
-    mpReply->deleteLater();
 
-    // update the games list
-    readGames();
-    createGameList();
+        // update the games list
+        readGames();
+        createGameList();
+    }
+}
+
+void MainWindow::updateFW()
+{
+
 }

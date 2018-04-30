@@ -546,7 +546,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Configuration Tool v0.1</string>
+     <string>Configuration Tool v0.2</string>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -663,7 +663,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>9</x>
+      <x>10</x>
       <y>320</y>
       <width>112</width>
       <height>23</height>
@@ -743,6 +743,22 @@
     </property>
     <property name="text">
      <string>F</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="updateFWButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>360</y>
+      <width>112</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Update the Arduino firmware with the latest version from github</string>
+    </property>
+    <property name="text">
+     <string>Update</string>
     </property>
    </widget>
   </widget>

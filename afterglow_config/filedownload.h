@@ -21,60 +21,37 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef FILEDOWNLOAD_H
+#define FILEDOWNLOAD_H
 
-#include <QMainWindow>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QTableWidgetItem>
-#include <QTimer>
-#include "serialcommunicator.h"
-#include "agconfig.h"
+#include <QObject>
+#include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QUrl>
 
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
+class FileDownloader : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    FileDownloader();
+    ~FileDownloader();
+
+    bool download(const QUrl &url, const QString &fileName);
+    QString& errorStr() { return mErrorStr; }
 
 private slots:
-    void gameChanged(int ix);
-    void connectAG();
-    void loadAG();
-    void saveAG();
-    void defaultAG();
-    void updateTable(int parameter);
-    void tableChanged(QTableWidgetItem *item);
-    void editSelected();
-    void selectByValue();
-    void enumSerialPorts();
-    void fetchGameList();
-    void updateFW();
+    void httpReadyRead();
+    void httpDownloadFinished();
 
 private:
-    void createGameList();
-    void prepareLampMatrix();
-    void updateGameDesc(int ix);
-    void setConnected(bool connected);
-    void initData();
-
-    Ui::MainWindow *ui;
-    void readGames(void);
-    QJsonDocument mGamesDoc;
-    QJsonArray mGamesList;
-    SerialCommunicator mSerialCommunicator;
-    bool mConnected;
-    int mAGVersion;
-    int mAGCfgVersion;
-    AFTERGLOW_CFG_t mCfg;
-    QTimer mTimer;
+    bool mSuccess;
+    QString mFileName;
+    QString mErrorStr;
+    QNetworkAccessManager *mpNm;
+    QNetworkReply *mpReply;
+    QFile *mpFile;
 };
 
-#endif // MAINWINDOW_H
+#endif // FILEDOWNLOAD_H
