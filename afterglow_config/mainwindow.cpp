@@ -25,6 +25,7 @@
 #include "ui_mainwindow.h"
 #include "fwupdate.h"
 #include "filedownload.h"
+#include <QAction>
 #include <QFile>
 #include <QJsonObject>
 #include <QSerialPortInfo>
@@ -88,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->loadButton, SIGNAL(clicked()), SLOT(loadAG()));
     connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
     connect(ui->defaultButton, SIGNAL(clicked()), SLOT(defaultAG()));
+    connect(ui->updateFWButton, SIGNAL(clicked()), SLOT(updateFW()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
 
@@ -557,12 +559,14 @@ void MainWindow::selectByValue()
 
 void MainWindow::fetchGameList()
 {
-    // download the latest games.json from github
     ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
     ui->statusBar->showMessage("Connecting to github...");
+
+    // download the latest games.json from github
     FileDownloader fd;
     if (!fd.download(QUrl(GITHUB_GAMES_LIST_URL), LOCAL_GAMES_LIST_FILE))
     {
+        // error
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         QString errStr = "Update failed: ";
         errStr = fd.errorStr();
@@ -570,6 +574,7 @@ void MainWindow::fetchGameList()
     }
     else
     {
+        // success
         ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
         ui->statusBar->showMessage("Update completed.");
 
@@ -581,5 +586,30 @@ void MainWindow::fetchGameList()
 
 void MainWindow::updateFW()
 {
+    FWUpdater fwUpdater;
 
+    // check the version in the repository
+    QString fn;
+    int v = fwUpdater.getRemoteVersion(&fn);
+    if (v != 0)
+    {
+        if (mAGVersion >= v)
+        {
+            // already at newest version
+            ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+            ui->statusBar->showMessage("Your afterglow board is already up to date!");
+        }
+        else
+        {
+            // download the firmware file from the repository
+
+            // start the update process
+        }
+    }
+    else
+    {
+        // error contacting the server
+        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+        ui->statusBar->showMessage("Could not retrieve the latest version from github!");
+    }
 }

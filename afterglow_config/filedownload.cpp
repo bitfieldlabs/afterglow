@@ -83,7 +83,7 @@ void FileDownloader::httpReadyRead()
     if (!mpFile->open(QIODevice::WriteOnly))
     {
         mSuccess = false;
-        mErrorStr = "Unable to save the games list file: ";
+        mErrorStr = "Unable to save file: ";
         mErrorStr += mpFile->errorString();
         delete mpFile;
         mpFile = NULL;
@@ -100,11 +100,13 @@ void FileDownloader::httpDownloadFinished()
 {
     if (mpFile)
     {
+        // close the file
         mpFile->flush();
         mpFile->close();
     }
     if (mpReply->error())
     {
+        // store error information
         mErrorStr = mpReply->errorString();
         mSuccess = false;
     }

@@ -32,6 +32,8 @@ public:
     FWUpdater();
     ~FWUpdater();
 
+    int getRemoteVersion(QString *pFn);
+
 private:
 
     QProcess *mpProcess;

@@ -22,6 +22,18 @@
  ***********************************************************************/
 
 #include "fwupdate.h"
+#include "filedownload.h"
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
+
+
+// github games list URL
+#define GITHUB_ARDUINO_SKETCH_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/afterglow_arduino.ino"
+
+// local games list file name
+#define GITHUB_ARDUINO_SKETCH_FILE "afterglow_arduino.ino"
+
+
 
 FWUpdater::FWUpdater()
 {
@@ -31,4 +43,35 @@ FWUpdater::FWUpdater()
 FWUpdater::~FWUpdater()
 {
     delete mpProcess;
+}
+
+int FWUpdater::getRemoteVersion(QString *pFn)
+{
+    int version = 0;
+
+    // get the arduino sketch (just for reading the current version)
+    FileDownloader fd;
+    if (fd.download(QUrl(GITHUB_ARDUINO_SKETCH_URL), GITHUB_ARDUINO_SKETCH_FILE))
+    {
+        // parse the current version number from the file
+        QFile file(GITHUB_ARDUINO_SKETCH_FILE);
+        if (file.open(QIODevice::ReadOnly))
+        {
+            QTextStream in(&file);
+            QRegularExpression re("#define AFTERGLOW_VERSION (\\d+)");
+            while (!in.atEnd())
+            {
+                QString line = in.readLine();
+                QRegularExpressionMatch match = re.match(line);
+                if (match.hasMatch())
+                {
+                    version = match.captured(1).toInt();
+                }
+            }
+            file.close();
+        }
+    }
+
+    // return 0 on failure
+    return version;
 }
