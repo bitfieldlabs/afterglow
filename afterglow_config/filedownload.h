@@ -29,6 +29,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QByteArray>
 
 class FileDownloader : public QObject
 {
@@ -52,6 +53,7 @@ private:
     QNetworkAccessManager *mpNm;
     QNetworkReply *mpReply;
     QFile *mpFile;
+    QByteArray mData;
 };
 
 #endif // FILEDOWNLOAD_H

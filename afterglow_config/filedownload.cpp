@@ -59,6 +59,8 @@ bool FileDownloader::download(const QUrl &url, const QString &fileName)
             connect(mpReply, SIGNAL(readyRead()), this, SLOT(httpReadyRead()));
             connect(mpReply, SIGNAL(finished()), this, SLOT(httpDownloadFinished()));
         }
+        // clear previous data
+        mData.clear();
     }
 
     // wait for the request to be handled
@@ -72,8 +74,13 @@ bool FileDownloader::download(const QUrl &url, const QString &fileName)
 
 void FileDownloader::httpReadyRead()
 {
+    // add the received data to the buffer
+    mData.append(mpReply->readAll());
+}
+
+void FileDownloader::httpDownloadFinished()
+{
     // open the destination file
-    mpFile = new QFile(mFileName);
     if (QFile::exists(mFileName))
     {
         // remove the current file
@@ -92,14 +99,8 @@ void FileDownloader::httpReadyRead()
     // write the received data to the file
     if (mpFile)
     {
-        mpFile->write(mpReply->readAll());
-    }
-}
+        mpFile->write(mData);
 
-void FileDownloader::httpDownloadFinished()
-{
-    if (mpFile)
-    {
         // close the file
         mpFile->flush();
         mpFile->close();

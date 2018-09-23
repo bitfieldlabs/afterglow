@@ -32,6 +32,7 @@
 #include <QThread>
 #include <QNetworkRequest>
 #include <QUrl>
+#include <QMessageBox>
 
 // interval for port enumeration [ms]
 #define ENUMERATION_INTERVAL 2000
@@ -589,27 +590,51 @@ void MainWindow::updateFW()
     FWUpdater fwUpdater;
 
     // check the version in the repository
-    QString fn;
-    int v = fwUpdater.getRemoteVersion(&fn);
+    int v = fwUpdater.getRemoteVersion();
     if (v != 0)
     {
+        /*
         if (mAGVersion >= v)
         {
             // already at newest version
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+            ui->statusBar->setStyleSheet("background-color: rgb(127, 255, 0);");
             ui->statusBar->showMessage("Your afterglow board is already up to date!");
         }
         else
+        */
         {
-            // download the firmware file from the repository
+            // ask again
+            QMessageBox::StandardButton reply;
+            QString updStr = "Do you want to update from v";
+            updStr += QString::number(mAGVersion);
+            updStr += " to v";
+            updStr += QString::number(v);
+            updStr += "?";
+            reply = QMessageBox::question(this, "Confirm", updStr,
+                                          QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::Yes)
+            {
+                // start the update process
+                if (fwUpdater.update(ui->serialPortSelection->currentText()))
+                {
 
-            // start the update process
+                }
+                else
+                {
+                    ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+                    QString errStr = "Update failed: ";
+                    errStr += fwUpdater.errorStr();
+                    ui->statusBar->showMessage(errStr);
+                }
+            }
         }
     }
     else
     {
         // error contacting the server
+        QString errStr = "Could not retrieve the latest version from github: ";
+        errStr = fwUpdater.errorStr();
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
-        ui->statusBar->showMessage("Could not retrieve the latest version from github!");
+        ui->statusBar->showMessage(errStr);
     }
 }

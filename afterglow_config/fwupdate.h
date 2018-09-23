@@ -25,18 +25,28 @@
 #define FWUPDATE_H
 
 #include <QProcess>
+#include <QString>
 
-class FWUpdater
+class FWUpdater : public QObject
 {
+    Q_OBJECT
+
 public:
     FWUpdater();
     ~FWUpdater();
 
-    int getRemoteVersion(QString *pFn);
+    int getRemoteVersion();
+    bool update(const QString &portName);
+    QString& errorStr() { return mErrorStr; }
+
+private slots:
+    void stdOut();
 
 private:
 
+    QString mErrorStr;
     QProcess *mpProcess;
+    QByteArray mProcessData;
 };
 
 

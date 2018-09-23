@@ -27,11 +27,17 @@
 #include <QRegularExpressionMatch>
 
 
-// github games list URL
+// github arduino sketch
 #define GITHUB_ARDUINO_SKETCH_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/afterglow_arduino.ino"
 
-// local games list file name
+// local arduino sketch file name
 #define GITHUB_ARDUINO_SKETCH_FILE "afterglow_arduino.ino"
+
+// github firmware binary
+#define GITHUB_ARDUINO_FW_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/bin/afterglow_arduino.ino.eightanaloginputs.hex"
+
+// local firmware binary file name
+#define GITHUB_ARDUINO_FW_FILE "afterglow_arduino.eightanaloginputs.hex"
 
 
 
@@ -45,7 +51,7 @@ FWUpdater::~FWUpdater()
     delete mpProcess;
 }
 
-int FWUpdater::getRemoteVersion(QString *pFn)
+int FWUpdater::getRemoteVersion()
 {
     int version = 0;
 
@@ -66,12 +72,65 @@ int FWUpdater::getRemoteVersion(QString *pFn)
                 if (match.hasMatch())
                 {
                     version = match.captured(1).toInt();
+                    break;
                 }
             }
             file.close();
         }
     }
+    else
+    {
+        mErrorStr = fd.errorStr();
+    }
 
     // return 0 on failure
     return version;
+}
+
+bool FWUpdater::update(const QString &portName)
+{
+    // download the firmware binary from github
+    FileDownloader fd;
+    if (fd.download(QUrl(GITHUB_ARDUINO_FW_URL), GITHUB_ARDUINO_FW_FILE))
+    {
+        // locate avrdude
+        QString bin = "avrdude";
+        QString arg = "-v -V -patmega328p -carduino -P";
+        arg += portName;
+        arg += "-b57600 -D -Uflash:w:";
+        arg += GITHUB_ARDUINO_FW_FILE;
+        arg += ":i";
+        QStringList args;
+        args.append(arg);
+
+        // delete old processes first
+        if (mpProcess)
+        {
+            delete mpProcess;
+            mpProcess = NULL;
+        }
+
+        // start a new process
+        mpProcess = new QProcess();
+        if (mpProcess)
+        {
+            // connect to stdout of the process
+            connect(mpProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(stdOut()) );
+            mpProcess->start(bin, args);
+            return true;
+        }
+    }
+    else
+    {
+        mErrorStr = fd.errorStr();
+    }
+    return false;
+}
+
+void FWUpdater::stdOut()
+{
+    if (mpProcess)
+    {
+        mProcessData += mpProcess->readAllStandardOutput();
+    }
 }
