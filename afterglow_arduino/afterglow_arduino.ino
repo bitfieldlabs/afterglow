@@ -22,7 +22,7 @@
  ***********************************************************************/
  
 //------------------------------------------------------------------------------
-/* This script assumes following pin layout:
+/* This code assumes following pin layout:
  *
  *  +----------+---------------+-----------+---------------+--------------+
  *  | Name     | Function      | Nano Pin# | Register, Bit | Mode         |
@@ -33,16 +33,9 @@
  *  | OUT_DATA | 74HC595 SER   | D5        | DDRD, 5       | Output       |
  *  | OUT_CLK  | 74LS595 SRCLK | D6        | DDRD, 6       | Output       |
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
- *  | LED      | LED           | D8        | DDRB, 1       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
- *  | CFG0     | DIP CFG 0     | D10       | DDRB, 3       | Input Pullup |
- *  | CFG1     | DIP CFG 1     | D11       | DDRB, 4       | Input Pullup |
- *  | CFG2     | DIP CFG 2     | D12       | DDRB, 5       | Input Pullup |
- *  | CFG3**   | DIP CFG 3     | D13       | DDRB, 6       | Input Pullup |
+ *  | J1       | TESTMD JUMPER | D10       | DDRB, 3       | Input Pullup |
  *  +----------+---------------+-----------+---------------+--------------+
-
-** CFG3 not working on boards revision <= 1.1 as it's connected to D13 (LED) 
-
 */
 
 #include <EEPROM.h>
@@ -51,7 +44,7 @@
 // Setup
 
 // afterglow version number
-#define AFTERGLOW_VERSION 100
+#define AFTERGLOW_VERSION 101
 
 // afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -194,10 +187,10 @@ void setup()
     // 74LS165 LOAD and CLK are output, DATA is input
     // 74HC595 LOAD, CLK and DATA are output
     DDRD = B11111001;
-    // LED output on pin 8, configuration input on pins 10-13
-    DDRB = B00000001;
-    // activate the pullups for the configuration pins
-    PORTB |= B00011100;
+    // nano LED output on pin 13, testmode jumper on pin 10
+    DDRB = B00100000;
+    // activate the pullup for the testmode pin
+    PORTB |= B00000100;
     // OE on A1, DBG on A2
     DDRC = B00000110;
     // keep OE high
@@ -275,11 +268,21 @@ ISR(TIMER1_COMPA_vect)
     uint16_t inData = sampleInput();
     bool validInput = true;
 
-    // testmode input simulation (CFG3 active)
+    // testmode input simulation (jumper J1 active)
     if ((PINB & B00000100) == 0)
     {
         // test mode
         inData = testModeInput();
+
+        // blink the nano LED with 2Hz to indicate test mode
+        if (sTtag / (500000 / TTAG_INT) % 2)
+        {
+            PORTB |= B00100000;
+        }
+        else
+        {
+            PORTB &= B11011111;
+        }
     }
     byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
@@ -336,9 +339,6 @@ ISR(TIMER1_COMPA_vect)
     // remember the last column and row samples
     sLastColMask = inColMask;
     sLastRowMask = inRowMask;
-
-    // update the funky afterglow LED
-    //afterglowLED(sTtag);
 
     // how long did it take?
     sLastIntTime = (TCNT1 - startCnt);
@@ -646,62 +646,6 @@ void dataOutput(byte colData, byte rowData)
     // This is only done here to ensure that the LEDs are not turned on before
     // the columns are duty cycled.
     PORTC &= B11111101;
-}
-//------------------------------------------------------------------------------
-void afterglowLED(uint32_t ttag)
-{
-    static const uint32_t kDutyCycleMin = 0;
-    static const uint32_t kDutyCycleMax = 48;
-    static uint32_t dttag = 0;
-    static bool positive = true;
-    static uint32_t dutyCycle = kDutyCycleMin;
-    static uint32_t dutyCyleDTtag = 0;
-    static const uint32_t dutyCycleUpdateInt = ((uint32_t)AFTERGLOW_LED_DUR * 1000 / (kDutyCycleMax - kDutyCycleMin) / (uint32_t)TTAG_INT);
-
-    // update the counters
-    dttag++;
-    dutyCyleDTtag++;
-
-    // update the duty cycle
-    if (dutyCyleDTtag >= dutyCycleUpdateInt)
-    {
-        if (positive)
-        {
-            dutyCycle++;
-            // start dimming
-            if (dutyCycle > kDutyCycleMax)
-            {
-                dutyCycle = (kDutyCycleMax - 1);
-                positive = false;
-            }
-        }
-        else
-        {
-            if (dutyCycle > kDutyCycleMin)
-            {
-                dutyCycle--;
-            }
-            else
-            {
-                dutyCycle = (kDutyCycleMin + 1);
-                positive = true;
-            }
-        }
-        dutyCyleDTtag = 0;   
-    }
-
-    // update the LED
-    if (dttag >= dutyCycle)
-    {
-        // turn the LED on
-        PORTB |= B00000001;
-        dttag = 0;
-    }
-    else
-    {
-        // turn the LED off
-        PORTB &= B11111110;
-    }
 }
 
 //------------------------------------------------------------------------------
