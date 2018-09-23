@@ -713,10 +713,24 @@ uint16_t testModeInput(void)
 
     // simulate one active lamp at a time, cycling through the full matrix
     byte rowMask = 0;
+
+    /*
     byte lampIx = (byte)((sTtag / TESTMODE_CYCLES) % 64);
     if ((lampIx / NUM_COL) == col)
     {
         rowMask = (1 << (lampIx % NUM_COL));
+    }
+    */
+
+    // switch between even and odd lamps
+    // turn on every other column
+    if (col % 2 == 0)
+    {
+        rowMask = B01010101;
+        if ((sTtag / TESTMODE_CYCLES) % 2)
+        {
+            rowMask <<= 1;
+        }
     }
 
     // invert the row mask as in the original input HIGH means off
