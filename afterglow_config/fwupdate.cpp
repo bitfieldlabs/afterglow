@@ -95,13 +95,31 @@ bool FWUpdater::update(const QString &portName)
     {
         // locate avrdude
         QString bin = "avrdude";
+
+        // compose the argument list
+        /*
         QString arg = "-v -V -patmega328p -carduino -P";
         arg += portName;
-        arg += "-b57600 -D -Uflash:w:";
+        arg += " -b57600 -D -Uflash:w:";
         arg += GITHUB_ARDUINO_FW_FILE;
         arg += ":i";
-        QStringList args;
+
         args.append(arg);
+        */
+        QStringList args;
+        args.append("-v");
+        args.append("-V");
+        args.append("-patmega328p");
+        args.append("-carduino");
+        args.append("-b57600");
+        QString portArg = "-P";
+        portArg += portName;
+        args.append(portArg);
+        args.append("-D");
+        QString flashArg = "-Uflash:w:";
+        flashArg += GITHUB_ARDUINO_FW_FILE;
+        flashArg += ":i";
+        args.append(flashArg);
 
         // delete old processes first
         if (mpProcess)
@@ -111,12 +129,19 @@ bool FWUpdater::update(const QString &portName)
         }
 
         // start a new process
+        mProcessData.clear();
         mpProcess = new QProcess();
         if (mpProcess)
         {
             // connect to stdout of the process
-            connect(mpProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(stdOut()) );
+            mpProcess->setProcessChannelMode(QProcess::MergedChannels);
+
             mpProcess->start(bin, args);
+            mpProcess->waitForFinished(30000);
+
+            // read all output
+            QString bla = mpProcess->readAll();
+
             return true;
         }
     }

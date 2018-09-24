@@ -614,8 +614,12 @@ void MainWindow::updateFW()
                                           QMessageBox::Yes|QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
+                // disconnect from the device
+                connectAG();
+
                 // start the update process
-                if (fwUpdater.update(ui->serialPortSelection->currentText()))
+                QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
+                if (fwUpdater.update(portDeviceName))
                 {
 
                 }
