@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/smyp/data/elektronikbaschtel/afterglow/afterglow_nano_smd/afterglow_nano_smd.sch)
-    (date "So 23 Sep 2018 12:37:03 CEST")
+    (date "Di 25 Sep 2018 19:07:11 CEST")
     (tool "Eeschema 5.0.0")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
