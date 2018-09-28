@@ -63,13 +63,13 @@ Text Label 1650 900  0    60   ~ 0
 $Comp
 L Connector:Conn_01x02_Male J3
 U 1 1 59DA2DDC
-P 950 1100
-F 0 "J3" H 950 1200 50  0000 C CNN
-F 1 "Conn_Power" H 950 900 50  0000 C CNN
-F 2 "Connectors_Molex:Molex_KK-41791-02_02x3.96mm_Straight" H 950 1100 50  0001 C CNN
-F 3 "" H 950 1100 50  0001 C CNN
-	1    950  1100
-	1    0    0    1   
+P 950 1000
+F 0 "J3" H 950 1100 50  0000 C CNN
+F 1 "Conn_Power" H 950 800 50  0000 C CNN
+F 2 "Connectors_Molex:Molex_KK-41791-02_02x3.96mm_Straight" H 950 1000 50  0001 C CNN
+F 3 "" H 950 1000 50  0001 C CNN
+	1    950  1000
+	1    0    0    -1  
 $EndComp
 NoConn ~ 900  2550
 Text Label 1900 1850 2    60   ~ 0
@@ -1893,7 +1893,7 @@ U 1 1 5B9C7C51
 P 4350 2350
 F 0 "A1" H 3850 1250 50  0000 C CNN
 F 1 "Arduino_Nano_v3.x" H 3850 1150 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 4500 1400 50  0001 L CNN
+F 2 "Modules:Arduino_Nano" H 4500 1400 50  0001 L CNN
 F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 4350 1350 50  0001 C CNN
 	1    4350 2350
 	1    0    0    -1  
