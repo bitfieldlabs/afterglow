@@ -1959,10 +1959,7 @@ Wire Wire Line
 	5800 5400 5700 5400
 Wire Wire Line
 	4550 1350 4550 1250
-NoConn ~ 3850 2550
-NoConn ~ 3850 2650
 NoConn ~ 4850 2150
-NoConn ~ 3850 2850
 NoConn ~ 3850 2950
 NoConn ~ 3850 3050
 $Comp
@@ -2214,28 +2211,6 @@ F 3 "" H 8100 6300 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Connection ~ 8250 6300
-$Comp
-L Device:Jumper JP1
-U 1 1 5BAB0DAE
-P 3550 2750
-F 0 "JP1" H 3550 2650 50  0000 C CNN
-F 1 "Jumper" H 3550 2550 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 3550 2750 50  0001 C CNN
-F 3 "~" H 3550 2750 50  0001 C CNN
-	1    3550 2750
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR02
-U 1 1 5BAB10AE
-P 3250 2750
-F 0 "#PWR02" H 3250 2500 50  0001 C CNN
-F 1 "GND" H 3255 2577 50  0000 C CNN
-F 2 "" H 3250 2750 50  0001 C CNN
-F 3 "" H 3250 2750 50  0001 C CNN
-	1    3250 2750
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4250 5600 4350 5600
 Wire Wire Line
@@ -2305,4 +2280,45 @@ Text Label 7900 5550 2    60   ~ 0
 SUP_GND
 Text Label 7950 6300 2    60   ~ 0
 SUP_GND
+$Comp
+L Switch:SW_DIP_x04 SW1
+U 1 1 5BB93746
+P 3550 2750
+F 0 "SW1" H 3550 3217 50  0000 C CNN
+F 1 "CFG" H 3550 2450 50  0000 C CNN
+F 2 "Buttons_Switches_THT:SW_DIP_x4_W7.62mm_Slide" H 3550 2750 50  0001 C CNN
+F 3 "" H 3550 2750 50  0001 C CNN
+	1    3550 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 2550 3100 2550
+Wire Wire Line
+	3100 2550 3100 2650
+Wire Wire Line
+	3250 2650 3100 2650
+Connection ~ 3100 2650
+Wire Wire Line
+	3100 2650 3100 2750
+Wire Wire Line
+	3250 2750 3100 2750
+Connection ~ 3100 2750
+Wire Wire Line
+	3100 2750 3100 2850
+Wire Wire Line
+	3250 2850 3100 2850
+Connection ~ 3100 2850
+Wire Wire Line
+	3100 2850 3100 3100
+$Comp
+L power:GND #PWR0106
+U 1 1 5BBDA8BB
+P 3100 3100
+F 0 "#PWR0106" H 3100 2850 50  0001 C CNN
+F 1 "GND" H 3105 2927 50  0000 C CNN
+F 2 "" H 3100 3100 50  0001 C CNN
+F 3 "" H 3100 3100 50  0001 C CNN
+	1    3100 3100
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
