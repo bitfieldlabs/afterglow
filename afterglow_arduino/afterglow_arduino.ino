@@ -44,13 +44,27 @@
 // Setup
 
 // afterglow version number
-#define AFTERGLOW_VERSION 101
+#define AFTERGLOW_VERSION 102
 
 // afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
 
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
+
+// Visual afterglow jingle at startup duration [ms] (set to 0 to disable jingle)
+#define STARTUP_JINGLE 5000
+
+#if (STARTUP_JINGLE > 0)
+// Jingle lamp iteration interval [ms]
+#define STARTUP_JINGLE_INT (1000UL / 48)
+
+// Duration of the startup jingle glow [ms]
+#define STARTUP_JINGLE_GLOWDUR 2000UL
+
+// Cycle steps for startup jingle glow
+#define STARTUP_JINGLE_STEP ((uint16_t)(65535UL / ((STARTUP_JINGLE_GLOWDUR * 1000) / ORIG_INT)) * NUM_COL)
+#endif
 
 // Number of consistent data samples required for matrix update
 #define SINGLE_UPDATE_CONS 2
@@ -136,6 +150,11 @@ static uint16_t sMaxIntTime = 0;
 // remember the last column and row samples
 static byte sLastColMask = 0;
 static byte sLastRowMask = 0;
+
+#if (STARTUP_JINGLE > 0)
+// startup jingle mode indicator
+static bool sJingleActive = false;
+#endif
 
 #if DEBUG_SERIAL
 static byte sLastOutColMask = 0;
@@ -284,6 +303,24 @@ ISR(TIMER1_COMPA_vect)
             PORTB &= B11011111;
         }
     }
+#if (STARTUP_JINGLE > 0)
+    // do the jingle at startup
+    else
+    {
+        // the jingle is only active during the first seconds after startup
+        if (sTtag < (STARTUP_JINGLE * (1000 / TTAG_INT)))
+        {
+            // get fake input for the jingle
+            sJingleActive = true;
+            inData = jingleInput();
+        }
+        else
+        {
+            sJingleActive = false;
+        }
+    }
+#endif
+
     byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
 
@@ -468,6 +505,13 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 {
     if (on)
     {
+#if (STARTUP_JINGLE > 0)
+        // lamps turn on immediately in jingle mode
+        if (sJingleActive)
+        {
+            step = 0xffff;
+        }
+#endif
         // increase the stored brightness value
         if (*pMx < (65535 - step))
         {
@@ -480,6 +524,13 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     }
     else
     {
+#if (STARTUP_JINGLE > 0)
+        // lamps have a very long afterglow in jingle mode
+        if (sJingleActive)
+        {
+            step = STARTUP_JINGLE_STEP;
+        }
+#endif
         // decrease the stored brightness value
         if (*pMx > step)
         {
@@ -682,6 +733,29 @@ uint16_t testModeInput(void)
     
     return ((colMask << 8) | rowMask);
 }
+
+#if (STARTUP_JINGLE > 0)
+//------------------------------------------------------------------------------
+uint16_t jingleInput(void)
+{
+    // simulate the original column cycle
+    byte col = ((sTtag / ORIG_CYCLES) % NUM_COL);
+    byte colMask = (1 << col);
+
+    // simulate one active lamp at a time, cycling through the full matrix
+    byte rowMask = 0;
+ #define JINGLE_LAMP_CYCLES (STARTUP_JINGLE_INT * (1000 / TTAG_INT))
+    uint32_t lampIx = (sTtag / JINGLE_LAMP_CYCLES);
+    if ((lampIx < (NUM_COL*NUM_ROW)) && (lampIx / NUM_COL) == col)
+    {
+        rowMask = (1 << (lampIx % NUM_COL));
+    }
+
+    // invert the row mask as in the original input HIGH means off
+    rowMask = ~rowMask;
+    return ((colMask << 8) | rowMask);
+}
+#endif
 
 //------------------------------------------------------------------------------
 bool updateValid(byte inColMask, byte inRowMask)
