@@ -1,3 +1,5 @@
+![afterglow](https://github.com/smyp/afterglow/blob/master/artwork/afterglow.png "Afterglow")
+
 AFTERGLOW is a WPC pinball machine extension board that aims at softening the hard light on/off transitions that result in replacing the original incandescent bulbs with LEDs.
 
 The brain of the board is a Arduino nano. It samples the original lamp matrix from the WPC Power Driver Board using two parallel to serial shift registers.
