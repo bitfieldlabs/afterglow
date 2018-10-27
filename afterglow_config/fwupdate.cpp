@@ -97,15 +97,6 @@ bool FWUpdater::update(const QString &portName)
         QString bin = "avrdude";
 
         // compose the argument list
-        /*
-        QString arg = "-v -V -patmega328p -carduino -P";
-        arg += portName;
-        arg += " -b57600 -D -Uflash:w:";
-        arg += GITHUB_ARDUINO_FW_FILE;
-        arg += ":i";
-
-        args.append(arg);
-        */
         QStringList args;
         args.append("-v");
         args.append("-V");
