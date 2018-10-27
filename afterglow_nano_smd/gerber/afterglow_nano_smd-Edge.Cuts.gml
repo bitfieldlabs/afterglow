@@ -1,11 +1,11 @@
-G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,5.0.0*
-G04 #@! TF.CreationDate,2018-10-07T17:19:00+02:00*
+G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,5.0.1*
+G04 #@! TF.CreationDate,2018-10-27T09:57:50+02:00*
 G04 #@! TF.ProjectId,afterglow_nano_smd,6166746572676C6F775F6E616E6F5F73,rev?*
 G04 #@! TF.SameCoordinates,Original*
 G04 #@! TF.FileFunction,Profile,NP*
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 5.0.0) date Sun Oct  7 17:19:00 2018*
+G04 Created by KiCad (PCBNEW 5.0.1) date Sa 27 Okt 2018 09:57:50 CEST*
 %MOMM*%
 %LPD*%
 G01*
