@@ -131,7 +131,7 @@ bool FWUpdater::update(const QString &portName)
             mpProcess->waitForFinished(30000);
 
             // read all output
-            QString bla = mpProcess->readAll();
+            mResponseStr = mpProcess->readAll();
 
             return true;
         }

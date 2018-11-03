@@ -38,12 +38,14 @@ public:
     int getRemoteVersion();
     bool update(const QString &portName);
     QString& errorStr() { return mErrorStr; }
+    QString& responseStr() { return mResponseStr; }
 
 private slots:
     void stdOut();
 
 private:
 
+    QString mResponseStr;
     QString mErrorStr;
     QProcess *mpProcess;
     QByteArray mProcessData;

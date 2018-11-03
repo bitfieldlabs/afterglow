@@ -329,7 +329,7 @@ void MainWindow::prepareLampMatrix()
         {
             if (c==0)
             {
-                ui->lampMatrix->setRowHeight(r,(r%2)?20:42);
+                ui->lampMatrix->setRowHeight(r,(r%2)?20:36);
             }
             if (r%2)
             {
@@ -614,14 +614,23 @@ void MainWindow::updateFW()
                                           QMessageBox::Yes|QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
+                QMessageBox resMsgBox;
+
                 // disconnect from the device
                 connectAG();
+
+                // act busy
+                QApplication::setOverrideCursor(Qt::WaitCursor);
+                ui->statusBar->showMessage("FW update in progress...");
+                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
 
                 // start the update process
                 QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
                 if (fwUpdater.update(portDeviceName))
                 {
-
+                    resMsgBox.setText("Firmware update successful.");
+                    ui->statusBar->showMessage("FW update done.");
+                    ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
                 }
                 else
                 {
@@ -629,7 +638,17 @@ void MainWindow::updateFW()
                     QString errStr = "Update failed: ";
                     errStr += fwUpdater.errorStr();
                     ui->statusBar->showMessage(errStr);
+                    resMsgBox.setText("Firmware update failed: "+errStr);
                 }
+
+                // idle again
+                QApplication::restoreOverrideCursor();
+
+                // show the result dialog
+                resMsgBox.setStandardButtons(QMessageBox::Ok);
+                resMsgBox.setDefaultButton(QMessageBox::Ok);
+                resMsgBox.setDetailedText(fwUpdater.responseStr());
+                resMsgBox.exec();
             }
         }
     }
