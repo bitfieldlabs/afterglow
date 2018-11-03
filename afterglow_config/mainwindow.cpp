@@ -140,6 +140,8 @@ void MainWindow::connectAG()
         prepareLampMatrix();
         updateGameDesc(ui->gameSelection->currentIndex());
         setConnected(false);
+        ui->connectionLabel->setText("Not connected");
+        ui->connectionLabel->setStyleSheet("");
     }
     else
     {
@@ -168,12 +170,14 @@ void MainWindow::connectAG()
             mAGVersion = mSerialCommunicator.pollVersion(&mAGCfgVersion);
             if (mAGVersion != 0)
             {
-                QString connectStr = "ConnectedAG to afterglow revision ";
+                QString connectStr = "Afterglow revision ";
                 connectStr += QString::number(mAGVersion, 10);
-                connectStr += " cfg ";
+                connectStr += " cfg v";
                 connectStr += QString::number(mAGCfgVersion, 10);
-                ui->statusBar->showMessage(connectStr);
+                ui->statusBar->showMessage("Connected to "+connectStr);
                 ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+                ui->connectionLabel->setStyleSheet("color: rgb(20, 155, 0);");
+                ui->connectionLabel->setText(connectStr);
                 setConnected(true);
 
                 // load the current configuration
@@ -183,6 +187,8 @@ void MainWindow::connectAG()
             {
                 ui->statusBar->showMessage("No afterglow board detected on this port!");
                 ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+                ui->connectionLabel->setText("Not connected");
+                ui->connectionLabel->setStyleSheet("");
             }
         }
         setCursor(Qt::ArrowCursor);
