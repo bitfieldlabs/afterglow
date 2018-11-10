@@ -103,7 +103,7 @@
 #define TESTMODE_CYCLES ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT)
 
 // enable lamp replay in test mode
-#define REPLAY_ENABLED
+//#define REPLAY_ENABLED
 
 
 //------------------------------------------------------------------------------
@@ -151,6 +151,8 @@ typedef struct AG_LAMP_SWITCH_s
     uint16_t dttag : 10; // delta time tag [16ms] to the last event
 } AG_LAMP_SWITCH_t;
 
+// Replay table dumped from pinmame.
+// This is around 30s of the Whitewater attract mode.
 static const AG_LAMP_SWITCH_t kLampReplay[] PROGMEM = {
 {0, 0, 0},   // +0.000s 0
 {0, 1, 0}, {1, 6, 0}, {2, 6, 0}, {3, 5, 0}, {5, 6, 0}, {6, 0, 0}, {6, 3, 0}, {6, 6, 0}, {6, 7, 0}, {1, 0, 2}, 
