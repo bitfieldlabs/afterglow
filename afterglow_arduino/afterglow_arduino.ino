@@ -34,7 +34,11 @@
  *  | OUT_CLK  | 74LS595 SRCLK | D6        | DDRD, 6       | Output       |
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
- *  | J1       | TESTMD JUMPER | D10       | DDRB, 3       | Input Pullup |
+ *  | TEST1    | TESTMODE 1    | D8        | DDRB, 1       | Input Pullup |
+ *  | TEST2    | TESTMODE 2    | D9        | DDRB, 2       | Input Pullup |
+ *  | TEST3    | TESTMODE 3    | D10       | DDRB, 3       | Input Pullup |
+ *  | TEST4    | TESTMODE 4    | D11       | DDRB, 4       | Input Pullup |
+ *  | CM       | CURRENT MEAS  | A0        | DDRC, 0       | Input        |
  *  +----------+---------------+-----------+---------------+--------------+
 */
 
@@ -43,17 +47,20 @@
 //------------------------------------------------------------------------------
 // Setup
 
-// afterglow version number
+// Afterglow version number
 #define AFTERGLOW_VERSION 102
 
-// afterglow configuration version
+// Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
+
+// Afterglow board revision. Currently v1.3.
+#define BOARD_REV 13
 
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 1
 
 // Visual afterglow jingle at startup duration [ms] (set to 0 to disable jingle)
-#define STARTUP_JINGLE 5000
+#define STARTUP_JINGLE 0
 
 #if (STARTUP_JINGLE > 0)
 // Jingle lamp iteration interval [ms]
@@ -104,6 +111,9 @@
 
 // enable lamp replay in test mode
 //#define REPLAY_ENABLED
+
+// current supervision on pin A0
+#define CURR_MEAS_PIN A0
 
 
 //------------------------------------------------------------------------------
@@ -1301,12 +1311,19 @@ void setup()
     DDRD = B11111001;
     // nano LED output on pin 13, testmode jumper on pin 10
     DDRB = B00100000;
-    // activate the pullup for the testmode pin
-    PORTB |= B00000100;
-    // OE on A1, DBG on A2
+    // activate the pullups for the testmode pins
+    PORTB |= B00001111;
+    // OE on A1, DBG on A2, current meas on A0
     DDRC = B00000110;
     // keep OE high
     PORTC |= B00000010;
+
+    // Configure the ADC clock to 1MHz by setting the prescaler to 16.
+    // This should allow for fast analog pin sampling without much loss of precision.
+    // defines for setting and clearing register bits.
+    _SFR_BYTE(ADCSRA) |= _BV(ADPS2);
+    _SFR_BYTE(ADCSRA) &= ~_BV(ADPS1);
+    _SFR_BYTE(ADCSRA) &= ~_BV(ADPS0);
 
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
@@ -1379,6 +1396,12 @@ ISR(TIMER1_COMPA_vect)
     // This is done before updating the matrix to avoid having an irregular update
     // frequency due to varying update calculation times.
     driveLampMatrix();
+
+#if (BOARD_REV >= 13)
+    // Measure the current flowing through the current measurement resistor
+    // (R26 on AG v1.3).
+    int cm = analogRead(CURR_MEAS_PIN);
+#endif
 
     // 74HC165 16bit sampling
     uint16_t inData = sampleInput();
@@ -1856,7 +1879,7 @@ uint16_t testModeInput(void)
 
     // switch between even and odd lamps
     // turn on every other column
-    if (col % 2 == 0)
+    if (col % 2 == ((sTtag / TESTMODE_CYCLES) % 2))
     {
         rowMask = B01010101;
         if ((sTtag / TESTMODE_CYCLES) % 2)
