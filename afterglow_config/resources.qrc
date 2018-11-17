@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>images/afterglow.png</file>
+        <file>images/a.ico</file>
     </qresource>
 </RCC>

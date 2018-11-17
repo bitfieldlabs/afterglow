@@ -428,6 +428,10 @@
   <property name="windowTitle">
    <string>Afterglow Configuration Tool</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/images/a.ico</normaloff>:/images/images/a.ico</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
