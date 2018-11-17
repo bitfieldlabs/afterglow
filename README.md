@@ -8,6 +8,6 @@ The basic principle involves resampling of the original lamp matrix signals at 4
 
 The resampled signal is output via serial to parallel shift registers an driven by 16 MOSFETs.
 
-Make  to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detailed information and instructions.
+Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detailed information and instructions.
 
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/pcb_v13_populated.jpg "Afterglow PCB v1.3")
