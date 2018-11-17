@@ -399,6 +399,9 @@ void MainWindow::setConnected(bool connected)
 
 void MainWindow::enumSerialPorts()
 {
+    // remember the current selection
+    QString currText = ui->serialPortSelection->currentText();
+
     // no enumeration while connected
     if (mConnected == false)
     {
@@ -412,6 +415,9 @@ void MainWindow::enumSerialPorts()
             QString s = info.portName();
             ui->serialPortSelection->addItem(s);
         }
+
+        // restore the previous selection if possible
+        ui->serialPortSelection->setCurrentText(currText);
 
         // enable the connect button
         ui->connectButton->setEnabled(ui->serialPortSelection->count()>0);
@@ -631,7 +637,11 @@ void MainWindow::updateFW()
                 ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
 
                 // start the update process
+#ifdef Q_OS_LINUX
                 QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
+#elif defined Q_OS_WIN
+                QString portDeviceName = ui->serialPortSelection->currentText();
+#endif
                 if (fwUpdater.update(portDeviceName))
                 {
                     resMsgBox.setText("Firmware update successful.");

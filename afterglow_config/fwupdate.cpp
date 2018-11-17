@@ -26,6 +26,12 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 
+// avrdude binary
+#ifdef Q_OS_LINUX
+#define AVRDUDE_BINARY "avrdude"
+#elif defined Q_OS_WIN
+#define AVRDUDE_BINARY "avrdude\\avrdude.exe"
+#endif
 
 // github arduino sketch
 #define GITHUB_ARDUINO_SKETCH_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/afterglow_arduino.ino"
@@ -38,7 +44,6 @@
 
 // local firmware binary file name
 #define GITHUB_ARDUINO_FW_FILE "afterglow_arduino.eightanaloginputs.hex"
-
 
 
 FWUpdater::FWUpdater()
@@ -94,7 +99,7 @@ bool FWUpdater::update(const QString &portName)
     if (fd.download(QUrl(GITHUB_ARDUINO_FW_URL), GITHUB_ARDUINO_FW_FILE))
     {
         // locate avrdude
-        QString bin = "avrdude";
+        QString bin = AVRDUDE_BINARY;
 
         // compose the argument list
         QStringList args;
