@@ -43,12 +43,14 @@
 */
 
 #include <EEPROM.h>
+#include <avr/wdt.h>
+#include <avr/boot.h>
 
 //------------------------------------------------------------------------------
 // Setup
 
 // Afterglow version number
-#define AFTERGLOW_VERSION 103
+#define AFTERGLOW_VERSION 104
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -279,11 +281,16 @@ void setup()
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
     Serial.println(" (c) 2018 morbid cornflakes");
+    // check the extended fuse for brown out detection level
+    uint8_t efuse = boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS);
+    Serial.println("-----------------------------------------------");
+    uint8_t bodBits = (efuse & 0x7);
+    Serial.print("efuse BOD ");
+    Serial.println((bodBits == 0x07) ? "OFF" : (bodBits == 0x04) ? "4.3V" : (bodBits == 0x05) ? "2.7V" : "1.8V");
 #ifdef REPLAY_ENABLED
     Serial.print("Replay Table Size: ");
     Serial.println(numReplays());
 #endif
-    Serial.println("-----------------------------------------------");
 #if DEBUG_SERIAL
     Serial.print("CFG from ");
     Serial.print(cfgLoaded ? "EEPROM" : "DEFAULT");
@@ -297,6 +304,9 @@ void setup()
 
     // enable all interrupts
     interrupts();
+
+    // enable a strict 15ms watchdog
+    wdt_enable(WDTO_15MS);
 }
 
 //------------------------------------------------------------------------------
@@ -304,11 +314,17 @@ void start()
 {
     // enable the timer compare interrupt
     TIMSK1 |= (1 << OCIE1A);
+
+    // enable a strict 15ms watchdog
+    wdt_enable(WDTO_15MS);
 }
 
 //------------------------------------------------------------------------------
 void stop()
 {
+    // disable the watchdog
+    wdt_disable();
+
     // disable the timer compare interrupt
     TIMSK1 &= ~(1 << OCIE1A);
 
@@ -324,6 +340,9 @@ ISR(TIMER1_COMPA_vect)
     // time is running
     uint16_t startCnt = TCNT1;
     sTtag++;
+
+    // kick the dog
+    wdt_reset();
 
     // Drive the lamp matrix
     // This is done before updating the matrix to avoid having an irregular update
