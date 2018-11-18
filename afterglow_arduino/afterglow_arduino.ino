@@ -197,6 +197,8 @@ static uint32_t sBadColCounter = 0;
 static uint32_t sBadColOrderCounter = 0;
 static byte sLastBadCol = 0;
 static byte sLastGoodCol = 0;
+static int sMaxCurr = 0;
+static int sLastCurr = 0;
 #endif
 
 // afterglow configuration data definition
@@ -352,7 +354,14 @@ ISR(TIMER1_COMPA_vect)
 #if (BOARD_REV >= 13)
     // Measure the current flowing through the current measurement resistor
     // (R26 on AG v1.3).
-    //int cm = analogRead(CURR_MEAS_PIN);
+    int cm = analogRead(CURR_MEAS_PIN);
+#if DEBUG_SERIAL
+    sLastCurr = cm;
+    if (sLastCurr > sMaxCurr)
+    {
+        sMaxCurr = sLastCurr;
+    }
+#endif
 #endif
 
     // 74HC165 16bit sampling
@@ -555,6 +564,10 @@ void loop()
         Serial.print(sBadColOrderCounter);
         Serial.print(" last good: ");
         Serial.println(sLastGoodCol);
+        Serial.print("CM ");
+        Serial.print(sLastCurr);
+        Serial.print(" max ");
+        Serial.println(sMaxCurr);
         // data debugging
         debugInputs(sLastColMask, sLastRowMask);
         debugOutput(sLastOutColMask, sLastOutRowMask);
@@ -793,15 +806,17 @@ uint16_t testModeInput(void)
 #else
     // switch between even and odd lamps
     // turn on every other column
+    /*
     if (col % 2 == ((sTtag / TESTMODE_CYCLES) % 2))
     {
         rowMask = B01010101;
-        rowMask = (sTtag / TESTMODE_CYCLES) % 8;
         if ((sTtag / TESTMODE_CYCLES) % 3)
         {
             rowMask <<= 1;
         }
     }
+    */
+    rowMask = 0xff;
 #endif
 
     // invert the row mask as in the original input HIGH means off
@@ -1099,7 +1114,7 @@ void debugOutput(byte outColMask, byte outRowMask)
 const AG_LAMP_SWITCH_t kLampReplay[] PROGMEM =
 {
 {7, 7, 0},   // +0.000s 0
-{7, 7, 25}, {0, 5, 404}, {1, 4, 0}, {2, 1, 0}, {2, 5, 0}, {3, 1, 0}, {3, 5, 0}, {4, 3, 0}, {4, 5, 0}, {5, 2, 0}, 
+{7, 7, 25}, {0, 5, 4}, {1, 4, 0}, {2, 1, 0}, {2, 5, 0}, {3, 1, 0}, {3, 5, 0}, {4, 3, 0}, {4, 5, 0}, {5, 2, 0}, 
 {5, 5, 0}, {0, 1, 2}, {1, 1, 0}, {1, 7, 0}, {6, 1, 0}, {7, 1, 0}, {0, 5, 4}, {0, 6, 0}, {1, 5, 0}, {2, 2, 0}, 
 {2, 6, 0}, {3, 2, 0}, {3, 5, 0}, {3, 6, 0}, {4, 5, 0}, {4, 6, 0}, {5, 3, 0}, {5, 5, 0}, {5, 6, 0}, {7, 5, 0}, 
 {0, 1, 3}, {0, 2, 0}, {1, 1, 0}, {1, 2, 0}, {1, 4, 0}, {2, 1, 0}, {2, 5, 0}, {3, 1, 0}, {4, 3, 0}, {5, 2, 0}, 
