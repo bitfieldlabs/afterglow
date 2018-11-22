@@ -2,5 +2,16 @@
     <qresource prefix="/images">
         <file>images/afterglow.png</file>
         <file>images/a.ico</file>
+        <file>images/flakie_transp.png</file>
+    </qresource>
+    <qresource prefix="/icons"/>
+    <qresource prefix="/icon">
+        <file>icons/atmosphere.svg</file>
+        <file>icons/document-save.svg</file>
+        <file>icons/download.svg</file>
+        <file>icons/network-connect.svg</file>
+        <file>icons/network-disconnect.svg</file>
+        <file>icons/view-refresh.svg</file>
+        <file>icons/circular-arrow-shape.svg</file>
     </qresource>
 </RCC>

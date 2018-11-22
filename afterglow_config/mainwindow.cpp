@@ -33,6 +33,7 @@
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QMessageBox>
+#include <QStyle>
 
 // interval for port enumeration [ms]
 #define ENUMERATION_INTERVAL 2000
