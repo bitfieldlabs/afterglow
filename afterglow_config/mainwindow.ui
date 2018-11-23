@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>768</width>
-    <height>670</height>
+    <height>826</height>
    </rect>
   </property>
   <property name="palette">
@@ -810,31 +810,11 @@
       <normaloff>:/icon/icons/view-refresh.svg</normaloff>:/icon/icons/view-refresh.svg</iconset>
     </property>
    </widget>
-   <widget class="QLabel" name="connectionLabel">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>90</y>
-      <width>381</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Not connected</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>590</y>
+      <x>700</x>
+      <y>730</y>
       <width>61</width>
       <height>51</height>
      </rect>
@@ -849,6 +829,36 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QTextBrowser" name="tickerText">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>661</y>
+      <width>581</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <zorder>lampMatrix</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+   <zorder>serialPortSelection</zorder>
+   <zorder>label_3</zorder>
+   <zorder>saveButton</zorder>
+   <zorder>loadButton</zorder>
+   <zorder>label_4</zorder>
+   <zorder>gameSelection</zorder>
+   <zorder>connectButton</zorder>
+   <zorder>parameterSelection</zorder>
+   <zorder>label_5</zorder>
+   <zorder>defaultButton</zorder>
+   <zorder>gameListFetchButton</zorder>
+   <zorder>updateFWButton</zorder>
+   <zorder>tickerText</zorder>
+   <zorder>label_6</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

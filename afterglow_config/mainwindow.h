@@ -42,6 +42,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void ticker(const QString &text, const QColor &c, int weight);
     ~MainWindow();
 
 private slots:

@@ -97,6 +97,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initData();
 
+    ui->tickerText->setStyleSheet("background-color: rgb(55, 55, 55);");
+    ticker("Afterglow Config 0.2 - Hello pinheads!", QColor("green"), QFont::Bold);
+    ticker("Ready.", QColor("green"), QFont::Bold);
+
     // start the port enumeration timer
     mTimer.start(ENUMERATION_INTERVAL);
 }
@@ -119,8 +123,7 @@ void MainWindow::readGames(void)
     QFile file("games.json");
     if (!file.exists())
     {
-        ui->statusBar->showMessage("Games list not present! Put games.json into root folder.");
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+        ticker("Games list not present! Put games.json into root folder.", QColor("orange"), QFont::Normal);
         return;
     }
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -141,8 +144,6 @@ void MainWindow::connectAG()
         prepareLampMatrix();
         updateGameDesc(ui->gameSelection->currentIndex());
         setConnected(false);
-        ui->connectionLabel->setText("Not connected");
-        ui->connectionLabel->setStyleSheet("");
     }
     else
     {
@@ -154,19 +155,16 @@ void MainWindow::connectAG()
         {
             QString warning = "Failed to open port ";
             warning += ui->serialPortSelection->currentText();
-            ui->statusBar->showMessage(warning);
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            ticker(warning, QColor("red"), QFont::Normal);
         }
         else
         {
             // the connection will reset the arduino - allow some time for startup
-            ui->statusBar->showMessage("Rebooting the arduino...");
-            ui->statusBar->setStyleSheet("");
+            ticker("Rebooting the arduino...", QColor("orange"), QFont::Normal);
             QThread::sleep(2);
 
             // poll the afterglow version to verify the connection
-            ui->statusBar->showMessage("Polling the afterglow version...");
-            ui->statusBar->setStyleSheet("");
+            ticker("Polling the afterglow version...", QColor("orange"), QFont::Normal);
 
             mAGVersion = mSerialCommunicator.pollVersion(&mAGCfgVersion);
             if (mAGVersion != 0)
@@ -175,10 +173,9 @@ void MainWindow::connectAG()
                 connectStr += QString::number(mAGVersion, 10);
                 connectStr += " cfg v";
                 connectStr += QString::number(mAGCfgVersion, 10);
+                ticker("Connected to "+connectStr, QColor("green"), QFont::Normal);
                 ui->statusBar->showMessage("Connected to "+connectStr);
                 ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
-                ui->connectionLabel->setStyleSheet("color: rgb(20, 155, 0);");
-                ui->connectionLabel->setText(connectStr);
                 setConnected(true);
 
                 // load the current configuration
@@ -186,10 +183,7 @@ void MainWindow::connectAG()
             }
             else
             {
-                ui->statusBar->showMessage("No afterglow board detected on this port!");
-                ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
-                ui->connectionLabel->setText("Not connected");
-                ui->connectionLabel->setStyleSheet("");
+                ticker("No afterglow board detected on this port!", QColor("red"), QFont::Bold);
             }
         }
         setCursor(Qt::ArrowCursor);
@@ -203,13 +197,11 @@ void MainWindow::loadAG()
         setCursor(Qt::WaitCursor);
         if (mSerialCommunicator.loadCfg(&mCfg))
         {
-            ui->statusBar->showMessage("Configuration successfully loaded");
-            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+            ticker("Configuration successfully loaded", QColor("green"), QFont::Normal);
         }
         else
         {
-            ui->statusBar->showMessage("Configuration poll failed!");
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            ticker("Configuration poll failed!", QColor("red"), QFont::Normal);
         }
         setCursor(Qt::ArrowCursor);
 
@@ -230,16 +222,14 @@ void MainWindow::defaultAG()
         setCursor(Qt::WaitCursor);
         if (mSerialCommunicator.defaultCfg())
         {
-            ui->statusBar->showMessage("Configuration successfully reset");
-            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+            ticker("Configuration successfully reset", QColor("green"), QFont::Normal);
 
             // load the new configuration from AG
             loadAG();
         }
         else
         {
-            ui->statusBar->showMessage("Configuration reset failed!");
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            ticker("Configuration reset failed!", QColor("red"), QFont::Normal);
         }
         setCursor(Qt::ArrowCursor);
 
@@ -248,6 +238,7 @@ void MainWindow::defaultAG()
     }
     else
     {
+        ticker("Not connected to afterglow!", QColor("red"), QFont::Normal);
         ui->statusBar->showMessage("Not connected to afterglow!");
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
@@ -260,18 +251,17 @@ void MainWindow::saveAG()
         setCursor(Qt::WaitCursor);
         if (mSerialCommunicator.saveCfg(&mCfg))
         {
-            ui->statusBar->showMessage("Configuration successfully saved");
-            ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+            ticker("Configuration successfully saved", QColor("green"), QFont::Normal);
         }
         else
         {
-            ui->statusBar->showMessage("Configuration save failed!");
-            ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
+            ticker("Configuration saving failed!", QColor("red"), QFont::Normal);
         }
         setCursor(Qt::ArrowCursor);
     }
     else
     {
+        ticker("Not connected to afterglow!", QColor("red"), QFont::Normal);
         ui->statusBar->showMessage("Not connected to afterglow!");
         ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
@@ -480,8 +470,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                 if (v<0) v=0;
                 if (v>65535) v= 65535;
                 if (v%10) v=(v/10)*10;
-                ui->statusBar->showMessage("Glow duration must be between 0 and 65535 and a multiple of 10!");
-                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+                ticker("Glow duration must be between 0 and 65535 and a multiple of 10!", QColor("red"), QFont::Normal);
             }
         }
         break;
@@ -491,8 +480,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
             {
                 if (v<0) v=0;
                 if (v>7) v=7;
-                ui->statusBar->showMessage("Brightness must be between 0 and 7!");
-                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+                ticker("Brightness must be between 0 and 7!", QColor("red"), QFont::Normal);
             }
         }
         break;
@@ -501,8 +489,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
     }
     else
     {
-        ui->statusBar->showMessage("Only numerical values allowed!");
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+        ticker("Only numerical values allowed!", QColor("red"), QFont::Normal);
     }
 
     if (ok)
@@ -574,24 +561,21 @@ void MainWindow::selectByValue()
 
 void MainWindow::fetchGameList()
 {
-    ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
-    ui->statusBar->showMessage("Connecting to github...");
+    ticker("Connecting to afterglow repository...", QColor("orange"), QFont::Normal);
 
     // download the latest games.json from github
     FileDownloader fd;
     if (!fd.download(QUrl(GITHUB_GAMES_LIST_URL), LOCAL_GAMES_LIST_FILE))
     {
         // error
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
         QString errStr = "Update failed: ";
         errStr = fd.errorStr();
-        ui->statusBar->showMessage(errStr);
+        ticker(errStr, QColor("red"), QFont::Normal);
     }
     else
     {
         // success
-        ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
-        ui->statusBar->showMessage("Update completed.");
+        ticker("Update completed.", QColor("green"), QFont::Normal);
 
         // update the games list
         readGames();
@@ -611,8 +595,7 @@ void MainWindow::updateFW()
         if (mAGVersion >= v)
         {
             // already at newest version
-            ui->statusBar->setStyleSheet("background-color: rgb(127, 255, 0);");
-            ui->statusBar->showMessage("Your afterglow board is already up to date!");
+            ticker("Your afterglow board is already up to date!", QColor("orange"), QFont::Normal);
         }
         else
         */
@@ -635,8 +618,7 @@ void MainWindow::updateFW()
 
                 // act busy
                 QApplication::setOverrideCursor(Qt::WaitCursor);
-                ui->statusBar->showMessage("FW update in progress...");
-                ui->statusBar->setStyleSheet("background-color: rgb(255, 255, 0);");
+                ticker("FW update in progress...", QColor("orange"), QFont::Normal);
 
                 // start the update process
 #ifdef Q_OS_LINUX
@@ -647,15 +629,13 @@ void MainWindow::updateFW()
                 if (fwUpdater.update(portDeviceName))
                 {
                     resMsgBox.setText("Firmware update successful.");
-                    ui->statusBar->showMessage("FW update done.");
-                    ui->statusBar->setStyleSheet("background-color: rgb(0, 255, 0);");
+                    ticker("FW update done.", QColor("green"), QFont::Normal);
                 }
                 else
                 {
-                    ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
                     QString errStr = "Update failed: ";
                     errStr += fwUpdater.errorStr();
-                    ui->statusBar->showMessage(errStr);
+                    ticker(errStr, QColor("red"), QFont::Normal);
                     resMsgBox.setText("Firmware update failed: "+errStr);
                 }
 
@@ -675,7 +655,14 @@ void MainWindow::updateFW()
         // error contacting the server
         QString errStr = "Could not retrieve the latest version from github: ";
         errStr = fwUpdater.errorStr();
-        ui->statusBar->setStyleSheet("background-color: rgb(255, 0, 0);");
-        ui->statusBar->showMessage(errStr);
+        ticker(errStr, QColor("red"), QFont::Normal);
     }
+}
+
+void MainWindow::ticker(const QString &text, const QColor &c, int weight)
+{
+    ui->tickerText->setFontWeight(weight);
+    ui->tickerText->setTextColor(c);
+    ui->tickerText->append(text);
+    ui->tickerText->repaint();
 }
