@@ -320,13 +320,15 @@ void MainWindow::prepareLampMatrix()
     ui->lampMatrix->setRowCount(16);
     ui->lampMatrix->setColumnCount(8);
     ui->lampMatrix->setWordWrap(true);
+    ui->lampMatrix->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->lampMatrix->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     for (int c=0; c<8; c++)
     {
         for (int r=0; r<16; r++)
         {
             if (c==0)
             {
-                ui->lampMatrix->setRowHeight(r,(r%2)?20:36);
+                //ui->lampMatrix->setRowHeight(r,(r%2)?20:36);
             }
             if (r%2)
             {
