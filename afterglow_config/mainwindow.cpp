@@ -396,6 +396,7 @@ void MainWindow::setConnected(bool connected)
     ui->defaultButton->setEnabled(connected);
     ui->updateFWButton->setEnabled(connected);
     ui->connectButton->setText(connected ? "Disconnect" : "Connect");
+    ui->connectButton->setIcon(connected ? QIcon(":/icon/icons/network-disconnect.svg"): QIcon(":/icon/icons/network-connect.svg"));
 }
 
 void MainWindow::enumSerialPorts()
