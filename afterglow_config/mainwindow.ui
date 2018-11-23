@@ -813,7 +813,7 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>675</x>
       <y>730</y>
       <width>61</width>
       <height>51</height>
@@ -832,9 +832,9 @@
    <widget class="QTextBrowser" name="tickerText">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>194</x>
       <y>661</y>
-      <width>581</width>
+      <width>561</width>
       <height>121</height>
      </rect>
     </property>
