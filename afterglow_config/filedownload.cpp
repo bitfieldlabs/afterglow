@@ -36,7 +36,6 @@ FileDownloader::FileDownloader()
 FileDownloader::~FileDownloader()
 {
     delete mpFile;
-    delete mpReply;
     delete mpNm;
 }
 

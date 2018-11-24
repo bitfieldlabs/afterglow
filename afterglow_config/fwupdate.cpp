@@ -49,6 +49,7 @@
 FWUpdater::FWUpdater()
 {
     mpProcess = NULL;
+    mpFWUpdDialog = NULL;
 }
 
 FWUpdater::~FWUpdater()
@@ -125,18 +126,29 @@ bool FWUpdater::update(const QString &portName)
         }
 
         // start a new process
-        mProcessData.clear();
         mpProcess = new QProcess();
         if (mpProcess)
         {
+            // open the output dialog
+            mpFWUpdDialog = new FWUpdateDialog();
+
             // connect to stdout of the process
+            mAvrdudeOutput.clear();
             mpProcess->setProcessChannelMode(QProcess::MergedChannels);
+            connect(mpProcess, SIGNAL(readyRead()), this, SLOT(stdOut()), Qt::DirectConnection);
 
             mpProcess->start(bin, args);
+            mpFWUpdDialog->exec();
             mpProcess->waitForFinished(30000);
 
             // read all output
             mResponseStr = mpProcess->readAll();
+
+            // cleanup
+            delete mpProcess;
+            mpProcess = NULL;
+            delete mpFWUpdDialog;
+            mpFWUpdDialog = NULL;
 
             return true;
         }
@@ -152,6 +164,11 @@ void FWUpdater::stdOut()
 {
     if (mpProcess)
     {
-        mProcessData += mpProcess->readAllStandardOutput();
+        QByteArray data = mpProcess->readAllStandardOutput();
+        mAvrdudeOutput += data;
+        if (mpFWUpdDialog)
+        {
+            mpFWUpdDialog->setOutput(mAvrdudeOutput);
+        }
     }
 }

@@ -26,6 +26,7 @@
 
 #include <QProcess>
 #include <QString>
+#include "fwupdatedialog.h"
 
 class FWUpdater : public QObject
 {
@@ -48,7 +49,8 @@ private:
     QString mResponseStr;
     QString mErrorStr;
     QProcess *mpProcess;
-    QByteArray mProcessData;
+    FWUpdateDialog *mpFWUpdDialog;
+    QString mAvrdudeOutput;
 };
 
 

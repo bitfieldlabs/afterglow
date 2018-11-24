@@ -30,17 +30,20 @@ SOURCES += \
         mainwindow.cpp \
     serialcommunicator.cpp \
     fwupdate.cpp \
-    filedownload.cpp
+    filedownload.cpp \
+    fwupdatedialog.cpp
 
 HEADERS += \
         mainwindow.h \
     serialcommunicator.h \
     agconfig.h \
     fwupdate.h \
-    filedownload.h
+    filedownload.h \
+    fwupdatedialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    fwupdatedialog.ui
 
 RESOURCES += \
     resources.qrc

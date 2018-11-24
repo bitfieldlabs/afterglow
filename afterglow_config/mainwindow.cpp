@@ -613,13 +613,10 @@ void MainWindow::updateFW()
                                           QMessageBox::Yes|QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
-                QMessageBox resMsgBox;
-
                 // disconnect from the device
                 connectAG();
 
                 // act busy
-                QApplication::setOverrideCursor(Qt::WaitCursor);
                 ticker("FW update in progress...", QColor("orange"), QFont::Normal);
 
                 // start the update process
@@ -630,7 +627,6 @@ void MainWindow::updateFW()
 #endif
                 if (fwUpdater.update(portDeviceName))
                 {
-                    resMsgBox.setText("Firmware update successful.");
                     ticker("FW update done.", QColor("green"), QFont::Normal);
                 }
                 else
@@ -638,17 +634,10 @@ void MainWindow::updateFW()
                     QString errStr = "Update failed: ";
                     errStr += fwUpdater.errorStr();
                     ticker(errStr, QColor("red"), QFont::Normal);
-                    resMsgBox.setText("Firmware update failed: "+errStr);
                 }
 
-                // idle again
-                QApplication::restoreOverrideCursor();
-
-                // show the result dialog
-                resMsgBox.setStandardButtons(QMessageBox::Ok);
-                resMsgBox.setDefaultButton(QMessageBox::Ok);
-                resMsgBox.setDetailedText(fwUpdater.responseStr());
-                resMsgBox.exec();
+                // reconnect
+                connectAG();
             }
         }
     }
