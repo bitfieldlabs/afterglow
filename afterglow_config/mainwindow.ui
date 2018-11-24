@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1002</width>
-    <height>983</height>
+    <width>693</width>
+    <height>693</height>
    </rect>
   </property>
   <property name="palette">
@@ -526,7 +526,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Configuration Tool v0.2</string>
+         <string>Configuration Tool v0.3</string>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -613,7 +613,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>120</width>
               <height>0</height>
              </size>
             </property>

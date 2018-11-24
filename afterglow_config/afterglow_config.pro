@@ -50,3 +50,5 @@ RESOURCES += \
 
 DISTFILES += \
     games.json
+
+win32:RC_ICON = :/images/a.ico
