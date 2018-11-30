@@ -183,7 +183,20 @@ void MainWindow::connectAG()
             }
             else
             {
+                // disconnect from the port
+                mSerialCommunicator.disconnect();
+
                 ticker("No afterglow board detected on this port!", QColor("red"), QFont::Bold);
+
+                // should we try to upload the FW
+                QMessageBox::StandardButton reply;
+                QString updStr = "No Afterglow detected on this port.\nDo you want to upload the firmware to this device?";
+                reply = QMessageBox::question(this, "Confirm", updStr, QMessageBox::Yes|QMessageBox::No);
+                if (reply == QMessageBox::Yes)
+                {
+                    // update the firmware
+                    updateFW();
+                }
             }
         }
         setCursor(Qt::ArrowCursor);
@@ -614,7 +627,10 @@ void MainWindow::updateFW()
             if (reply == QMessageBox::Yes)
             {
                 // disconnect from the device
-                connectAG();
+                if (mConnected)
+                {
+                    connectAG();
+                }
 
                 // act busy
                 ticker("FW update in progress...", QColor("orange"), QFont::Normal);

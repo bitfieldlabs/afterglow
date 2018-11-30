@@ -17,6 +17,7 @@ public:
 
     void addOutput(const QString &text);
     void setOutput(const QString &text);
+    void setMsgStyle(const QString &s);
 
 private:
     Ui::FWUpdateDialog *ui;

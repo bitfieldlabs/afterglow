@@ -136,6 +136,7 @@ bool FWUpdater::update(const QString &portName)
             mAvrdudeOutput.clear();
             mpProcess->setProcessChannelMode(QProcess::MergedChannels);
             connect(mpProcess, SIGNAL(readyRead()), this, SLOT(stdOut()), Qt::DirectConnection);
+            connect(mpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(procFinished(int,QProcess::ExitStatus)), Qt::DirectConnection);
 
             mpProcess->start(bin, args);
             mpFWUpdDialog->exec();
@@ -169,6 +170,23 @@ void FWUpdater::stdOut()
         if (mpFWUpdDialog)
         {
             mpFWUpdDialog->setOutput(mAvrdudeOutput);
+        }
+    }
+}
+
+void FWUpdater::procFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if (mpFWUpdDialog)
+    {
+        if ((exitStatus != QProcess::NormalExit) || (exitCode != 0))
+        {
+            // paint the message window red
+            mpFWUpdDialog->setMsgStyle("background-color: rgb(255, 179, 179);");
+        }
+        else
+        {
+            // we like green
+            mpFWUpdDialog->setMsgStyle("background-color: rgb(179, 255, 179);");
         }
     }
 }

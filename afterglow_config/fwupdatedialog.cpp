@@ -38,3 +38,9 @@ void FWUpdateDialog::setOutput(const QString &text)
 
     this->ui->fwUpdateOutput->repaint();
 }
+
+void FWUpdateDialog::setMsgStyle(const QString &s)
+{
+    this->ui->fwUpdateOutput->setStyleSheet(s);
+    this->ui->fwUpdateOutput->repaint();
+}

@@ -43,6 +43,7 @@ public:
 
 private slots:
     void stdOut();
+    void procFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
 
