@@ -526,7 +526,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Configuration Tool v0.3</string>
+         <string>Configuration Tool v0.4</string>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

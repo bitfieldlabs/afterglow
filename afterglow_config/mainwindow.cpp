@@ -98,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initData();
 
     ui->tickerText->setStyleSheet("background-color: rgb(55, 55, 55);");
-    ticker("Afterglow Config 0.2 - Hello pinheads!", QColor("green"), QFont::Bold);
+    ticker("Afterglow Config 0.4 - Hello pinheads!", QColor("green"), QFont::Bold);
     ticker("Ready.", QColor("green"), QFont::Bold);
 
     // start the port enumeration timer
