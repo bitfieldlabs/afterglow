@@ -98,7 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initData();
 
     ui->tickerText->setStyleSheet("background-color: rgb(55, 55, 55);");
-    ticker("Afterglow Config 0.4 - Hello pinheads!", QColor("green"), QFont::Bold);
+    ui->versionLabel->setText("Afterglow Configuration Tool v" + QString(AGCONFIG_VERSION));
+    ticker("Afterglow Config " + QString(AGCONFIG_VERSION) + " - Hello pinheads!", QColor("green"), QFont::Bold);
     ticker("Ready.", QColor("green"), QFont::Bold);
 
     // start the port enumeration timer
@@ -442,8 +443,8 @@ void MainWindow::updateTable(int parameter)
             uint32_t v;
             switch (parameter)
             {
-                case 0:  v=(uint32_t)mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE; break;
-                case 1:  v=(uint32_t)mCfg.lampBrightness[c][r]; break;
+                case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 1:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
                 default: v=0; break;
             }
 
@@ -510,9 +511,9 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
     if (ok)
     {
         // apply to all selected cells
-        for (uint32_t c=0; c<8; c++)
+        for (int32_t c=0; c<8; c++)
         {
-            for (uint32_t r=0; r<8; r++)
+            for (int32_t r=0; r<8; r++)
             {
                 QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
                 if (pWI)
@@ -525,8 +526,8 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                         // apply the changes to the configuration
                         switch (param)
                         {
-                        case 0: mCfg.lampGlowDur[c][r] = (v / GLOWDUR_CFG_SCALE); break;
-                        case 1: mCfg.lampBrightness[c][r] = v; break;
+                        case 0: mCfg.lampGlowDur[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 1: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
                         default: break;
                         }
                     }
@@ -552,9 +553,9 @@ void MainWindow::selectByValue()
     if (pCWI)
     {
         // select all cells with the same value as the currently selected one
-        for (uint32_t c=0; c<8; c++)
+        for (int32_t c=0; c<8; c++)
         {
-            for (uint32_t r=0; r<8; r++)
+            for (int32_t r=0; r<8; r++)
             {
                 QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
                 if (pWI)
@@ -606,53 +607,50 @@ void MainWindow::updateFW()
     int v = fwUpdater.getRemoteVersion();
     if (v != 0)
     {
-        /*
-        if (mAGVersion >= v)
+        // ask again
+        QMessageBox::StandardButton reply;
+        QString updStr = "Do you want to update from v";
+        updStr += QString::number(mAGVersion);
+        updStr += " to v";
+        updStr += QString::number(v);
+        updStr += "?";
+        reply = QMessageBox::question(this, "Confirm", updStr,
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes)
         {
-            // already at newest version
-            ticker("Your afterglow board is already up to date!", QColor("orange"), QFont::Normal);
-        }
-        else
-        */
-        {
-            // ask again
-            QMessageBox::StandardButton reply;
-            QString updStr = "Do you want to update from v";
-            updStr += QString::number(mAGVersion);
-            updStr += " to v";
-            updStr += QString::number(v);
-            updStr += "?";
-            reply = QMessageBox::question(this, "Confirm", updStr,
-                                          QMessageBox::Yes|QMessageBox::No);
-            if (reply == QMessageBox::Yes)
+            // if we're not connected yet then this is an attempt to initialise the device
+            bool init = !mConnected;
+
+            // disconnect from the device
+            if (mConnected)
             {
-                // disconnect from the device
-                if (mConnected)
-                {
-                    connectAG();
-                }
+                connectAG();
+            }
 
-                // act busy
-                ticker("FW update in progress...", QColor("orange"), QFont::Normal);
+            // act busy
+            ticker("FW update in progress...", QColor("orange"), QFont::Normal);
 
-                // start the update process
+            // start the update process
 #ifdef Q_OS_LINUX
-                QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
+            QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
 #elif defined Q_OS_WIN
-                QString portDeviceName = ui->serialPortSelection->currentText();
+            QString portDeviceName = ui->serialPortSelection->currentText();
 #endif
-                if (fwUpdater.update(portDeviceName))
-                {
-                    ticker("FW update done.", QColor("green"), QFont::Normal);
-                }
-                else
-                {
-                    QString errStr = "Update failed: ";
-                    errStr += fwUpdater.errorStr();
-                    ticker(errStr, QColor("red"), QFont::Normal);
-                }
+            bool success = fwUpdater.update(portDeviceName);
+            if (success)
+            {
+                ticker("FW update done.", QColor("green"), QFont::Normal);
+            }
+            else
+            {
+                QString errStr = "Update failed: ";
+                errStr += fwUpdater.errorStr();
+                ticker(errStr, QColor("red"), QFont::Normal);
+            }
 
-                // reconnect
+            // reconnect
+            if (!init || success)
+            {
                 connectAG();
             }
         }

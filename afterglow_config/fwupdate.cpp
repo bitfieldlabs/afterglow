@@ -48,8 +48,9 @@
 
 FWUpdater::FWUpdater()
 {
-    mpProcess = NULL;
-    mpFWUpdDialog = NULL;
+    mpProcess = nullptr;
+    mpFWUpdDialog = nullptr;
+    mError = false;
 }
 
 FWUpdater::~FWUpdater()
@@ -122,7 +123,7 @@ bool FWUpdater::update(const QString &portName)
         if (mpProcess)
         {
             delete mpProcess;
-            mpProcess = NULL;
+            mpProcess = nullptr;
         }
 
         // start a new process
@@ -137,21 +138,27 @@ bool FWUpdater::update(const QString &portName)
             mpProcess->setProcessChannelMode(QProcess::MergedChannels);
             connect(mpProcess, SIGNAL(readyRead()), this, SLOT(stdOut()), Qt::DirectConnection);
             connect(mpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(procFinished(int,QProcess::ExitStatus)), Qt::DirectConnection);
+            connect(mpProcess, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(errorOccurred(QProcess::ProcessError)), Qt::DirectConnection);
 
             mpProcess->start(bin, args);
             mpFWUpdDialog->exec();
-            mpProcess->waitForFinished(30000);
+
+            // terminate the process if it's still running
+            if (mpProcess->state() != QProcess::NotRunning)
+            {
+                mpProcess->terminate();
+            }
 
             // read all output
             mResponseStr = mpProcess->readAll();
 
             // cleanup
             delete mpProcess;
-            mpProcess = NULL;
+            mpProcess = nullptr;
             delete mpFWUpdDialog;
-            mpFWUpdDialog = NULL;
+            mpFWUpdDialog = nullptr;
 
-            return true;
+            return !mError;
         }
     }
     else
@@ -182,6 +189,7 @@ void FWUpdater::procFinished(int exitCode, QProcess::ExitStatus exitStatus)
         {
             // paint the message window red
             mpFWUpdDialog->setMsgStyle("background-color: rgb(255, 179, 179);");
+            mError = true;
         }
         else
         {
@@ -189,4 +197,16 @@ void FWUpdater::procFinished(int exitCode, QProcess::ExitStatus exitStatus)
             mpFWUpdDialog->setMsgStyle("background-color: rgb(179, 255, 179);");
         }
     }
+}
+
+void FWUpdater::errorOccurred(QProcess::ProcessError error)
+{
+    if (mpFWUpdDialog)
+    {
+        // paint the message window red
+        mpFWUpdDialog->setOutput("Failed to run avrdude! Check whether the binary is available on your system.");
+        mpFWUpdDialog->setMsgStyle("background-color: rgb(255, 179, 179);");
+        mError = true;
+    }
+    (void)error;
 }

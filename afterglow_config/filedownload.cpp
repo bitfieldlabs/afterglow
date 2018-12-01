@@ -27,9 +27,9 @@
 
 FileDownloader::FileDownloader()
 {
-    mpNm = NULL;
-    mpReply = NULL;
-    mpFile = NULL;
+    mpNm = nullptr;
+    mpReply = nullptr;
+    mpFile = nullptr;
     mSuccess = false;
 }
 

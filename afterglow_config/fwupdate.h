@@ -44,6 +44,7 @@ public:
 private slots:
     void stdOut();
     void procFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void errorOccurred(QProcess::ProcessError error);
 
 private:
 
@@ -52,6 +53,7 @@ private:
     QProcess *mpProcess;
     FWUpdateDialog *mpFWUpdDialog;
     QString mAvrdudeOutput;
+    bool mError;
 };
 
 

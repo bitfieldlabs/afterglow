@@ -1,6 +1,9 @@
 #ifndef AGCONFIG_H
 #define AGCONFIG_H
 
+// Current version
+#define AGCONFIG_VERSION "0.4"
+
 // number of columns in the lamp matrix
 #define NUM_COL 8
 

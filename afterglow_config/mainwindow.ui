@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>897</width>
-    <height>980</height>
+    <width>693</width>
+    <height>668</height>
    </rect>
   </property>
   <property name="palette">
@@ -513,7 +513,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="versionLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -526,7 +526,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Configuration Tool v0.4</string>
+         <string>Welcome</string>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
