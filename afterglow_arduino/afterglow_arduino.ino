@@ -50,7 +50,7 @@
 // Setup
 
 // Afterglow version number
-#define AFTERGLOW_VERSION 104
+#define AFTERGLOW_VERSION 105
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -104,12 +104,6 @@
 
 // afterglow LED glow duration [ms]
 #define AFTERGLOW_LED_DUR (2000)
-
-// test mode lamp switch interval [ms]
-#define TESTMODE_INT (500)
-
-// number of cycles per testmode interval
-#define TESTMODE_CYCLES ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT)
 
 // current supervision on pin A0
 #define CURR_MEAS_PIN A0
@@ -351,6 +345,9 @@ ISR(TIMER1_COMPA_vect)
     // frequency due to varying update calculation times.
     driveLampMatrix();
 
+    // breathe (arduino LED)
+    breathe();
+
 #if (BOARD_REV >= 13)
     // Measure the current flowing through the current measurement resistor
     // (R26 on AG v1.3).
@@ -369,20 +366,10 @@ ISR(TIMER1_COMPA_vect)
     bool validInput = true;
 
     // testmode input simulation (jumper J1 active)
-    if ((PINB & B00000100) == 0)
+    if ((PINB & B00000001) == 0)
     {
         // test mode
         inData = testModeInput();
-
-        // blink the nano LED with 2Hz to indicate test mode
-        if (sTtag / (500000 / TTAG_INT) % 2)
-        {
-            PORTB |= B00100000;
-        }
-        else
-        {
-            PORTB &= B11011111;
-        }
     }
 #if (STARTUP_JINGLE > 0)
     // do the jingle at startup
@@ -547,7 +534,7 @@ void loop()
     if ((loopCounter % 10) == 0)
     {
         // print the maximum interrupt runtime
-        if ((PINB & B00000100) == 0)
+        if ((PINB & B00000001) == 0)
         {
             Serial.println("TESTMODE!");
         }
@@ -801,23 +788,99 @@ uint16_t testModeInput(void)
     byte rowMask = 0;
 
 #ifdef REPLAY_ENABLED
-    // replay from table
-    rowMask = replay(col);
-#else
-    // switch between even and odd lamps
-    // turn on every other column
-    /*
-    if (col % 2 == ((sTtag / TESTMODE_CYCLES) % 2))
+    // test switch 2 activates the replay mode
+    if ((PINB & B00000010) == 0)
     {
-        rowMask = B01010101;
-        if ((sTtag / TESTMODE_CYCLES) % 3)
+        // replay from table
+        rowMask = replay(col);
+    }
+#endif
+
+    // Start simulation if test switch 2 (replay mode) is inactive
+    if ((PINB & B00000010) != 0)
+    {
+#define TEST_MODE_NUMMODES 7    // number of test modes
+#define TEST_MODE_DUR 8         // test duration per mode [s]
+#define TESTMODE_INT (500)      // test mode lamp switch interval [ms]
+#define TESTMODE_CYCLES ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT) // number of cycles per testmode interval
+        
+        // loop through all available modes
+        uint8_t m = (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT));
+        switch (m % TEST_MODE_NUMMODES)
         {
-            rowMask <<= 1;
+            case 0:
+            // cycle all columns
+            {
+                uint8_t c = ((sTtag / TESTMODE_CYCLES) % NUM_COL);
+                if (c == col)
+                {
+                    rowMask = 0xff;
+                }
+            }
+            break;
+            case 1:
+            // cycle all rows
+            {
+                uint8_t r = ((sTtag / TESTMODE_CYCLES) % NUM_ROW);
+                rowMask |= (1 << r);
+            }
+            break;
+            case 2:
+            // cycle all columns (inverted)
+            {
+                uint8_t c = ((sTtag / TESTMODE_CYCLES) % NUM_COL);
+                if (c != col)
+                {
+                    rowMask = 0xff;
+                }
+            }
+            break;
+            case 3:
+            // cycle all rows (inverted)
+            {
+                uint8_t r = ((sTtag / TESTMODE_CYCLES) % NUM_ROW);
+                rowMask = ~(1 << r);
+            }
+            break;
+            case 4:
+            // blink all lamps
+            {
+                if ((sTtag / TESTMODE_CYCLES) % 2)
+                {
+                    rowMask = 0xff;
+                }
+            }
+            break;
+            case 5:
+            // switch between even and odd lamps
+            // turn on every other column
+            {
+                if (col % 2 == ((sTtag / TESTMODE_CYCLES) % 2))
+                {
+                    rowMask = B01010101;
+                    if ((sTtag / TESTMODE_CYCLES) % 3)
+                    {
+                        rowMask <<= 1;
+                    }
+                }
+            }
+            break;
+            case 6:
+            // cycle through all lamps individually with 4x speed
+            {
+                uint8_t l = (uint8_t)((sTtag / TESTMODE_CYCLES * 4) % (NUM_COL * NUM_ROW));
+                uint8_t c = (l / NUM_ROW);
+                uint8_t r = (l % NUM_COL);
+                if (c == col)
+                {
+                    rowMask = (1 << r);
+                }
+            }
+            break;
+            default:
+            break;
         }
     }
-    */
-    rowMask = 0xff;
-#endif
 
     // invert the row mask as in the original input HIGH means off
     rowMask = ~rowMask;
@@ -1085,6 +1148,63 @@ void saveCfgToEEPROM()
     }
     Serial.print("EEPROM write ");
     Serial.println(sizeof(sCfg));
+}
+
+//------------------------------------------------------------------------------
+void breathe()
+{
+    // In test mode the LED blinks
+    if ((PINB & B00000100) == 0)
+    {
+        // blink the nano LED with 2Hz to indicate test mode
+        if (sTtag / (500000 / TTAG_INT) % 2)
+        {
+            PORTB |= B00100000;
+        }
+        else
+        {
+            PORTB &= B11011111;
+        }
+    }
+    else
+    {
+        // breathe
+        #define BREATHE_PW_CYCLE (10000 / TTAG_INT)
+        static uint8_t sPW = 0;
+        static bool sPWPlus = true;
+        uint8_t cycle = (sTtag % BREATHE_PW_CYCLE);
+        if (sPW >= cycle)
+        {
+            PORTB |= B00100000;
+        }
+        else
+        {
+            PORTB &= B11011111;
+        }
+        if ((sTtag % 64) == 0)
+        {
+            if ((sPW > (BREATHE_PW_CYCLE/2)) ||
+                ((sTtag % 512) == 0))
+            {
+                if (sPWPlus)
+                {
+                    sPW++;
+                    if (sPW == BREATHE_PW_CYCLE)
+                    {
+                        sPWPlus = false;
+                    }
+                }
+                else
+                {
+                    sPW--;
+                    if (sPW == 0)
+                    {
+                        sPWPlus = true;
+                    }
+                }
+            }
+        }
+    }
 }
 
 #if DEBUG_SERIAL
