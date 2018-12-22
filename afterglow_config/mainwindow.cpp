@@ -434,6 +434,10 @@ void MainWindow::enumSerialPorts()
 
 void MainWindow::updateTable(int parameter)
 {
+    // clear the selection, otherwise the selected item would adopt the
+    // change of the last value in tableChanged()
+    ui->lampMatrix->clearSelection();
+
     // populate the table with the values from the configuration
     for (int c=0; c<8; c++)
     {
