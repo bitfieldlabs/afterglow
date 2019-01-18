@@ -346,7 +346,7 @@ ISR(TIMER1_COMPA_vect)
     driveLampMatrix();
 
     // breathe (arduino LED)
-    breathe();
+    //breathe();
 
 #if (BOARD_REV >= 13)
     // Measure the current flowing through the current measurement resistor
