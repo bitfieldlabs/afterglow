@@ -1,0 +1,391 @@
+Index: makefile.unix
+===================================================================
+--- makefile.unix	(revision 4643)
++++ makefile.unix	(working copy)
+@@ -592,10 +592,10 @@
+ # Choose any additonal sound drivers you want to include, besides the 
+ # native sound driver for your system.
+ # SOUND_ESOUND = 1
+-# SOUND_ALSA = 1
++SOUND_ALSA = 1
+ # SOUND_ARTS_TEIRA = 1
+ # SOUND_ARTS_SMOTEK = 1
+-# SOUND_SDL = 1
++SOUND_SDL = 1
+ # SOUND_WAVEOUT = 1
+ 
+ 
+Index: src/ui/options.c
+===================================================================
+--- src/ui/options.c	(revision 4643)
++++ src/ui/options.c	(working copy)
+@@ -695,8 +695,8 @@
+         settings.list_font_color = (COLORREF)-1;
+         settings.list_clone_color = (COLORREF)-1;
+ 
+-        settings.skip_disclaimer = FALSE;
+-        settings.skip_gameinfo = FALSE;
++        settings.skip_disclaimer = TRUE;
++        settings.skip_gameinfo = TRUE;
+         settings.high_priority = FALSE;
+ 
+         /* video */
+Index: src/unix/config.c
+===================================================================
+--- src/unix/config.c	(revision 4643)
++++ src/unix/config.c	(working copy)
+@@ -1,6 +1,6 @@
+ /*
+  * X-mame config-file and commandline parsing
+- * We don't use stderr_file resp stdout_file in here since we don't know if 
++ * We don't use stderr_file resp stdout_file in here since we don't know if
+  * it's valid yet.
+  */
+ 
+@@ -129,8 +129,8 @@
+ 	{ "language", "lang", rc_string, &language, "english", 0, 0, NULL, "Select the language for the menus and osd" },
+ 	{ "fuzzycmp", "fc", rc_bool, &use_fuzzycmp, "1", 0, 0, NULL, "Enable/disable use of fuzzy gamename matching when there is no exact match" },
+ 	{ "cheat", "c", rc_bool, &options.cheat, "0", 0, 0, NULL, "Enable/disable cheat subsystem" },
+-	{ "skip_disclaimer", NULL, rc_bool, &options.skip_disclaimer, "0", 0, 0, NULL, "Skip displaying the disclaimer screen" },
+-	{ "skip_gameinfo", NULL, rc_bool, &options.skip_gameinfo, "0", 0, 0, NULL, "Skip displaying the game info screen" },
++	{ "skip_disclaimer", NULL, rc_bool, &options.skip_disclaimer, "1", 0, 0, NULL, "Skip displaying the disclaimer screen" },
++	{ "skip_gameinfo", NULL, rc_bool, &options.skip_gameinfo, "1", 0, 0, NULL, "Skip displaying the game info screen" },
+ 	{ "crconly", NULL, rc_bool, &options.crc_only, "0", 0, 0, NULL, "Use only CRC for all integrity checks" },
+ 	{ "bios", NULL, rc_string, &options.bios, "default", 0, 14, NULL, "change system bios" },
+ #ifdef MAME_DEBUG
+@@ -267,7 +267,7 @@
+ 	   YELL about it and bail out. */
+ #ifdef LSB_FIRST
+ 	if(*((unsigned short*)lsb_test) != 0x0100)
+-#else	
++#else
+ 	if(*((unsigned short*)lsb_test) != 0x0001)
+ #endif
+ 	{
+@@ -499,11 +499,11 @@
+ 		if (end == 0)
+ 			len = strlen(begin);
+ 		else
+-			len = end - begin;            
++			len = end - begin;
+ 
+ 		for (i = 0; drivers[i]; i++)
+ 		{
+-			if (strncasecmp(begin, drivers[i]->name, len) == 0 
++			if (strncasecmp(begin, drivers[i]->name, len) == 0
+ 					&& len == strlen(drivers[i]->name))
+ 			{
+ 				begin = strrchr(gamename,'/');
+@@ -518,7 +518,7 @@
+ 			}
+ 		}
+ 	}
+-#endif                                
++#endif
+ 
+ 	/* educated guess on what the user wants to play */
+ 	if ( (game_index == -1) && use_fuzzycmp)
+@@ -627,7 +627,7 @@
+ 						/* skip '\0' once in the list of extensions */
+ 						dst += strlen(dst) + 1;
+ 					}
+-					dev = device_next(drivers[game_index], dev); 
++					dev = device_next(drivers[game_index], dev);
+ 				}
+ 			}
+ 			if(!options.image_files[i].type)
+@@ -682,18 +682,18 @@
+ 		mame_fclose(options.language_file);
+ }
+ 
+-/* 
++/*
+  * show help and exit
+  */
+-void show_usage(void) 
++void show_usage(void)
+ {
+ 	/* header */
+-	fprintf(stdout_file, 
++	fprintf(stdout_file,
+ #ifdef MESS
+ 			"Usage: xmess <system> [game] [options]\n"
+ #else
+ 			"Usage: xmame [game] [options]\n"
+-#endif 
++#endif
+ 			"Options:\n");
+ 
+ 	/* actual help message */
+Index: src/wpc/capgames.c
+===================================================================
+--- src/wpc/capgames.c	(revision 4643)
++++ src/wpc/capgames.c	(working copy)
+@@ -66,7 +66,7 @@
+ 	static int name##_getsol(int solNo) { \
+ 		return (memory_region(REGION_CPU1)[fastflipaddr] > 0); \
+ 	}\
+-	static core_tGameData name##GameData = {0,disp,{FLIP,0,lamps,1,sb,0,gameno,0,##name##_getsol},NULL,{"", capInvSw##gameno}}; \
++	static core_tGameData name##GameData = {0,disp,{FLIP,0,lamps,1,sb,0,gameno,0,0},NULL,{"", capInvSw##gameno}}; \
+ 	static void init_##name(void) { \
+ 		core_gameData = &name##GameData; \
+ 	}
+Index: src/wpc/core.c
+===================================================================
+--- src/wpc/core.c	(revision 4643)
++++ src/wpc/core.c	(working copy)
+@@ -658,7 +658,7 @@
+   tmpPalette[COL_DMDON][2]    = bStart;
+ 
+   /*-- If the "colorize" option is set, use the individual option colors for the shades --*/
+-  if (pmoptions.dmd_colorize) { 
++  if (pmoptions.dmd_colorize) {
+     if (pmoptions.dmd_red0 > 0 || pmoptions.dmd_green0 > 0 || pmoptions.dmd_blue0 > 0) {
+       tmpPalette[COL_DMDOFF][0]   = pmoptions.dmd_red0;
+       tmpPalette[COL_DMDOFF][1]   = pmoptions.dmd_green0;
+@@ -675,7 +675,7 @@
+       tmpPalette[COL_DMD66][2]    = pmoptions.dmd_blue66;
+     }
+   }
+-  
++
+   /*-- segment display antialias colors --*/
+   tmpPalette[COL_SEGAAON1][0] = rStart * 72 / 100;
+   tmpPalette[COL_SEGAAON1][1] = gStart * 72 / 100;
+@@ -1078,7 +1078,7 @@
+                                                             else proc_top[8] = tmpSeg;
+                                                         break;
+                                                         default: proc_bottom[left/char_width + (doubleAlpha == 0)] = tmpSeg; break;
+-							} 
++							}
+ 						}
+ 					}
+ #endif
+@@ -1097,7 +1097,7 @@
+ 
+ 				}
+ 			}
+-#endif 
++#endif
+     }
+   }
+ 
+@@ -1479,7 +1479,7 @@
+ 
+ /*-- lamp handling --*/
+ void core_setLamp(UINT8 *lampMatrix, int col, int row) {
+-  while (col) {
++	while (col) {
+     if (col & 0x01) *lampMatrix |= row;
+     col >>= 1;
+     lampMatrix += 1;
+@@ -1486,7 +1486,7 @@
+   }
+ }
+ void core_setLampBlank(UINT8 *lampMatrix, int col, int row) {
+-  while (col) {
++	while (col) {
+     if (col & 0x01) *lampMatrix = row;
+     col >>= 1;
+     lampMatrix += 1;
+@@ -1849,7 +1849,7 @@
+   raw_dmdoffs = 0;
+ 
+   g_raw_gtswpc_dmdframes = 0;
+-  
++
+   g_needs_DMD_update = 1;
+ #endif
+ 
+Index: src/wpc/sims/wpc/full/bop.c
+===================================================================
+--- src/wpc/sims/wpc/full/bop.c	(revision 4643)
++++ src/wpc/sims/wpc/full/bop.c	(working copy)
+@@ -559,7 +559,7 @@
+ 
+ 	if (g_fHandleMechanics < 0)
+ 	{
+-		if (_stricmp(Machine->gamedrv->name, "bop_l7") == 0)
++		if (strcasecmp(Machine->gamedrv->name, "bop_l7") == 0)
+ 		{
+ 			// Reset Bride of Pinbot face to 0. 
+ 			wpc_ram[0x1fc9] = 0x01;
+Index: src/wpc/wpc.c
+===================================================================
+--- src/wpc/wpc.c	(revision 4643)
++++ src/wpc/wpc.c	(working copy)
+@@ -12,6 +12,23 @@
+ #include "p-roc/p-roc.h"
+ #endif
+ 
++#define AFTERGLOW_OUTPUT
++#ifdef AFTERGLOW_OUTPUT
++typedef struct AG_LAMP_SWITCH_s
++{
++    UINT16 col : 3;    // lamp column
++    UINT16 row : 3;    // lamp row
++    UINT16 dttag : 10; // delta time tag [16ms] to the last event
++} AG_LAMP_SWITCH_t;
++
++#define AG_TTAG_SCALING (16.0 / 1000.0) // 16ms steps
++
++#define AG_NUM_COL 8
++#define AG_NUM_ROW 8
++#define AG_NUM_LAMP_SWITCHES 64000  // Replay size [events]
++static UINT8 ag_lamp_status[AG_NUM_COL][AG_NUM_ROW] = {0};
++#endif
++
+ #define PRINT_GI_DATA      0 /* printf the GI Data for debugging purposes   */
+ #define DEBUG_GI           0 /* debug GI code - more printf stuff basically */
+ #define WPC_FAST_FLIP      1
+@@ -201,13 +218,13 @@
+     solenoid changes.  This allows specific machines to override the handler
+     in their init routine with one that can intercept certain solenoid
+     changes and then have the default handler cover all other cases.
+-    
++
+     `solNum` is 0 to 63 and represents a bit number in the value returned by
+     core_getAllSol().
+-    
++
+     `enabled` indicates whether the solenoid has changed to enabled (1) or
+     disabled (0).
+-    
++
+     `smoothed` indicated whether this came from the period solenoid change
+     processing with smoothed readings (1) or came from an immediate solenoid
+     change in the emulator (0).
+@@ -282,7 +299,7 @@
+     // TODO:PROC: Upper flipper circuits in WPC-95. (Is this still the case?)
+     // Some games (AFM) seem to use sim files to activate these coils.  Others (MM) don't ever seem to activate them (Trolls).
+   }
+-  
++
+   // Called from wpc_w() to process immediate changes to solenoid values.
+   void proc_immediate_solenoid_change(int offset, UINT8 new_data) {
+     static UINT32 current_values = 0;
+@@ -289,7 +306,7 @@
+     UINT32 mask = (0xFF << offset);
+     UINT8 changed_data = new_data ^ ((current_values & mask) >> offset);
+     int i;
+-    
++
+     if (changed_data) {
+       current_values = (current_values & ~mask) | (new_data << offset);
+       for (i = offset; changed_data; ++i, changed_data >>= 1, new_data >>= 1) {
+@@ -369,7 +386,6 @@
+ 	static int gi_last[CORE_MAXGI];
+ 	int changed_gi[CORE_MAXGI];
+ #endif
+-
+   wpclocals.vblankCount = (wpclocals.vblankCount+1) % 16;
+ 
+ #ifdef PROC_SUPPORT
+@@ -421,7 +437,7 @@
+       UINT64 allSol = core_getAllSol();
+       UINT64 chgSol = (allSol ^ lastSol);
+       lastSol = allSol;
+-      
++
+       if (chgSol) {
+         for (ii=0; ii<64; ii++) {
+           if (chgSol & 0x1) {
+@@ -434,12 +450,12 @@
+           allSol >>= 1;
+         }
+       }
+-  
++
+       // GI
+       for (ii = 0; ii < CORE_MAXGI; ii++) {
+         changed_gi[ii] = gi_last[ii] != coreGlobals.gi[ii];
+         gi_last[ii] = coreGlobals.gi[ii];
+-  
++
+         if (changed_gi[ii]) {
+           procDriveLamp(ii+72, coreGlobals.gi[ii] > 2);
+         }
+@@ -512,6 +528,65 @@
+ #endif
+     memcpy(coreGlobals.lampMatrix, coreGlobals.tmpLampMatrix, sizeof(coreGlobals.tmpLampMatrix));
+     memset(coreGlobals.tmpLampMatrix, 0, 8);
++
++#ifdef AFTERGLOW_OUTPUT
++	//fprintf(stdout, "setLamp %.6lf %d %d %d\n", timer_get_time(), col, row, (UINT8)row);
++    // update the lamp core_status
++    static double ag_first_event = 0.0;
++    static UINT32 ag_dttag_tot = 0;
++    static ag_num_events = 0;
++    UINT32 cbit = 1;
++/*
++    fprintf(stdout, "\nal %.6lf 0x%02X %d%d%d%d%d%d%d%d\n", timer_get_time(), coreGlobals.lampMatrix[7],
++        ((coreGlobals.lampMatrix[7] >> 0) & 0x01), ((coreGlobals.lampMatrix[7] >> 1) & 0x01),
++        ((coreGlobals.lampMatrix[7] >> 2) & 0x01), ((coreGlobals.lampMatrix[7] >> 3) & 0x01),
++        ((coreGlobals.lampMatrix[7] >> 4) & 0x01), ((coreGlobals.lampMatrix[7] >> 5) & 0x01),
++        ((coreGlobals.lampMatrix[7] >> 6) & 0x01), ((coreGlobals.lampMatrix[7] >> 7) & 0x01));
++*/
++    for (UINT8 c=0; c<AG_NUM_COL; c++)
++    {
++        UINT8 rd = coreGlobals.lampMatrix[c];
++        for (UINT8 r=0; r<AG_NUM_ROW; r++)
++        {
++            UINT8 newStatus = (rd & 0x01) ? 1 : 0;
++            // handle lamp status changes
++            if (newStatus != ag_lamp_status[c][r])
++            {
++                double now = timer_get_time();
++
++                // update the status
++                ag_lamp_status[c][r] = newStatus;
++
++                // adjust the reference time if necessary
++                if (ag_first_event == 0.0)
++                {
++                    ag_first_event = now;
++                }
++                double dt_first = (now - ag_first_event);
++                UINT32 dttag_first = (UINT32)((dt_first / AG_TTAG_SCALING) + 0.5);
++                UINT16 dttag = (UINT16)(dttag_first - ag_dttag_tot);
++                ag_dttag_tot += (UINT32)dttag;
++
++                // create a new event
++                if (ag_num_events < AG_NUM_LAMP_SWITCHES)
++                {
++                    // print the event
++                    fprintf(stdout, "{%u, %u, %u}, ", c, r, dttag);
++                    if (ag_num_events % 10 == 0)
++                    {
++                        if (ag_num_events % 50 == 0)
++                        {
++                            fprintf(stdout, "  // +%.3lfs %lu", dt_first, ag_dttag_tot*16);
++                        }
++                        fprintf(stdout, "\n");
++                    }
++                    ag_num_events ++;
++                }
++            }
++            rd >>= 1;
++        }
++    }
++#endif
+   }
+   if ((wpclocals.vblankCount % (WPC_VBLANKDIV*WPC_DISPLAYSMOOTH)) == 0) {
+     if ((core_gameData->gen & GENWPC_HASDMD) == 0) {
+@@ -546,7 +621,7 @@
+   /-------------------------------*/
+   if (
+ #ifdef PROC_SUPPORT
+-      coreGlobals.p_rocEn || 
++      coreGlobals.p_rocEn ||
+ #endif
+       (wpclocals.vblankCount % WPC_VBLANKDIV) == 0) /*-- update switches --*/
+     core_updateSw((core_gameData->gen & GENWPC_HASFLIPTRON) ? TRUE : (wpc_data[WPC_GILAMPS] & 0x80));
+@@ -959,7 +1034,7 @@
+ 		{
+ 			int i;
+ 			wpclocals.modsol_sample = 0;
+-			
++
+ 			// Messy mappings to duplicate what the core does, see core_getSol()
+ 			for (i = 0; i < 32; i++)
+ 			{
