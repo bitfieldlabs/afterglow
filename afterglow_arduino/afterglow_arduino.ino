@@ -1,6 +1,6 @@
 /***********************************************************************
  *  afterglow:
- *      Copyright (c) 2018 Christoph Schmid
+ *      Copyright (c) 2018-2019 Christoph Schmid
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
@@ -50,7 +50,7 @@
 // Setup
 
 // Afterglow version number
-#define AFTERGLOW_VERSION 105
+#define AFTERGLOW_VERSION 106
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -61,31 +61,23 @@
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
 
-// Visual afterglow jingle at startup duration [ms] (set to 0 to disable jingle)
-#define STARTUP_JINGLE 0
-
-#if (STARTUP_JINGLE > 0)
-// Jingle lamp iteration interval [ms]
-#define STARTUP_JINGLE_INT (1000UL / 48)
-
-// Duration of the startup jingle glow [ms]
-#define STARTUP_JINGLE_GLOWDUR 2000UL
-
-// Cycle steps for startup jingle glow
-#define STARTUP_JINGLE_STEP ((uint16_t)(65535UL / ((STARTUP_JINGLE_GLOWDUR * 1000) / ORIG_INT)) * NUM_COL)
-#endif
-
 // Number of consistent data samples required for matrix update
 #define SINGLE_UPDATE_CONS 2
 
-// local time interval (us)
-#define TTAG_INT (250)
-
-// original matrix update interval (us)
+// original matrix update interval [us]
 #define ORIG_INT (2000)
 
-// cycles per original interval
-#define ORIG_CYCLES (ORIG_INT / TTAG_INT)
+// local time interval, config A [us]
+#define TTAG_INT_A (250)
+
+// cycles per original interval, config A
+#define ORIG_CYCLES_A (ORIG_INT / TTAG_INT_A)
+
+// local time interval, config B [us]
+#define TTAG_INT_B (500)
+
+// cycles per original interval, config B
+#define ORIG_CYCLES_B (ORIG_INT / TTAG_INT_B)
 
 // number of columns in the lamp matrix
 #define NUM_COL 8
@@ -107,6 +99,14 @@
 
 // current supervision on pin A0
 #define CURR_MEAS_PIN A0
+
+// test mode setup
+#define TEST_MODE_NUMMODES 7    // number of test modes
+#define TEST_MODE_DUR 8         // test duration per mode [s]
+#define TESTMODE_INT (500)      // test mode lamp switch interval [ms]
+#define TESTMODE_CYCLES_A ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_A) // number of cycles per testmode interval, config A
+#define TESTMODE_CYCLES_B ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_B) // number of cycles per testmode interval, config B
+
 
 // enable lamp replay in test mode
 //#define REPLAY_ENABLED
@@ -179,11 +179,6 @@ static uint16_t sMaxIntTime = 0;
 static byte sLastColMask = 0;
 static byte sLastRowMask = 0;
 
-#if (STARTUP_JINGLE > 0)
-// startup jingle mode indicator
-static bool sJingleActive = false;
-#endif
-
 #if DEBUG_SERIAL
 static byte sLastOutColMask = 0;
 static byte sLastOutRowMask = 0;
@@ -214,24 +209,17 @@ static uint16_t sGlowSteps[NUM_COL][NUM_ROW];
 // precalculated maximum subcycle for lamp activation (brightness)
 static byte sMaxSubcycle[NUM_COL][NUM_ROW];
 
+// last state of PINB
+static uint8_t sLastPINB = 0;
+
 
 //------------------------------------------------------------------------------
 void setup()
 {
-    // Use Timer1 to create an interrupt every TTAG_INT us.
-    // This will be the heartbeat of our realtime task.
     noInterrupts(); // disable all interrupts
-    TCCR1A = 0;
-    TCCR1B = 0;
-    // set compare match register for TTAG_INT us increments
-    // prescaler is at 1, so counting real clock cycles
-    OCR1A = (TTAG_INT * 16);  // [16MHz clock cycles]
-    // turn on CTC mode
-    TCCR1B |= (1 << WGM12);
-    // Set CS10 bit so timer runs at clock speed
-    TCCR1B |= (1 << CS10);  
-    // enable timer compare interrupt
-    TIMSK1 |= (1 << OCIE1A);
+
+    // setup the timers
+    timerSetup();
 
     // I/O pin setup
     // 74LS165 LOAD and CLK are output, DATA is input
@@ -303,6 +291,28 @@ void setup()
 
     // enable a strict 15ms watchdog
     wdt_enable(WDTO_15MS);
+
+    sLastPINB = PINB;
+}
+
+//------------------------------------------------------------------------------
+void timerSetup(void)
+{
+    // Use Timer1 to create an interrupt every TTAG_INT us.
+    // This will be the heartbeat of our realtime task.
+    TCCR1A = 0;
+    TCCR1B = 0;
+    // set compare match register for TTAG_INT us increments
+    // prescaler is at 1, so counting real clock cycles
+    OCR1A = (PINB & B00000100) ?
+        (TTAG_INT_A * 16) :  // [16MHz clock cycles]
+        (TTAG_INT_B * 16);   // [16MHz clock cycles]
+    // turn on CTC mode
+    TCCR1B |= (1 << WGM12);
+    // Set CS10 bit so timer runs at clock speed
+    TCCR1B |= (1 << CS10);  
+    // enable timer compare interrupt
+    TIMSK1 |= (1 << OCIE1A);
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +342,7 @@ void stop()
 // Timer1 interrupt handler
 // This is the realtime task heartbeat. All the magic happens here.
 ISR(TIMER1_COMPA_vect)
-{
+{   
     // time is running
     uint16_t startCnt = TCNT1;
     sTtag++;
@@ -344,9 +354,6 @@ ISR(TIMER1_COMPA_vect)
     // This is done before updating the matrix to avoid having an irregular update
     // frequency due to varying update calculation times.
     driveLampMatrix();
-
-    // breathe (arduino LED)
-    //breathe();
 
 #if (BOARD_REV >= 13)
     // Measure the current flowing through the current measurement resistor
@@ -371,23 +378,6 @@ ISR(TIMER1_COMPA_vect)
         // test mode
         inData = testModeInput();
     }
-#if (STARTUP_JINGLE > 0)
-    // do the jingle at startup
-    else
-    {
-        // the jingle is only active during the first seconds after startup
-        if (sTtag < (STARTUP_JINGLE * (1000 / TTAG_INT)))
-        {
-            // get fake input for the jingle
-            sJingleActive = true;
-            inData = jingleInput();
-        }
-        else
-        {
-            sJingleActive = false;
-        }
-    }
-#endif
 
     byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
     byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
@@ -530,6 +520,21 @@ void loop()
         complete = false;
     }
 
+    // watch out for interval configuration changes
+    if ((PINB & B00000100) != (sLastPINB & B00000100))
+    {
+        // reinitialize the timers
+        noInterrupts();
+        timerSetup();
+        sTtag = 0;
+        sLastPINB = PINB;
+        interrupts();
+#if DEBUG_SERIAL
+        Serial.print("New TTAG_INT: ");
+        Serial.println((PINB & B00000100) ? TTAG_INT_A : TTAG_INT_B);
+#endif
+    }
+
 #if DEBUG_SERIAL
     if ((loopCounter % 10) == 0)
     {
@@ -538,6 +543,8 @@ void loop()
         {
             Serial.println("TESTMODE!");
         }
+        Serial.print("TTAG_INT ");
+        Serial.println((PINB & B00000100) ? TTAG_INT_A : TTAG_INT_B);
         Serial.print("INT dt max ");
         Serial.print(sMaxIntTime / 16);
         Serial.print("us last ");
@@ -583,13 +590,6 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 {
     if (on)
     {
-#if (STARTUP_JINGLE > 0)
-        // lamps turn on immediately in jingle mode
-        if (sJingleActive)
-        {
-            step = 0xffff;
-        }
-#endif
         // increase the stored brightness value
         if (*pMx < (65535 - step))
         {
@@ -602,13 +602,6 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     }
     else
     {
-#if (STARTUP_JINGLE > 0)
-        // lamps have a very long afterglow in jingle mode
-        if (sJingleActive)
-        {
-            step = STARTUP_JINGLE_STEP;
-        }
-#endif
         // decrease the stored brightness value
         if (*pMx > step)
         {
@@ -697,7 +690,9 @@ void driveLampMatrix()
     // Brightness 2        *       *                       *       *
     // Brightness 3        *       *       *               *       *       *
     // Brightness 4        *       *       *       *       *       *       *
-    uint32_t colCycle = (sTtag / NUM_COL) % ORIG_CYCLES;
+    uint32_t colCycle = (PINB & B00000100) ?
+        ((sTtag / NUM_COL) % ORIG_CYCLES_A) :
+        ((sTtag / NUM_COL) % ORIG_CYCLES_B);
 
     // prepare the data
     // LSB is row/col 0, MSB is row/col 7
@@ -713,7 +708,9 @@ void driveLampMatrix()
         // nothing to do if the matrix value is zero (off)
         if (*pMx)
         {
-            uint16_t subCycle = (*pMx / (65536 / ORIG_CYCLES));
+            uint16_t subCycle = (PINB & B00000100) ?
+                (*pMx / (65536 / ORIG_CYCLES_A)) :
+                (*pMx / (65536 / ORIG_CYCLES_B));
 
             // limit to the configured maximum brightness
             if (subCycle > *pMaxSubCycle)
@@ -781,7 +778,9 @@ void dataOutput(byte colData, byte rowData)
 uint16_t testModeInput(void)
 {
     // simulate the original column cycle
-    byte col = ((sTtag / ORIG_CYCLES) % NUM_COL);
+    byte col = (PINB & B00000100) ?
+        ((sTtag / ORIG_CYCLES_A) % NUM_COL) :
+        ((sTtag / ORIG_CYCLES_B) % NUM_COL);
     byte colMask = (1 << col);
 
     // populate the row
@@ -798,20 +797,20 @@ uint16_t testModeInput(void)
 
     // Start simulation if test switch 2 (replay mode) is inactive
     if ((PINB & B00000010) != 0)
-    {
-#define TEST_MODE_NUMMODES 7    // number of test modes
-#define TEST_MODE_DUR 8         // test duration per mode [s]
-#define TESTMODE_INT (500)      // test mode lamp switch interval [ms]
-#define TESTMODE_CYCLES ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT) // number of cycles per testmode interval
-        
+    {       
         // loop through all available modes
-        uint8_t m = (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT));
+        uint8_t m = (PINB & B00000100) ?
+            (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT_A)) :
+            (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT_B));
+        uint32_t tmp = (PINB & B00000100) ?
+            (sTtag / TESTMODE_CYCLES_A) :
+            (sTtag / TESTMODE_CYCLES_B);
         switch (m % TEST_MODE_NUMMODES)
         {
             case 0:
             // cycle all columns
             {
-                uint8_t c = ((sTtag / TESTMODE_CYCLES) % NUM_COL);
+                uint8_t c = (tmp % NUM_COL);
                 if (c == col)
                 {
                     rowMask = 0xff;
@@ -821,14 +820,14 @@ uint16_t testModeInput(void)
             case 1:
             // cycle all rows
             {
-                uint8_t r = ((sTtag / TESTMODE_CYCLES) % NUM_ROW);
+                uint8_t r = (tmp % NUM_ROW);
                 rowMask |= (1 << r);
             }
             break;
             case 2:
             // cycle all columns (inverted)
             {
-                uint8_t c = ((sTtag / TESTMODE_CYCLES) % NUM_COL);
+                uint8_t c = (tmp % NUM_COL);
                 if (c != col)
                 {
                     rowMask = 0xff;
@@ -838,14 +837,14 @@ uint16_t testModeInput(void)
             case 3:
             // cycle all rows (inverted)
             {
-                uint8_t r = ((sTtag / TESTMODE_CYCLES) % NUM_ROW);
+                uint8_t r = (tmp % NUM_ROW);
                 rowMask = ~(1 << r);
             }
             break;
             case 4:
             // blink all lamps
             {
-                if ((sTtag / TESTMODE_CYCLES) % 2)
+                if (tmp % 2)
                 {
                     rowMask = 0xff;
                 }
@@ -855,10 +854,10 @@ uint16_t testModeInput(void)
             // switch between even and odd lamps
             // turn on every other column
             {
-                if (col % 2 == ((sTtag / TESTMODE_CYCLES) % 2))
+                if (col % 2 == (tmp % 2))
                 {
                     rowMask = B01010101;
-                    if ((sTtag / TESTMODE_CYCLES) % 3)
+                    if (tmp % 3)
                     {
                         rowMask <<= 1;
                     }
@@ -868,7 +867,7 @@ uint16_t testModeInput(void)
             case 6:
             // cycle through all lamps individually with 4x speed
             {
-                uint8_t l = (uint8_t)((sTtag / TESTMODE_CYCLES * 4) % (NUM_COL * NUM_ROW));
+                uint8_t l = (uint8_t)((tmp * 4) % (NUM_COL * NUM_ROW));
                 uint8_t c = (l / NUM_ROW);
                 uint8_t r = (l % NUM_COL);
                 if (c == col)
@@ -887,29 +886,6 @@ uint16_t testModeInput(void)
 
     return ((colMask << 8) | rowMask);
 }
-
-#if (STARTUP_JINGLE > 0)
-//------------------------------------------------------------------------------
-uint16_t jingleInput(void)
-{
-    // simulate the original column cycle
-    byte col = ((sTtag / ORIG_CYCLES) % NUM_COL);
-    byte colMask = (1 << col);
-
-    // simulate one active lamp at a time, cycling through the full matrix
-    byte rowMask = 0;
- #define JINGLE_LAMP_CYCLES (STARTUP_JINGLE_INT * (1000 / TTAG_INT))
-    uint32_t lampIx = (sTtag / JINGLE_LAMP_CYCLES);
-    if ((lampIx < (NUM_COL*NUM_ROW)) && (lampIx / NUM_COL) == col)
-    {
-        rowMask = (1 << (lampIx % NUM_COL));
-    }
-
-    // invert the row mask as in the original input HIGH means off
-    rowMask = ~rowMask;
-    return ((colMask << 8) | rowMask);
-}
-#endif
 
 //------------------------------------------------------------------------------
 bool updateValid(byte inColMask, byte inRowMask)
@@ -964,7 +940,9 @@ void applyCfg()
                 ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_COL) : 0xffff;
 
             // translate maximum brightness into maximum lamp driving subcycle
-            *pMaxSubCycle++ = (*pBrightness >> (8/ORIG_CYCLES-1));
+            *pMaxSubCycle++ = (PINB & B00000100) ?
+                (*pBrightness >> (8/ORIG_CYCLES_A-1)) :
+                (*pBrightness >> (8/ORIG_CYCLES_B-1));
 
             // next
             pGlowDur++;
@@ -1148,63 +1126,6 @@ void saveCfgToEEPROM()
     }
     Serial.print("EEPROM write ");
     Serial.println(sizeof(sCfg));
-}
-
-//------------------------------------------------------------------------------
-void breathe()
-{
-    // In test mode the LED blinks
-    if ((PINB & B00000100) == 0)
-    {
-        // blink the nano LED with 2Hz to indicate test mode
-        if (sTtag / (500000 / TTAG_INT) % 2)
-        {
-            PORTB |= B00100000;
-        }
-        else
-        {
-            PORTB &= B11011111;
-        }
-    }
-    else
-    {
-        // breathe
-        #define BREATHE_PW_CYCLE (10000 / TTAG_INT)
-        static uint8_t sPW = 0;
-        static bool sPWPlus = true;
-        uint8_t cycle = (sTtag % BREATHE_PW_CYCLE);
-        if (sPW >= cycle)
-        {
-            PORTB |= B00100000;
-        }
-        else
-        {
-            PORTB &= B11011111;
-        }
-        if ((sTtag % 64) == 0)
-        {
-            if ((sPW > (BREATHE_PW_CYCLE/2)) ||
-                ((sTtag % 512) == 0))
-            {
-                if (sPWPlus)
-                {
-                    sPW++;
-                    if (sPW == BREATHE_PW_CYCLE)
-                    {
-                        sPWPlus = false;
-                    }
-                }
-                else
-                {
-                    sPW--;
-                    if (sPW == 0)
-                    {
-                        sPWPlus = true;
-                    }
-                }
-            }
-        }
-    }
 }
 
 #if DEBUG_SERIAL
@@ -2283,7 +2204,9 @@ byte replay(byte col)
     int nr = numReplays();
 
     // update the lamp matrix
-    uint32_t replayTtag = (sTtag >> 6); //(sTtag / (REPLAY_TTAG_SCALE / TTAG_INT));
+    uint32_t replayTtag = (PINB & B00000100) ?
+        (sTtag >> 6) : //(sTtag / (REPLAY_TTAG_SCALE / TTAG_INT_A));
+        (sTtag >> 5);  //(sTtag / (REPLAY_TTAG_SCALE / TTAG_INT_B));
     if (lastUpdTtag == 0)
     {
         lastUpdTtag = replayTtag;
