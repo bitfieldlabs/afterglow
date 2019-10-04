@@ -191,7 +191,7 @@ static uint32_t sTtag = 0;
 static uint16_t sLastIntTime = 0;
 static uint16_t sMaxIntTime = 0;
 
-// remember the last column and row samples
+// remember the last column and row samplesh
 static byte sLastColMask = 0;
 static byte sLastRowMask = 0;
 
@@ -611,7 +611,7 @@ inline void updateMx(uint16_t *pMx, uint8_t *pDelay, const uint8_t *pkDelayCfg,
         // count down the lamp delay first
         if (*pDelay)
         {
-            *pDelay--;
+            (*pDelay)--;
         }
         else
         {
