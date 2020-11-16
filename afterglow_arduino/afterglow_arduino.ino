@@ -50,7 +50,7 @@
 // Setup
 
 // Afterglow version number
-#define AFTERGLOW_VERSION 106
+#define AFTERGLOW_VERSION 107
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -353,7 +353,16 @@ ISR(TIMER1_COMPA_vect)
     // Drive the lamp matrix
     // This is done before updating the matrix to avoid having an irregular update
     // frequency due to varying update calculation times.
-    driveLampMatrix();
+    if ((PINB & B00001000) == 0)
+    {
+        // pass-through mode
+        driveLampMatrixPassThrough();
+    }
+    else
+    {
+        // afterglow mode
+        driveLampMatrix();
+    }
 
 #if (BOARD_REV >= 13)
     // Measure the current flowing through the current measurement resistor
@@ -543,6 +552,14 @@ void loop()
         {
             Serial.println("TESTMODE!");
         }
+        if ((PINB & B0000100) == 0)
+        {
+            Serial.println("REPLAY!");
+        }
+        if ((PINB & B0001000) == 0)
+        {
+            Serial.println("PASS THROUGH!");
+        }
         Serial.print("TTAG_INT ");
         Serial.println((PINB & B00000100) ? TTAG_INT_A : TTAG_INT_B);
         Serial.print("INT dt max ");
@@ -663,6 +680,25 @@ uint16_t sampleInput(void)
         PORTD |= B00001000;                // CLK high
     }
     return data;
+}
+
+//------------------------------------------------------------------------------
+void driveLampMatrixPassThrough()
+{
+    static byte sLastPassThroughColMask = 0;
+    static byte sLastPassThroughRowMask = 0;
+
+    // only update when changed
+    if ((sLastColMask != sLastPassThroughColMask) ||
+        (sLastRowMask != sLastPassThroughRowMask))
+    {
+        // update the output
+        dataOutput(sLastColMask, sLastRowMask);
+
+        // remember the new state
+        sLastPassThroughColMask = sLastColMask;
+        sLastPassThroughRowMask = sLastRowMask;
+    }
 }
 
 //------------------------------------------------------------------------------
