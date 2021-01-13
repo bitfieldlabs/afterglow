@@ -639,6 +639,8 @@ void MainWindow::updateFW()
             QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
 #elif defined Q_OS_WIN
             QString portDeviceName = ui->serialPortSelection->currentText();
+#elif defined Q_OS_MACOS
+            QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
 #endif
             bool success = fwUpdater.update(portDeviceName);
             if (success)

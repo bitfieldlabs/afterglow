@@ -31,6 +31,8 @@
 #define AVRDUDE_BINARY "avrdude"
 #elif defined Q_OS_WIN
 #define AVRDUDE_BINARY "avrdude\\avrdude.exe"
+#elif defined Q_OS_MACOS
+#define AVRDUDE_BINARY "avrdude\\avrdude"
 #endif
 
 // github arduino sketch
