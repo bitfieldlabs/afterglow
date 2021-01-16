@@ -1,8 +1,10 @@
 #ifndef AGCONFIG_H
 #define AGCONFIG_H
 
+#include <QtGlobal>
+
 // Current version
-#define AGCONFIG_VERSION "0.4"
+#define AGCONFIG_VERSION "0.4.1"
 
 // number of columns in the lamp matrix
 #define NUM_COL 8
@@ -16,11 +18,11 @@
 // afterglow configuration data definition
 typedef struct AFTERGLOW_CFG_s
 {
-    uint16_t version;                      // afterglow version of the configuration
-    uint16_t res;                          // reserved bytes
-    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
-    uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
-    uint32_t crc;                          // data checksum
+    quint16 version;                      // afterglow version of the configuration
+    quint16 res;                          // reserved bytes
+    quint8 lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    quint8 lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+    quint32 crc;                          // data checksum
 } AFTERGLOW_CFG_t;
 
 #endif // AGCONFIG_H

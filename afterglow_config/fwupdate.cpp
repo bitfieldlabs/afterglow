@@ -36,13 +36,13 @@
 #endif
 
 // github arduino sketch
-#define GITHUB_ARDUINO_SKETCH_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/afterglow_arduino.ino"
+#define GITHUB_ARDUINO_SKETCH_URL "https://raw.githubusercontent.com/bitfieldlabs/afterglow/master/afterglow_arduino/afterglow_arduino.ino"
 
 // local arduino sketch file name
 #define GITHUB_ARDUINO_SKETCH_FILE "afterglow_arduino.ino"
 
 // github firmware binary
-#define GITHUB_ARDUINO_FW_URL "https://raw.githubusercontent.com/smyp/afterglow/master/afterglow_arduino/bin/afterglow_arduino.ino.eightanaloginputs.hex"
+#define GITHUB_ARDUINO_FW_URL "https://raw.githubusercontent.com/bitfieldlabs/afterglow/master/afterglow_arduino/bin/afterglow_arduino.ino.eightanaloginputs.hex"
 
 // local firmware binary file name
 #define GITHUB_ARDUINO_FW_FILE "afterglow_arduino.eightanaloginputs.hex"
@@ -141,7 +141,6 @@ bool FWUpdater::update(const QString &portName)
             connect(mpProcess, SIGNAL(readyRead()), this, SLOT(stdOut()), Qt::DirectConnection);
             connect(mpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(procFinished(int,QProcess::ExitStatus)), Qt::DirectConnection);
             connect(mpProcess, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(errorOccurred(QProcess::ProcessError)), Qt::DirectConnection);
-
             mpProcess->start(bin, args);
             mpFWUpdDialog->exec();
 

@@ -353,7 +353,7 @@ void MainWindow::prepareLampMatrix()
                     header->setText(QString::number(r/2+1));
                     ui->lampMatrix->setVerticalHeaderItem(r,header);
                 }
-                ui->lampMatrix->setItem(r, c, new QTableWidgetItem(""));
+                ui->lampMatrix->setItem(r, c, new QTableWidgetItem("0"));
                 QTableWidgetItem *pWI = ui->lampMatrix->item(r, c);
                 if (pWI)
                 {
