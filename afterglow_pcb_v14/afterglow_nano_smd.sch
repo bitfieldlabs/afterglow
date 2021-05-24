@@ -2017,7 +2017,7 @@ Wire Wire Line
 Wire Wire Line
 	6200 9300 6200 9400
 $Comp
-L afterglow_nano_smd-rescue:Arduino_Nano_v3.x-MCU_Module A1
+L afterglow_nano_smd-rescue:Arduino_Nano_v3.x-MCU_Module-afterglow_nano_smd-rescue A1
 U 1 1 5B9C7C51
 P 8000 5350
 F 0 "A1" H 7500 4250 50  0000 C CNN

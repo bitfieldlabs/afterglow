@@ -454,11 +454,11 @@ X S 3 100 -200 100 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module
+# afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module-afterglow_nano_smd-rescue
 #
-DEF afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module A 0 40 Y Y 1 F N
+DEF afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module-afterglow_nano_smd-rescue A 0 40 Y Y 1 F N
 F0 "A" -200 1025 50 H V R CNN
-F1 "afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module" -200 950 50 H V R CNN
+F1 "afterglow_nano_smd-rescue_Arduino_Nano_v3.x-MCU_Module-afterglow_nano_smd-rescue" -200 950 50 H V R CNN
 F2 "Module:Arduino_Nano" 150 -950 50 H I L CNN
 F3 "" 0 -1000 50 H I C CNN
 $FPLIST
