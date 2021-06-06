@@ -50,7 +50,7 @@
 // Setup
 
 // Afterglow version number
-#define AFTERGLOW_VERSION 107
+#define AFTERGLOW_VERSION 108
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 1
@@ -174,6 +174,7 @@ static uint32_t sTtag = 0;
 // interrupt runtime counters [cycles]
 static uint16_t sLastIntTime = 0;
 static uint16_t sMaxIntTime = 0;
+static volatile uint16_t sOverflowCount = 0;
 
 // remember the last column and row samples
 static byte sLastColMask = 0;
@@ -217,9 +218,6 @@ static uint8_t sLastPINB = 0;
 void setup()
 {
     noInterrupts(); // disable all interrupts
-
-    // setup the timers
-    timerSetup();
 
     // I/O pin setup
     // 74LS165 LOAD and CLK are output, DATA is input
@@ -286,6 +284,9 @@ void setup()
     Serial.println("");
 #endif
 
+    // setup the timers
+    timerSetup();
+
     // enable all interrupts
     interrupts();
 
@@ -300,17 +301,18 @@ void timerSetup(void)
 {
     // Use Timer1 to create an interrupt every TTAG_INT us.
     // This will be the heartbeat of our realtime task.
-    TCCR1A = 0;
     TCCR1B = 0;
+    // turn on CTC mode
+    TCCR1B |= (1 << WGM12);
+    // Set CS10 bit so timer runs at clock speed
+    TCCR1B |= (1 << CS10);  
+    // turn off other timer1 functions
+    TCCR1A = 0;
     // set compare match register for TTAG_INT us increments
     // prescaler is at 1, so counting real clock cycles
     OCR1A = (PINB & B00000100) ?
         (TTAG_INT_A * 16) :  // [16MHz clock cycles]
         (TTAG_INT_B * 16);   // [16MHz clock cycles]
-    // turn on CTC mode
-    TCCR1B |= (1 << WGM12);
-    // Set CS10 bit so timer runs at clock speed
-    TCCR1B |= (1 << CS10);  
     // enable timer compare interrupt
     TIMSK1 |= (1 << OCIE1A);
 }
@@ -336,6 +338,14 @@ void stop()
 
     // pull OE high to disable all outputs
     PORTC |= B00000010;
+}
+
+//------------------------------------------------------------------------------
+// Timer1 overflow handler
+// 
+ISR(TIMER1_OVF_vect)
+{
+    sOverflowCount++;
 }
 
 //------------------------------------------------------------------------------
@@ -566,7 +576,8 @@ void loop()
         Serial.print(sMaxIntTime / 16);
         Serial.print("us last ");
         Serial.print(sLastIntTime / 16);
-        Serial.println("us");
+        Serial.print("us ovfl ");
+        Serial.println(sOverflowCount);
         Serial.print("Bad col: ");
         Serial.print(sBadColCounter);
         Serial.print(" col ");
