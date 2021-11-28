@@ -6,7 +6,7 @@ The brain of the board is a Arduino nano. It samples the original lamp matrix fr
 
 The basic principle involves resampling of the original lamp matrix signals at 4kHz. This allows for PWM LED dimming with 3 bits (8 brightness steps).
 
-The resampled signal is output via serial to parallel shift registers an driven by 16 MOSFETs.
+The resampled signal is output via serial to parallel shift registers driving 16 MOSFETs.
 
 Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detailed information and instructions.
 
