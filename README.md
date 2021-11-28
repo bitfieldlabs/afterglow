@@ -1,6 +1,6 @@
 ![afterglow](https://github.com/smyp/afterglow/blob/master/artwork/afterglow.png "Afterglow")
 
-AFTERGLOW is a pinball machine extension board that aims at softening the hard lamp on/off transitions that result in replacing the original incandescent bulbs with LEDs. It works with Williams WPC, Williams System 11, Data East and probably also with Sega games.
+AFTERGLOW is a pinball machine extension board that aims at softening the hard lamp on/off transitions which are the consequencebgh of replacing the original incandescent bulbs with LEDs. It works with Williams WPC, Williams System 11, Data East and probably also with Sega games.
 
 The brain of the board is a Arduino nano. It samples the original lamp matrix from the WPC Power Driver Board using two parallel to serial shift registers.
 
