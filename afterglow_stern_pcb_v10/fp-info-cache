@@ -1,4 +1,4 @@
-10292191050914070
+10301868586032571
 Air_Coils_SML_NEOSID
 Neosid_Air-Coil_SML_1turn_HDM0131A
 Neosid, Air-Coil, SML, 1turn, HDM0131A,
@@ -28749,6 +28749,13 @@ Pololu Breakout 16-pin 15.2x20.3mm 0.6x0.8\
 16
 16
 Modules
+SD_CARD_MODULE_ALI
+
+
+0
+6
+6
+Modules
 ST_Morpho_Connector_144_STLink
 ST Morpho Connector 144 With STLink
 ST Morpho Connector 144 STLink
@@ -39221,6 +39228,13 @@ DIP254P762X533-18
 18
 18
 SnapEDA Library
+MODULE_SC0915
+
+
+0
+53
+53
+SnapEDA Library
 SOT94P279X129-5N
 
 
@@ -47788,6 +47802,13 @@ vial
 0
 0
 0
+apa-106
+APA-106-F8
+APA-106-F8
+APA 106 F8 RGB LED 8mm
+0
+4
+4
 arduino_nano
 arduino_mini
 30 pins DIL package, elliptical pads, width 600mil (arduino mini)
@@ -47860,6 +47881,27 @@ Blank
 0
 divers
 Blank
+
+
+0
+0
+0
+flipbits_nano_board
+bl_logo
+
+
+0
+0
+0
+flipbits_nano_board
+flames
+
+
+0
+0
+0
+flipbits_nano_board
+flipbits
 
 
 0
