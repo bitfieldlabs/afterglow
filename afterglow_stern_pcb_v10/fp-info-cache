@@ -1,4 +1,4 @@
-19809564396813254
+19829999209189685
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -59465,6 +59465,13 @@ Hamamatsu SiPM
 2
 2
 OptoDevice
+Kingbright_KPS-3227
+3.2mmx2.7mm, light sensor, https://www.kingbright.com/attachments/file/psearch/000/00/00/KPS-3227SP1C(Ver.16).pdf
+KPS-3227 Ambient Light Photo Sensor
+0
+4
+4
+OptoDevice
 Kingbright_KPS-5130
 http://www.kingbright.com/attachments/file/psearch/000/00/00/KPS-5130PD7C(Ver.14).pdf
 KPS-5130 photodiode RGB sensor
@@ -84497,7 +84504,28 @@ afterglow
 0
 0
 afterglow
+ag_qr
+
+
+0
+557
+0
+afterglow
+bl_logo
+
+
+0
+0
+0
+afterglow
 bl_text
+
+
+0
+0
+0
+afterglow
+stern
 
 
 0
