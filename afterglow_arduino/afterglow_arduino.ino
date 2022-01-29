@@ -49,14 +49,24 @@
 //------------------------------------------------------------------------------
 // Setup
 
+#define AFTERGLOW_WHITESTAR
+
 // Afterglow version number
-#define AFTERGLOW_VERSION 108
+#define AFTERGLOW_VERSION 109
 
 // Afterglow configuration version
-#define AFTERGLOW_CFG_VERSION 1
+#ifndef AFTERGLOW_WHITESTAR
+#  define AFTERGLOW_CFG_VERSION 1
+#else
+#  define AFTERGLOW_CFG_VERSION 2
+#endif
 
 // Afterglow board revision. Currently v1.3.
-#define BOARD_REV 13
+#ifndef AFTERGLOW_WHITESTAR
+#  define BOARD_REV 13
+#else
+#  define BOARD_REV 20
+#endif
 
 // turn debug output via serial on/off
 #define DEBUG_SERIAL 0
@@ -65,7 +75,11 @@
 #define SINGLE_UPDATE_CONS 2
 
 // original matrix update interval [us]
-#define ORIG_INT (2000)
+#ifndef AFTERGLOW_WHITESTAR
+#  define ORIG_INT (2000)
+#else
+#  define ORIG_INT (1000)
+#endif
 
 // local time interval, config A [us]
 #define TTAG_INT_A (250)
@@ -83,7 +97,11 @@
 #define NUM_COL 8
 
 // number of rows in the lamp matrix
-#define NUM_ROW 8
+#ifndef AFTERGLOW_WHITESTAR
+#  define NUM_ROW 8
+#else
+#  define NUM_ROW 10
+#endif
 
 // default glow duration [ms]
 #define DEFAULT_GLOWDUR 140
@@ -93,9 +111,6 @@
 
 // default maximum lamp brightness 0-7
 #define DEFAULT_BRIGHTNESS 7
-
-// afterglow LED glow duration [ms]
-#define AFTERGLOW_LED_DUR (2000)
 
 // current supervision on pin A0
 #define CURR_MEAS_PIN A0
@@ -177,12 +192,12 @@ static uint16_t sMaxIntTime = 0;
 static volatile uint16_t sOverflowCount = 0;
 
 // remember the last column and row samples
-static byte sLastColMask = 0;
-static byte sLastRowMask = 0;
+static uint16_t sLastColMask = 0;
+static uint16_t sLastRowMask = 0;
 
 #if DEBUG_SERIAL
-static byte sLastOutColMask = 0;
-static byte sLastOutRowMask = 0;
+static uint16_t sLastOutColMask = 0;
+static uint16_t sLastOutRowMask = 0;
 static uint32_t sBadColCounter = 0;
 static uint32_t sBadColOrderCounter = 0;
 static byte sLastBadCol = 0;
@@ -223,12 +238,12 @@ void setup()
     // 74LS165 LOAD and CLK are output, DATA is input
     // 74HC595 LOAD, CLK and DATA are output
     DDRD = B11111001;
-    // nano LED output on pin 13, testmode jumper on pin 10
-    DDRB = B00100000;
+    // Whitestar rows on pins 12 and 13, testmode config on pins 8-11
+    DDRB = B00000000;
     // activate the pullups for the testmode pins
     PORTB |= B00001111;
-    // OE on A1, DBG on A2, current meas on A0
-    DDRC = B00000110;
+    // OE on A1, Whitestar on A2 and A3, current meas on A0
+    DDRC = B00001110;
     // keep OE high
     PORTC |= B00000010;
 
@@ -262,7 +277,7 @@ void setup()
     Serial.begin(115200);
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
-    Serial.println(" (c) 2018 morbid cornflakes");
+    Serial.println(" (c) 2018-2022 morbid cornflakes");
     // check the extended fuse for brown out detection level
     uint8_t efuse = boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS);
     Serial.println("-----------------------------------------------");
@@ -374,7 +389,8 @@ ISR(TIMER1_COMPA_vect)
         driveLampMatrix();
     }
 
-#if (BOARD_REV >= 13)
+// Current measurement is only available boards starting from v1.3, but not on Whitestar boards
+#if ((BOARD_REV >= 13) && (BOARD_REV < 20))
     // Measure the current flowing through the current measurement resistor
     // (R26 on AG v1.3).
     int cm = analogRead(CURR_MEAS_PIN);
@@ -388,7 +404,7 @@ ISR(TIMER1_COMPA_vect)
 #endif
 
     // 74HC165 16bit sampling
-    uint16_t inData = sampleInput();
+    uint32_t inData = sampleInput();
     bool validInput = true;
 
     // testmode input simulation (jumper J1 active)
@@ -398,8 +414,8 @@ ISR(TIMER1_COMPA_vect)
         inData = testModeInput();
     }
 
-    byte inColMask = (inData >> 8); // LSB is col 0, MSB is col 7
-    byte inRowMask = ~(byte)inData; // high means OFF, LSB is row 0, MSB is row 7
+    uint16_t inColMask = (uint16_t)(inData >> 16); // LSB is col 0, MSB is col 7
+    uint16_t inRowMask = ~(uint16_t)inData; // high means OFF, LSB is row 0, bit 7 is row 7
 
     // evaluate the column reading
     // only one bit should be set as only one column can be active at a time
@@ -643,7 +659,7 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 }
 
 //------------------------------------------------------------------------------
-void updateCol(uint32_t col, byte rowMask)
+void updateCol(uint32_t col, uint16_t rowMask)
 {
     // paranoia check
     if (col >= NUM_COL)
@@ -659,7 +675,7 @@ void updateCol(uint32_t col, byte rowMask)
     for (uint32_t r=0; r<NUM_ROW; r++)
     {
         // update the matrix value
-        updateMx(pMx, (rowMask & 0x01), *pkStep);
+        updateMx(pMx, (rowMask & 0x0001), *pkStep);
 
         // next row
         pMx++;
@@ -669,13 +685,13 @@ void updateCol(uint32_t col, byte rowMask)
 }
 
 //------------------------------------------------------------------------------
-uint16_t sampleInput(void)
+uint32_t sampleInput(void)
 {
     // drive CLK and LOAD low
     PORTD &= B11100111;
     
     // wait some time
-    uint16_t data = 0;
+    uint32_t data = 0;
     data+= 17;
     data-= 3;
     
@@ -685,19 +701,25 @@ uint16_t sampleInput(void)
     // clock in all data
     for (byte i=0; i<16; i++)
     {
-        data <<= 1;                        // make way for the new bit
+        data <<= (i == 8) ? 9 : 1;         // make way for the new bit, shift columns up to bit 16
         PORTD &= B11110111;                // CLK low
         data |= ((PIND & B00000100) >> 2); // read data bit
         PORTD |= B00001000;                // CLK high
     }
+
+#ifdef AFTERGLOW_WHITESTAR
+    // read the two extra rows
+    data |= ((uint16)(PINB & B00110000) << 4);
+#endif
+
     return data;
 }
 
 //------------------------------------------------------------------------------
 void driveLampMatrixPassThrough()
 {
-    static byte sLastPassThroughColMask = 0;
-    static byte sLastPassThroughRowMask = 0;
+    static uint16_t sLastPassThroughColMask = 0;
+    static uint16_t sLastPassThroughRowMask = 0;
 
     // only update when changed
     if ((sLastColMask != sLastPassThroughColMask) ||
@@ -717,7 +739,7 @@ void driveLampMatrix()
 {   
     // turn off everything briefly to avoid ghosting
     // the scope says this takes ~20us at 16MHz
-    dataOutput(0x00, 0x00);
+    dataOutput(0x0000, 0x0000);
 
     // check which column we're currently updating
     uint32_t outCol = (sTtag % NUM_COL);
@@ -743,8 +765,8 @@ void driveLampMatrix()
 
     // prepare the data
     // LSB is row/col 0, MSB is row/col 7
-    byte colData = (1 << outCol);
-    byte rowData = 0;
+    uint16_t colData = (1 << outCol);
+    uint16_t rowData = 0;
     uint16_t *pMx = &sMatrixState[outCol][0];
     byte *pMaxSubCycle = &sMaxSubcycle[outCol][0];
     for (uint32_t r=0; r<NUM_ROW; r++)
@@ -767,6 +789,7 @@ void driveLampMatrix()
 
             // Lamps are turned on when the value in the matrix is not zero
             // and when the value is high enough for the current sub cycle.
+            hmm
             if (subCycle >= colCycle)
             {
                 rowData |= 0x80;
@@ -785,15 +808,15 @@ void driveLampMatrix()
 }
 
 //------------------------------------------------------------------------------
-void dataOutput(byte colData, byte rowData)
+void dataOutput(uint16_t colData, uint16_t rowData)
 {
     // This writes the 16bit column and row data to the two 74595 shift registers
     
     // pull RCLK (OUT_LOAD) and CLK low to start sending data
     PORTD &= B00111111;
 
-    // prepare the data
-    uint16_t data = ((rowData << 8) | colData);
+    // prepare the data (8 bits from column and row)
+    uint16_t data = ((uint8_t)(rowData << 8) | (colData & 0x00ff));
     
     // clock out all data
     for (uint16_t bitMask=0x8000; bitMask>0; bitMask>>=1)
@@ -815,6 +838,12 @@ void dataOutput(byte colData, byte rowData)
     // pull RCLK high to latch the data
     PORTD |= B10000000;
 
+#ifdef AFTERGLOW_WHITESTAR
+    // output the two additional rows directly on A2 and A3
+    PORTC &= B00001100;
+    PORTC |= ((rowData >> 8) << 2);
+#endif
+
     // Enable by pulling OE low.
     // This is only done here to ensure that the LEDs are not turned on before
     // the columns are duty cycled.
@@ -822,16 +851,16 @@ void dataOutput(byte colData, byte rowData)
 }
 
 //------------------------------------------------------------------------------
-uint16_t testModeInput(void)
+uint32_t testModeInput(void)
 {
     // simulate the original column cycle
-    byte col = (PINB & B00000100) ?
+    uint16_t col = (PINB & B00000100) ?
         ((sTtag / ORIG_CYCLES_A) % NUM_COL) :
         ((sTtag / ORIG_CYCLES_B) % NUM_COL);
-    byte colMask = (1 << col);
+    uint16_t colMask = (1 << col);
 
     // populate the row
-    byte rowMask = 0;
+    uint16_t rowMask = 0;
 
 #ifdef REPLAY_ENABLED
     // test switch 2 activates the replay mode
@@ -860,7 +889,7 @@ uint16_t testModeInput(void)
                 uint8_t c = (tmp % NUM_COL);
                 if (c == col)
                 {
-                    rowMask = 0xff;
+                    rowMask = 0xffff;
                 }
             }
             break;
@@ -877,7 +906,7 @@ uint16_t testModeInput(void)
                 uint8_t c = (tmp % NUM_COL);
                 if (c != col)
                 {
-                    rowMask = 0xff;
+                    rowMask = 0xffff;
                 }
             }
             break;
@@ -893,7 +922,7 @@ uint16_t testModeInput(void)
             {
                 if (tmp % 2)
                 {
-                    rowMask = 0xff;
+                    rowMask = 0xffff;
                 }
             }
             break;
@@ -903,7 +932,7 @@ uint16_t testModeInput(void)
             {
                 if (col % 2 == (tmp % 2))
                 {
-                    rowMask = B01010101;
+                    rowMask = 0xaaaa;
                     if (tmp % 3)
                     {
                         rowMask <<= 1;
@@ -931,14 +960,14 @@ uint16_t testModeInput(void)
     // invert the row mask as in the original input HIGH means off
     rowMask = ~rowMask;
 
-    return ((colMask << 8) | rowMask);
+    return ((colMask << 16) | rowMask);
 }
 
 //------------------------------------------------------------------------------
-bool updateValid(byte inColMask, byte inRowMask)
+bool updateValid(uint16_t inColMask, uint16_t inRowMask)
 {
     static byte sConsistentSamples = 0;
-    static byte sLastUpdColMask = 0x00;
+    static uint16_t sLastUpdColMask = 0x0000;
     bool valid = false;
 
     // check if the current column has not been handled already
@@ -2240,7 +2269,7 @@ int numReplays(void)
 }
 
 //------------------------------------------------------------------------------
-byte replay(byte col)
+uint16_t replay(byte col)
 {
     static byte replayLamps[NUM_COL] = {0};
     static uint32_t lastUpdTtag = 0;
