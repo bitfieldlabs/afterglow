@@ -723,7 +723,7 @@ uint32_t sampleInput(void)
 
 #ifdef AFTERGLOW_WHITESTAR
     // read the two extra rows
-    data |= ((uint16)(PINB & B00110000) << 4);
+    data |= ((uint16_t)(PINB & B00110000) << 4);
 #endif
 
     return data;
@@ -803,7 +803,6 @@ void driveLampMatrix()
 
             // Lamps are turned on when the value in the matrix is not zero
             // and when the value is high enough for the current sub cycle.
-            hmm
             if (subCycle >= colCycle)
             {
                 rowData |= (1 << (NUM_ROW-1));
@@ -974,11 +973,11 @@ uint32_t testModeInput(void)
     // invert the row mask as in the original input HIGH means off
     rowMask = ~rowMask;
 
-    return ((colMask << 16) | rowMask);
+    return (((uint32_t)colMask << 16) | (uint32_t)rowMask);
 }
 
 //------------------------------------------------------------------------------
-bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStrobeLine);
+bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStrobeLine)
 {
     bool validInput = true;
 
