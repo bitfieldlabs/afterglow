@@ -69,7 +69,7 @@
 #endif
 
 // turn debug output via serial on/off
-#define DEBUG_SERIAL 0
+#define DEBUG_SERIAL 1
 
 // Number of consistent data samples required for matrix update
 #define SINGLE_UPDATE_CONS 2
@@ -101,6 +101,13 @@
 #  define NUM_ROW 8
 #else
 #  define NUM_ROW 10
+#endif
+
+// number of strobed lines
+#ifndef AFTERGLOW_WHITESTAR
+#  define NUM_STROBE 8
+#else
+#  define NUM_STROBE 10
 #endif
 
 // default glow duration [ms]
@@ -198,10 +205,10 @@ static uint16_t sLastRowMask = 0;
 #if DEBUG_SERIAL
 static uint16_t sLastOutColMask = 0;
 static uint16_t sLastOutRowMask = 0;
-static uint32_t sBadColCounter = 0;
-static uint32_t sBadColOrderCounter = 0;
-static byte sLastBadCol = 0;
-static byte sLastGoodCol = 0;
+static uint32_t sBadStrobeCounter = 0;
+static uint32_t sBadStrobeOrderCounter = 0;
+static byte sLastBadStrobeMask = 0;
+static byte sLastGoodStrobeLine = 0;
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
 #endif
@@ -405,7 +412,6 @@ ISR(TIMER1_COMPA_vect)
 
     // 74HC165 16bit sampling
     uint32_t inData = sampleInput();
-    bool validInput = true;
 
     // testmode input simulation (jumper J1 active)
     if ((PINB & B00000001) == 0)
@@ -419,38 +425,10 @@ ISR(TIMER1_COMPA_vect)
 
     // evaluate the column reading
     // only one bit should be set as only one column can be active at a time
-    uint32_t inCol = NUM_COL;
-    switch (inColMask)
-    {
-        case 0x01: inCol = 0; break;
-        case 0x02: inCol = 1; break;
-        case 0x04: inCol = 2; break;
-        case 0x08: inCol = 3; break;
-        case 0x10: inCol = 4; break;
-        case 0x20: inCol = 5; break;
-        case 0x40: inCol = 6; break;
-        case 0x80: inCol = 7; break;
-        default:
-        {
-            // This may happen if the sample is taken in between column transition.
-            // Depending on the pinball ROM version the duration of this transition varies.
-            // On a Whitewater with Home ROM LH6 (contains anti ghosting updates) this
-            // gap was measured to be around 30us long.
-            // Machines with anti-ghosting firmware will show a gap with no column enabled
-            // for a while during the transition while older firmwares might have two
-            // columns enabled at the same time due to slow transistor deactivation. Both
-            // cases are caught here.
-            // See also https://emmytech.com/arcade/led_ghost_busting/index.html for details.
-#if DEBUG_SERIAL
-            sBadColCounter++;
-            sLastBadCol = inColMask;
-#endif
-            validInput = false;
-        }
-        break;
-    }
+    uint32_t strobeLine;
+    bool validInput = checkValidStrobeMask(inColMask, inRowMask, &strobeLine);
 
-    // The matrix is updated only once per original column cycle. The code
+    // The matrix is updated only once per original strobe cycle. The code
     // waits for a number of consecutive consistent information before updating the matrix.
     validInput &= updateValid(inColMask, inRowMask);
 
@@ -458,15 +436,15 @@ ISR(TIMER1_COMPA_vect)
     // matrix state is left unchanged.
     if (validInput)
     {
-        // update the current column
-        updateCol(inCol, inRowMask);
+        // update the lamp matrix with the current strobe line
+        updateStrobe(strobeLine, inColMask, inRowMask);
 
 #if DEBUG_SERIAL
-        if ((inCol != (sLastGoodCol+1)) && (inCol!=(sLastGoodCol-7)))
+        if ((strobeLine != (sLastGoodStrobeLine+1)) && (strobeLine!=(sLastGoodStrobeLine-NUM_STROBE+1)))
         {
-            sBadColOrderCounter++;
+            sBadStrobeOrderCounter++;
         }
-        sLastGoodCol = inCol;
+        sLastGoodStrobeLine = strobeLine;
 #endif
     }
 
@@ -595,13 +573,13 @@ void loop()
         Serial.print("us ovfl ");
         Serial.println(sOverflowCount);
         Serial.print("Bad col: ");
-        Serial.print(sBadColCounter);
+        Serial.print(sBadStrobeCounter);
         Serial.print(" col ");
-        Serial.print(sLastBadCol);
+        Serial.print(sLastBadStrobeMask);
         Serial.print(" ord ");
-        Serial.print(sBadColOrderCounter);
+        Serial.print(sBadStrobeOrderCounter);
         Serial.print(" last good: ");
-        Serial.println(sLastGoodCol);
+        Serial.println(sLastGoodStrobeLine);
         Serial.print("CM ");
         Serial.print(sLastCurr);
         Serial.print(" max ");
@@ -682,6 +660,42 @@ void updateCol(uint32_t col, uint16_t rowMask)
         pkStep++;
         rowMask >>= 1;
     }
+}
+
+//------------------------------------------------------------------------------
+void updateRow(uint32_t row, uint16_t colMask)
+{
+    // paranoia check
+    if (row >= NUM_ROW)
+    {
+        return;
+    }
+    
+    // get a pointer to the matrix row
+    uint16_t *pMx = &sMatrixState[0][row];
+    const uint16_t *pkStep = &sGlowSteps[0][row];
+
+    // update all column values
+    for (uint32_t c=0; c<NUM_COL; c++)
+    {
+        // update the matrix value
+        updateMx(pMx, (colMask & 0x0001), *pkStep);
+
+        // next row
+        pMx += NUM_ROW;
+        pkStep += NUM_ROW;
+        colMask >>= 1;
+    }
+}
+
+//------------------------------------------------------------------------------
+void updateStrobe(uint32_t strobe, uint16_t colMask, uint16_t rowMask)
+{
+#ifndef AFTERGLOW_WHITESTAR
+    updateCol(strobe, rowMask);
+#else
+    updateRow(strobe, colMask);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -792,7 +806,7 @@ void driveLampMatrix()
             hmm
             if (subCycle >= colCycle)
             {
-                rowData |= 0x80;
+                rowData |= (1 << (NUM_ROW-1));
             }
         }
         pMx++;
@@ -964,14 +978,65 @@ uint32_t testModeInput(void)
 }
 
 //------------------------------------------------------------------------------
+bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStrobeLine);
+{
+    bool validInput = true;
+
+#ifndef AFTERGLOW_WHITESTAR
+    uint16_t strobeMask = inColMask;
+    *pStrobeLine = NUM_COL;
+#else
+    uint16_t strobeMask = inRowMask;
+    *pStrobeLine = NUM_ROW;
+#endif
+
+    switch (strobeMask)
+    {
+        case 0x01: *pStrobeLine = 0; break;
+        case 0x02: *pStrobeLine = 1; break;
+        case 0x04: *pStrobeLine = 2; break;
+        case 0x08: *pStrobeLine = 3; break;
+        case 0x10: *pStrobeLine = 4; break;
+        case 0x20: *pStrobeLine = 5; break;
+        case 0x40: *pStrobeLine = 6; break;
+        case 0x80: *pStrobeLine = 7; break;
+        default:
+        {
+            // This may happen if the sample is taken in between column transition.
+            // Depending on the pinball ROM version the duration of this transition varies.
+            // On a Whitewater with Home ROM LH6 (contains anti ghosting updates) this
+            // gap was measured to be around 30us long.
+            // Machines with anti-ghosting firmware will show a gap with no column enabled
+            // for a while during the transition while older firmwares might have two
+            // columns enabled at the same time due to slow transistor deactivation. Both
+            // cases are caught here.
+            // See also https://emmytech.com/arcade/led_ghost_busting/index.html for details.
+#if DEBUG_SERIAL
+            sBadStrobeCounter++;
+            sLastBadStrobeMask = strobeMask;
+#endif
+            validInput = false;
+        }
+        break;
+    }
+    return validInput;
+}
+
+//------------------------------------------------------------------------------
 bool updateValid(uint16_t inColMask, uint16_t inRowMask)
 {
     static byte sConsistentSamples = 0;
-    static uint16_t sLastUpdColMask = 0x0000;
+    static uint16_t sLastUpdStrobeMask = 0x0000;
     bool valid = false;
 
-    // check if the current column has not been handled already
-    if (inColMask != sLastUpdColMask)
+#ifndef AFTERGLOW_WHITESTAR
+    uint16_t strobeMask = inColMask;
+#else
+    uint16_t strobeMask = inRowMask;
+#endif
+
+    // check if the current strobe line has not been handled already
+    if (strobeMask != sLastUpdStrobeMask)
     {
         // reset the counter when the data changes
         if ((inColMask != sLastColMask) || (inRowMask != sLastRowMask))
@@ -991,7 +1056,7 @@ bool updateValid(uint16_t inColMask, uint16_t inRowMask)
         // https://emmytech.com/arcade/led_ghost_busting/index.html for details.
         if (sConsistentSamples >= (SINGLE_UPDATE_CONS-1))
         {
-            sLastUpdColMask = inColMask;
+            sLastUpdStrobeMask = strobeMask;
             valid = true;
         }
     }
