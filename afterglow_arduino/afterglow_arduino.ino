@@ -49,7 +49,7 @@
 //------------------------------------------------------------------------------
 // Setup
 
-#define AFTERGLOW_WHITESTAR
+//#define AFTERGLOW_WHITESTAR
 
 // Afterglow version number
 #define AFTERGLOW_VERSION 109
@@ -61,7 +61,7 @@
 #  define AFTERGLOW_CFG_VERSION 2
 #endif
 
-// Afterglow board revision. Currently v1.3.
+// Afterglow board revision
 #ifndef AFTERGLOW_WHITESTAR
 #  define BOARD_REV 13
 #else
@@ -207,7 +207,7 @@ static uint16_t sLastOutColMask = 0;
 static uint16_t sLastOutRowMask = 0;
 static uint32_t sBadStrobeCounter = 0;
 static uint32_t sBadStrobeOrderCounter = 0;
-static byte sLastBadStrobeMask = 0;
+static uint16_t sLastBadStrobeMask = 0;
 static byte sLastGoodStrobeLine = 0;
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
@@ -707,7 +707,7 @@ uint32_t sampleInput(void)
     // wait some time
     uint32_t data = 0;
     data+= 17;
-    data-= 3;
+    data-= 17;
     
     // drive LOAD high to save pin states
     PORTD |= B00010000;
@@ -805,7 +805,7 @@ void driveLampMatrix()
             // and when the value is high enough for the current sub cycle.
             if (subCycle >= colCycle)
             {
-                rowData |= (1 << (NUM_ROW-1));
+                rowData |= ((uint16_t)1 << (NUM_ROW-1));
             }
         }
         pMx++;
@@ -829,7 +829,7 @@ void dataOutput(uint16_t colData, uint16_t rowData)
     PORTD &= B00111111;
 
     // prepare the data (8 bits from column and row)
-    uint16_t data = ((uint8_t)(rowData << 8) | (colData & 0x00ff));
+    uint16_t data = ((rowData << 8) | (colData & 0x00ff));
     
     // clock out all data
     for (uint16_t bitMask=0x8000; bitMask>0; bitMask>>=1)
@@ -991,14 +991,18 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
 
     switch (strobeMask)
     {
-        case 0x01: *pStrobeLine = 0; break;
-        case 0x02: *pStrobeLine = 1; break;
-        case 0x04: *pStrobeLine = 2; break;
-        case 0x08: *pStrobeLine = 3; break;
-        case 0x10: *pStrobeLine = 4; break;
-        case 0x20: *pStrobeLine = 5; break;
-        case 0x40: *pStrobeLine = 6; break;
-        case 0x80: *pStrobeLine = 7; break;
+        case 0x0001: *pStrobeLine = 0; break;
+        case 0x0002: *pStrobeLine = 1; break;
+        case 0x0004: *pStrobeLine = 2; break;
+        case 0x0008: *pStrobeLine = 3; break;
+        case 0x0010: *pStrobeLine = 4; break;
+        case 0x0020: *pStrobeLine = 5; break;
+        case 0x0040: *pStrobeLine = 6; break;
+        case 0x0080: *pStrobeLine = 7; break;
+#ifdef AFTERGLOW_WHITESTAR
+        case 0x0100: *pStrobeLine = 8; break;
+        case 0x0200: *pStrobeLine = 9; break;
+#endif
         default:
         {
             // This may happen if the sample is taken in between column transition.
