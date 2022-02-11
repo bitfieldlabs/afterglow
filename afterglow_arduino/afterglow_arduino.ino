@@ -49,7 +49,7 @@
 //------------------------------------------------------------------------------
 // Setup
 
-//#define AFTERGLOW_WHITESTAR
+#define AFTERGLOW_WHITESTAR
 
 // Afterglow version number
 #define AFTERGLOW_VERSION 109
@@ -284,6 +284,9 @@ void setup()
     Serial.begin(115200);
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
+#ifdef AFTERGLOW_WHITESTAR
+    Serial.print(" WS ");
+#endif
     Serial.println(" (c) 2018-2022 morbid cornflakes");
     // check the extended fuse for brown out detection level
     uint8_t efuse = boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS);
@@ -723,7 +726,7 @@ uint32_t sampleInput(void)
 
 #ifdef AFTERGLOW_WHITESTAR
     // read the two extra rows
-    data |= ((uint16_t)(PINB & B00110000) << 4);
+    data |= (((uint16_t)(PINB & B00110000)) << 4);
 #endif
 
     return data;
@@ -854,7 +857,7 @@ void dataOutput(uint16_t colData, uint16_t rowData)
 #ifdef AFTERGLOW_WHITESTAR
     // output the two additional rows directly on A2 and A3
     PORTC &= B00001100;
-    PORTC |= ((rowData >> 8) << 2);
+    PORTC |= (uint8_t)((rowData >> 8) << 2);
 #endif
 
     // Enable by pulling OE low.
@@ -910,7 +913,7 @@ uint32_t testModeInput(void)
             // cycle all rows
             {
                 uint8_t r = (tmp % NUM_ROW);
-                rowMask |= (1 << r);
+                rowMask |= ((uint16_t)1 << r);
             }
             break;
             case 2:
