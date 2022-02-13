@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name afterglow_nano_smd-rescue)(type Legacy)(uri ${KIPRJMOD}/afterglow_nano_smd-rescue.lib)(options "")(descr ""))
-)
