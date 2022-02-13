@@ -43,6 +43,7 @@
  *  | TEST3    | TESTMODE 3    | D10       | DDRB, 3       | Input Pullup |
  *  | TEST4    | TESTMODE 4    | D11       | DDRB, 4       | Input Pullup |
  *  | CM       | CURRENT MEAS  | A0        | DDRC, 0       | Input        |
+ *  | WS2812   | RGB LED (WS)  | A0        | DDRC, 0       | Output       |
  *  +----------+---------------+-----------+---------------+--------------+
 */
 
@@ -69,7 +70,7 @@
 #ifndef AFTERGLOW_WHITESTAR
 #  define BOARD_REV 13
 #else
-#  define BOARD_REV 20
+#  define BOARD_REV 21
 #endif
 
 // turn debug output via serial on/off
