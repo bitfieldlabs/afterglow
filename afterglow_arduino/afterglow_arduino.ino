@@ -105,9 +105,13 @@
 
 // number of strobed lines
 #ifndef AFTERGLOW_WHITESTAR
-#  define NUM_STROBE 8
+// Most systems strobe the 8 columns
+#  define NUM_STROBE NUM_COL
+#  define NUM_NONSTROBE NUM_ROW
 #else
-#  define NUM_STROBE 10
+// Stern Whitestar strobes the 10 rows
+#  define NUM_STROBE NUM_ROW
+#  define NUM_NONSTROBE NUM_COL
 #endif
 
 // default glow duration [ms]
@@ -125,6 +129,8 @@
 // test mode setup
 #define TEST_MODE_NUMMODES 7    // number of test modes
 #define TEST_MODE_DUR 8         // test duration per mode [s]
+#define TEST_MODE_DUR_CYCLES_A  ((uint32_t)TEST_MODE_DUR * 1000000UL / TTAG_INT_A) // number of cycles per testmode, config A
+#define TEST_MODE_DUR_CYCLES_B  ((uint32_t)TEST_MODE_DUR * 1000000UL / TTAG_INT_B) // number of cycles per testmode, config B
 #define TESTMODE_INT (500)      // test mode lamp switch interval [ms]
 #define TESTMODE_CYCLES_A ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_A) // number of cycles per testmode interval, config A
 #define TESTMODE_CYCLES_B ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_B) // number of cycles per testmode interval, config B
@@ -247,8 +253,8 @@ void setup()
     DDRD = B11111001;
     // Whitestar rows on pins 12 and 13, testmode config on pins 8-11
     DDRB = B00000000;
-    // activate the pullups for the testmode pins
-    PORTB |= B00001111;
+    // activate the pullups for the testmode and the whitestar pins
+    PORTB |= B00111111;
     // OE on A1, Whitestar on A2 and A3, current meas on A0
     DDRC = B00001110;
     // keep OE high
@@ -715,7 +721,7 @@ uint32_t sampleInput(void)
     // drive LOAD high to save pin states
     PORTD |= B00010000;
     
-    // clock in all data
+    // clock in all 16 data bits from the shift register
     for (byte i=0; i<16; i++)
     {
         data <<= (i == 8) ? 9 : 1;         // make way for the new bit, shift columns up to bit 16
@@ -726,7 +732,7 @@ uint32_t sampleInput(void)
 
 #ifdef AFTERGLOW_WHITESTAR
     // read the two extra rows
-    data |= (((uint16_t)(PINB & B00110000)) << 4);
+    data |= (((uint32_t)(PINB & B00110000)) << 4);
 #endif
 
     return data;
@@ -856,8 +862,7 @@ void dataOutput(uint16_t colData, uint16_t rowData)
 
 #ifdef AFTERGLOW_WHITESTAR
     // output the two additional rows directly on A2 and A3
-    PORTC &= B00001100;
-    PORTC |= (uint8_t)((rowData >> 8) << 2);
+    PORTC = ((PORTC & B11110011) | (uint8_t)(((rowData >> 8) & B00000011) << 2));
 #endif
 
     // Enable by pulling OE low.
@@ -870,20 +875,31 @@ void dataOutput(uint16_t colData, uint16_t rowData)
 uint32_t testModeInput(void)
 {
     // simulate the original column cycle
-    uint16_t col = (PINB & B00000100) ?
-        ((sTtag / ORIG_CYCLES_A) % NUM_COL) :
-        ((sTtag / ORIG_CYCLES_B) % NUM_COL);
-    uint16_t colMask = (1 << col);
+    static uint8_t sCycleCounter = 0;
+    static uint8_t sStrobeLine = 0;
+    bool modeA = (PINB & B00000100) ? true : false;
+    if ((modeA && (sCycleCounter == ORIG_CYCLES_A)) ||
+        (!modeA && (sCycleCounter == ORIG_CYCLES_B)))
+    {
+        sCycleCounter = 0;
+        sStrobeLine++;
+    }
+    if (sStrobeLine == NUM_STROBE)
+    {
+        sStrobeLine = 0;
+    }
+    sCycleCounter++;
+    uint16_t strobeMask = ((uint16_t)1 << (uint16_t)sStrobeLine);
 
-    // populate the row
-    uint16_t rowMask = 0;
+    // populate the non strobed mask
+    uint16_t nonStrobeMask = 0;
 
 #ifdef REPLAY_ENABLED
     // test switch 2 activates the replay mode
     if ((PINB & B00000010) == 0)
     {
         // replay from table
-        rowMask = replay(col);
+        nonStrobeMask = replay(sStrobeLine);
     }
 #endif
 
@@ -891,67 +907,86 @@ uint32_t testModeInput(void)
     if ((PINB & B00000010) != 0)
     {       
         // loop through all available modes
-        uint8_t m = (PINB & B00000100) ?
-            (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT_A)) :
-            (sTtag / (TEST_MODE_DUR * 1000000UL / TTAG_INT_B));
-        uint32_t tmp = (PINB & B00000100) ?
-            (sTtag / TESTMODE_CYCLES_A) :
-            (sTtag / TESTMODE_CYCLES_B);
-        switch (m % TEST_MODE_NUMMODES)
+        static uint32_t sModeCounter = 0;
+        static uint32_t sMode = 0;
+        static uint32_t sModeCycleCounter = 0;
+        static uint32_t sModeCycle = 0;
+        if ((modeA && (sModeCounter == TEST_MODE_DUR_CYCLES_A)) ||
+            (!modeA && (sModeCounter == TEST_MODE_DUR_CYCLES_B)))
+        {
+            sModeCounter = 0;
+            sModeCycleCounter = 0;
+            sModeCycle = 0;
+            sMode++;
+        }
+        if (sMode == TEST_MODE_NUMMODES)
+        {
+            sMode = 0;
+        }
+        sModeCounter++;
+        if ((modeA && (sModeCycleCounter == TESTMODE_CYCLES_A)) ||
+            (!modeA && (sModeCycleCounter == TESTMODE_CYCLES_B)))
+        {
+            sModeCycleCounter = 0;
+            sModeCycle++;
+        }
+        sModeCycleCounter++;
+
+        switch (sMode)
         {
             case 0:
-            // cycle all columns
+            // cycle all strobe lines
             {
-                uint8_t c = (tmp % NUM_COL);
-                if (c == col)
+                uint8_t s = (sModeCycle % NUM_STROBE);
+                if (s == sStrobeLine)
                 {
-                    rowMask = 0xffff;
+                    nonStrobeMask = 0xffff;
                 }
             }
             break;
             case 1:
-            // cycle all rows
+            // cycle all non strobe lines
             {
-                uint8_t r = (tmp % NUM_ROW);
-                rowMask |= ((uint16_t)1 << r);
+                uint8_t ns = (sModeCycle % NUM_NONSTROBE);
+                nonStrobeMask |= ((uint16_t)1 << ns);
             }
             break;
             case 2:
-            // cycle all columns (inverted)
+            // cycle all strobe lines (inverted)
             {
-                uint8_t c = (tmp % NUM_COL);
-                if (c != col)
+                uint8_t s = (sModeCycle % NUM_STROBE);
+                if (s != sStrobeLine)
                 {
-                    rowMask = 0xffff;
+                    nonStrobeMask = 0xffff;
                 }
             }
             break;
             case 3:
-            // cycle all rows (inverted)
+            // cycle all non strobe lines (inverted)
             {
-                uint8_t r = (tmp % NUM_ROW);
-                rowMask = ~(1 << r);
+                uint8_t ns = (sModeCycle % NUM_NONSTROBE);
+                nonStrobeMask = ~(1 << ns);
             }
             break;
             case 4:
             // blink all lamps
             {
-                if (tmp % 2)
+                if (sModeCycle % 2)
                 {
-                    rowMask = 0xffff;
+                    nonStrobeMask = 0xffff;
                 }
             }
             break;
             case 5:
             // switch between even and odd lamps
-            // turn on every other column
+            // turn on every other strobe line
             {
-                if (col % 2 == (tmp % 2))
+                if (sStrobeLine % 2 == (sModeCycle % 2))
                 {
-                    rowMask = 0xaaaa;
-                    if (tmp % 3)
+                    nonStrobeMask = 0xaaaa;
+                    if (sModeCycle % 3)
                     {
-                        rowMask <<= 1;
+                        nonStrobeMask <<= 1;
                     }
                 }
             }
@@ -959,13 +994,20 @@ uint32_t testModeInput(void)
             case 6:
             // cycle through all lamps individually with 4x speed
             {
-                uint8_t l = (uint8_t)((tmp * 4) % (NUM_COL * NUM_ROW));
+                uint8_t l = (uint8_t)((sModeCycle * 4) % (NUM_COL * NUM_ROW));
                 uint8_t c = (l / NUM_ROW);
                 uint8_t r = (l % NUM_COL);
-                if (c == col)
+#ifndef AFTERGLOW_WHITESTAR
+                if (c == sStrobeLine)
                 {
-                    rowMask = (1 << r);
+                    nonStrobeMask = (1 << r);
                 }
+#else
+                if (r == sStrobeLine)
+                {
+                    nonStrobeMask = (1 << c);
+                }
+#endif
             }
             break;
             default:
@@ -973,9 +1015,17 @@ uint32_t testModeInput(void)
         }
     }
 
+    // assign the column and row mask
+#ifndef AFTERGLOW_WHITESTAR
+    uint16_t colMask = strobeMask;
+    uint16_t rowMask = nonStrobeMask;
+#else
+    uint16_t colMask = nonStrobeMask;
+    uint16_t rowMask = strobeMask;
+#endif
+
     // invert the row mask as in the original input HIGH means off
     rowMask = ~rowMask;
-
     return (((uint32_t)colMask << 16) | (uint32_t)rowMask);
 }
 
@@ -983,13 +1033,12 @@ uint32_t testModeInput(void)
 bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStrobeLine)
 {
     bool validInput = true;
+    *pStrobeLine = NUM_STROBE;
 
 #ifndef AFTERGLOW_WHITESTAR
-    uint16_t strobeMask = inColMask;
-    *pStrobeLine = NUM_COL;
+    uint16_t strobeMask = (inColMask & 0xff);
 #else
-    uint16_t strobeMask = inRowMask;
-    *pStrobeLine = NUM_ROW;
+    uint16_t strobeMask = (inRowMask & 0x03ff);
 #endif
 
     switch (strobeMask)
@@ -1079,7 +1128,7 @@ void applyCfg()
     byte *pMaxSubCycle = &sMaxSubcycle[0][0];
     for (byte c=0; c<NUM_COL; c++)
     {
-        for (byte r=0; r<NUM_COL; r++)
+        for (byte r=0; r<NUM_ROW; r++)
         {
             // brightness step per lamp matrix update (assumes one update per original matrix step)
             uint32_t glowDur = (*pGlowDur * GLOWDUR_CFG_SCALE);
