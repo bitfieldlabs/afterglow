@@ -19,7 +19,9 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 #### Stern Whitestar (and possibly S.A.M.)
 * *PCB v2.1* Dedicated board which will only work with Stern Whitestar and possibly S.A.M. games
 
-#### Nice Picture
+### Nice Picture
+
+#### PCB v1.3
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/pcb_v13_populated.jpg "Afterglow PCB v1.3")
 
 
