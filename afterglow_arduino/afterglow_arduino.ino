@@ -53,7 +53,7 @@
 //------------------------------------------------------------------------------
 // Setup
 
-#define AFTERGLOW_WHITESTAR
+//#define AFTERGLOW_WHITESTAR
 
 // Afterglow version number
 #define AFTERGLOW_VERSION 109
@@ -73,7 +73,7 @@
 #endif
 
 // turn debug output via serial on/off
-#define DEBUG_SERIAL 1
+#define DEBUG_SERIAL 0
 
 // Number of consistent data samples required for matrix update
 #define SINGLE_UPDATE_CONS 2
