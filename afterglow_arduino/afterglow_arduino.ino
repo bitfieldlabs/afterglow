@@ -34,6 +34,10 @@
  *  | OUT_CLK  | 74LS595 SRCLK | D6        | DDRD, 6       | Output       |
  *  | OUT_LOAD | 74LS595 RCLK  | D7        | DDRD, 7       | Output       |
  *  | OE       | 74LS595 OE    | A1        | DDRC, 1       | Output       |
+ *  | R9_IN    | Row 9 IN (WS) | D12       | DDRB, 5       | Input Pullup |
+ *  | R10_IN   | Row 10 IN (WS)| A4        | DDRC, 5       | Input Pullup |
+ *  | R9_OUT   | Row 9 OUT (WS)| A2        | DDRC, 3       | Output       |
+ *  | R10_OUT  | Row 10 OUT(WS)| A3        | DDRC, 4       | Output       |
  *  | TEST1    | TESTMODE 1    | D8        | DDRB, 1       | Input Pullup |
  *  | TEST2    | TESTMODE 2    | D9        | DDRB, 2       | Input Pullup |
  *  | TEST3    | TESTMODE 3    | D10       | DDRB, 3       | Input Pullup |
@@ -251,12 +255,14 @@ void setup()
     // 74LS165 LOAD and CLK are output, DATA is input
     // 74HC595 LOAD, CLK and DATA are output
     DDRD = B11111001;
-    // Whitestar rows on pins 12 and 13, testmode config on pins 8-11
+    // Whitestar row 9 on pin D12, testmode config on pins 8-11
     DDRB = B00000000;
     // activate the pullups for the testmode and the whitestar pins
-    PORTB |= B00111111;
+    PORTB |= B00011111;
     // OE on A1, Whitestar on A2 and A3, current meas on A0
     DDRC = B00001110;
+    // Whitestar row 10 pin on A4 (enable pullup)
+    PORTC |= B00010000;
     // keep OE high
     PORTC |= B00000010;
 
@@ -732,7 +738,8 @@ uint32_t sampleInput(void)
 
 #ifdef AFTERGLOW_WHITESTAR
     // read the two extra rows
-    data |= (((uint32_t)(PINB & B00110000)) << 4);
+    data |= (((uint32_t)(PINB & B00010000)) << 4); // row 9 on D12
+    data |= (((uint32_t)(PINC & B00010000)) << 5); // row 10 on A4
 #endif
 
     return data;
