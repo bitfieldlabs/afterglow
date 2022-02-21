@@ -54,7 +54,8 @@
 //------------------------------------------------------------------------------
 // Setup
 
-//#define AFTERGLOW_WHITESTAR
+// Afterglow Whitestar version (PCB version >=2.0)
+#define AFTERGLOW_WHITESTAR
 
 // Afterglow version number
 #define AFTERGLOW_VERSION 109
@@ -128,8 +129,13 @@
 // default maximum lamp brightness 0-7
 #define DEFAULT_BRIGHTNESS 7
 
+#ifndef AFTERGLOW_WHITESTAR
 // current supervision on pin A0
-#define CURR_MEAS_PIN A0
+#  define CURR_MEAS_PIN A0
+#else
+// RGB status LED on A0
+#  define RGB_LED_A0
+#endif
 
 // test mode setup
 #define TEST_MODE_NUMMODES 7    // number of test modes
@@ -260,8 +266,12 @@ void setup()
     DDRB = B00000000;
     // activate the pullups for the testmode and the whitestar pins
     PORTB |= B00011111;
-    // OE on A1, Whitestar on A2 and A3, current meas on A0
+    // OE on A1, Whitestar on A2 and A3
+    // current meas on A0 for AG <v2.0, WS2812 on AG >=v2.0
     DDRC = B00001110;
+ #ifdef RGB_LED_A0
+    DDRC |= B00000001;
+ #endif
     // Whitestar row 10 pin on A4 (enable pullup)
     PORTC |= B00010000;
     // keep OE high
@@ -332,6 +342,11 @@ void setup()
     wdt_enable(WDTO_15MS);
 
     sLastPINB = PINB;
+
+#ifdef RGB_LED_A0
+    // all green
+    ws2812_update(0x00220000);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1331,6 +1346,35 @@ void saveCfgToEEPROM()
     Serial.print("EEPROM write ");
     Serial.println(sizeof(sCfg));
 }
+
+#ifdef RGB_LED_A0
+//------------------------------------------------------------------------------
+void ws2812_update(uint32_t rgb)
+{
+    // turn interrupts off
+    noInterrupts();
+
+    // save current port state
+    uint8_t pch = (PORTC | B00000001);
+    uint8_t pcl = (PORTC & B11111110);
+
+    // write all bits
+    for (int i=0; i<24; i++)
+    {
+        // pull high
+        PORTC = pch;
+        //__asm__("nop\n\t""nop\n\t""nop\n\t"");
+        // set bit
+        PORTC = pcl | ((uint8_t)(rgb >> 23) & 0x01);
+        rgb <<= 1;
+        __asm__("nop\n\t""nop\n\t""nop\n\t""nop\n\t");
+        PORTC = pcl;
+    }
+
+    // enable all interrupts again
+    interrupts();
+}
+#endif
 
 #if DEBUG_SERIAL
 //------------------------------------------------------------------------------
