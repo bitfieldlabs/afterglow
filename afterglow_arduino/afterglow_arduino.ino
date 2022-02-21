@@ -55,7 +55,7 @@
 // Setup
 
 // Afterglow Whitestar version (PCB version >=2.0)
-#define AFTERGLOW_WHITESTAR
+//#define AFTERGLOW_WHITESTAR
 
 // Afterglow version number
 #define AFTERGLOW_VERSION 109
@@ -218,6 +218,7 @@ static volatile uint16_t sOverflowCount = 0;
 // remember the last column and row samples
 static uint16_t sLastColMask = 0;
 static uint16_t sLastRowMask = 0;
+static uint32_t sConsBadStrobeCounter = 0;
 
 #if DEBUG_SERIAL
 static uint16_t sLastOutColMask = 0;
@@ -251,6 +252,22 @@ static byte sMaxSubcycle[NUM_COL][NUM_ROW];
 
 // last state of PINB
 static uint8_t sLastPINB = 0;
+
+// status enumeration
+typedef enum AFTERGLOW_STATUS_e
+{
+    AG_STATUS_INIT = 0,     // initialising
+    AG_STATUS_OK,           // up and running
+    AG_STATUS_PASSTHROUGH,  // ready in pass-through mode
+    AG_STATUS_TESTMODE,     // ready in test mode
+    AG_STATUS_REPLAY,       // ready in replay mode
+    AG_STATUS_INVINPUT,     // invalid input
+    AG_STATUS_OVERRUN       // interrupt overrun
+} AFTERGLOW_STATUS_t;
+
+// afterglow status
+static AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
+static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 
 
 //------------------------------------------------------------------------------
@@ -343,10 +360,8 @@ void setup()
 
     sLastPINB = PINB;
 
-#ifdef RGB_LED_A0
-    // all green
-    ws2812_update(0x00220000);
-#endif
+    // ready
+    sStatus = AG_STATUS_OK;
 }
 
 //------------------------------------------------------------------------------
@@ -441,14 +456,21 @@ ISR(TIMER1_COMPA_vect)
 #endif
 #endif
 
-    // 74HC165 16bit sampling
-    uint32_t inData = sampleInput();
-
-    // testmode input simulation (jumper J1 active)
+    // read/create the input data
+    uint32_t inData;
     if ((PINB & B00000001) == 0)
     {
-        // test mode
+        // testmode input simulation (jumper J1 active)
         inData = testModeInput();
+        sStatus = ((PINB & B00000010) == 0) ? AG_STATUS_REPLAY : AG_STATUS_TESTMODE;
+    }
+    else
+    {
+        // 74HC165 input sampling
+        uint32_t inData = sampleInput();
+        sStatus = (sOverflowCount < 100) ? 
+                   ((sConsBadStrobeCounter < 100) ?
+                    (((PINB & B00001000) == 0) ? AG_STATUS_PASSTHROUGH : AG_STATUS_OK) : AG_STATUS_INVINPUT) : AG_STATUS_OVERRUN;
     }
 
     uint16_t inColMask = (uint16_t)(inData >> 16); // LSB is col 0, MSB is col 7
@@ -482,6 +504,9 @@ ISR(TIMER1_COMPA_vect)
     // remember the last column and row samples
     sLastColMask = inColMask;
     sLastRowMask = inRowMask;
+
+    // status update
+    statusUpdate();
 
     // how long did it take?
     sLastIntTime = (TCNT1 - startCnt);
@@ -1089,13 +1114,25 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
             // columns enabled at the same time due to slow transistor deactivation. Both
             // cases are caught here.
             // See also https://emmytech.com/arcade/led_ghost_busting/index.html for details.
+            if (sConsBadStrobeCounter < 0xffffffff)
+            {
+                sConsBadStrobeCounter++;
+            }
 #if DEBUG_SERIAL
-            sBadStrobeCounter++;
+            if (sConsBadStrobeCounter < 0xffffffff)
+            {
+                sBadStrobeCounter++;
+            }
             sLastBadStrobeMask = strobeMask;
 #endif
             validInput = false;
         }
         break;
+    }
+    // restart the consecutive bad strobe counter
+    if (validInput)
+    {
+        sConsBadStrobeCounter = 0;
     }
     return validInput;
 }
@@ -1326,7 +1363,7 @@ void receiveCfg()
 #if DEBUG_SERIAL
     else
     {
-            Serial.print("SIZE MISMATCH: ");
+            Serial.print("SIAG_STATUS_TESTMODEZE MISMATCH: ");
             Serial.println(size);
     }
 #endif
@@ -1347,9 +1384,31 @@ void saveCfgToEEPROM()
     Serial.println(sizeof(sCfg));
 }
 
+//------------------------------------------------------------------------------
+void statusUpdate()
+{
+#ifdef RGB_LED_A0
+    if (sStatus != sLastStatus)
+    {
+        switch (sStatus)
+        {
+            case AG_STATUS_INIT: ws2812Update(0x00222222); break;
+            case AG_STATUS_OK: ws2812Update(0x00220000); break;
+            case AG_STATUS_TESTMODE: ws2812Update(0x00220011); break;
+            case AG_STATUS_INVINPUT: ws2812Update(0x00003300); break;
+            case AG_STATUS_OVERRUN: ws2812Update(0x00003333); break;
+            case AG_STATUS_PASSTHROUGH: ws2812Update(0x00333333); break;
+            case AG_STATUS_REPLAY: ws2812Update(0x00110033); break;
+            default: ws2812Update(0x00444444); break;
+        }
+        sLastStatus = sStatus;
+    }
+#endif
+}
+
 #ifdef RGB_LED_A0
 //------------------------------------------------------------------------------
-void ws2812_update(uint32_t rgb)
+void ws2812Update(uint32_t rgb)
 {
     // turn interrupts off
     noInterrupts();
