@@ -1183,7 +1183,7 @@ void applyCfg()
             // brightness step per lamp matrix update (assumes one update per original matrix step)
             uint32_t glowDur = (*pGlowDur * GLOWDUR_CFG_SCALE);
             *pGS++ = (glowDur > 0) ?
-                ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_COL) : 0xffff;
+                ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_STROBE) : 0xffff;
 
             // translate maximum brightness into maximum lamp driving subcycle
             *pMaxSubCycle++ = (PINB & B00000100) ?
