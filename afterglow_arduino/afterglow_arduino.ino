@@ -4,7 +4,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/smyp/afterglow
+ *  https://github.com/bitfieldlabs/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -54,47 +54,45 @@
 //------------------------------------------------------------------------------
 // Setup
 
-// Afterglow Whitestar version (PCB version >=2.0)
-//#define AFTERGLOW_WHITESTAR
+#define AFTERGLOW_VERSION       109     // Afterglow version number
+#define AFTERGLOW_WHITESTAR       0     // Enable Afterglow Whitestar mode (PCB version >=2.0) when set to 1
+#define AFTERGLOW_BOARD_REV      15     // Afterglow WPC/Sys11/DE board revision
+#define AFTERGLOW_WS_BOARD_REV   21     // Afterglow Whitestar/AFTERGLOW_WHITESTARS.A.M. board revision
+#define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update
+#define TTAG_INT_A              250     // Matrix update time interval, config A [us], defines the matrix update frequency (1000000/TTAG_INT_A/8 Hz)
+#define TTAG_INT_B              500     // Matrix update time interval, config B [us], defines the matrix update frequency (1000000/TTAG_INT_B/8 Hz)
+#define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
+#define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
+#define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
+#define DEBUG_SERIAL              0     // Turn debug output via serial on/off
 
-// Afterglow version number
-#define AFTERGLOW_VERSION 109
+
+//------------------------------------------------------------------------------
+// Some definitions
 
 // Afterglow configuration version
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
 #  define AFTERGLOW_CFG_VERSION 1
 #else
 #  define AFTERGLOW_CFG_VERSION 2
 #endif
 
 // Afterglow board revision
-#ifndef AFTERGLOW_WHITESTAR
-#  define BOARD_REV 13
+#if (AFTERGLOW_WHITESTAR == 0)
+#  define BOARD_REV AFTERGLOW_BOARD_REV
 #else
-#  define BOARD_REV 21
+#  define BOARD_REV AFTERGLOW_WS_BOARD_REV
 #endif
 
-// turn debug output via serial on/off
-#define DEBUG_SERIAL 0
-
-// Number of consistent data samples required for matrix update
-#define SINGLE_UPDATE_CONS 2
-
 // original matrix update interval [us]
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
 #  define ORIG_INT (2000)
 #else
 #  define ORIG_INT (1000)
 #endif
 
-// local time interval, config A [us]
-#define TTAG_INT_A (250)
-
 // cycles per original interval, config A
 #define ORIG_CYCLES_A (ORIG_INT / TTAG_INT_A)
-
-// local time interval, config B [us]
-#define TTAG_INT_B (500)
 
 // cycles per original interval, config B
 #define ORIG_CYCLES_B (ORIG_INT / TTAG_INT_B)
@@ -103,14 +101,14 @@
 #define NUM_COL 8
 
 // number of rows in the lamp matrix
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
 #  define NUM_ROW 8
 #else
 #  define NUM_ROW 10
 #endif
 
 // number of strobed lines
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
 // Most systems strobe the 8 columns
 #  define NUM_STROBE NUM_COL
 #  define NUM_NONSTROBE NUM_ROW
@@ -120,16 +118,10 @@
 #  define NUM_NONSTROBE NUM_COL
 #endif
 
-// default glow duration [ms]
-#define DEFAULT_GLOWDUR 140
-
 // glow duration scaling in the configuration
 #define GLOWDUR_CFG_SCALE 10
 
-// default maximum lamp brightness 0-7
-#define DEFAULT_BRIGHTNESS 7
-
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
 // current supervision on pin A0
 #  define CURR_MEAS_PIN A0
 #else
@@ -146,11 +138,7 @@
 #define TESTMODE_CYCLES_A ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_A) // number of cycles per testmode interval, config A
 #define TESTMODE_CYCLES_B ((uint32_t)TESTMODE_INT * 1000UL / (uint32_t)TTAG_INT_B) // number of cycles per testmode interval, config B
 
-
-// enable lamp replay in test mode
-//#define REPLAY_ENABLED
-
-#ifdef REPLAY_ENABLED
+#if REPLAY_ENABLED
 // Replay time scale [us]
 #define REPLAY_TTAG_SCALE 16000
 
@@ -324,17 +312,19 @@ void setup()
     Serial.begin(115200);
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
-#ifdef AFTERGLOW_WHITESTAR
+#if AFTERGLOW_WHITESTAR
     Serial.print(" WS ");
 #endif
-    Serial.println(" (c) 2018-2022 morbid cornflakes");
+    Serial.println("");
+    Serial.println("-------------------------------");
+    Serial.println("(c) 2018-2022 morbid cornflakes");
+
     // check the extended fuse for brown out detection level
     uint8_t efuse = boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS);
-    Serial.println("-----------------------------------------------");
     uint8_t bodBits = (efuse & 0x7);
     Serial.print("efuse BOD ");
     Serial.println((bodBits == 0x07) ? "OFF" : (bodBits == 0x04) ? "4.3V" : (bodBits == 0x05) ? "2.7V" : "1.8V");
-#ifdef REPLAY_ENABLED
+#if REPLAY_ENABLED
     Serial.print("Replay Table Size: ");
     Serial.println(numReplays());
 #endif
@@ -747,7 +737,7 @@ void updateRow(uint32_t row, uint16_t colMask)
 //------------------------------------------------------------------------------
 void updateStrobe(uint32_t strobe, uint16_t colMask, uint16_t rowMask)
 {
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
     updateCol(strobe, rowMask);
 #else
     updateRow(strobe, colMask);
@@ -777,7 +767,7 @@ uint32_t sampleInput(void)
         PORTD |= B00001000;                // CLK high
     }
 
-#ifdef AFTERGLOW_WHITESTAR
+#if (NUM_ROW > 8)
     // read the two extra rows
     data |= (((uint32_t)(PINB & B00010000)) << 4); // row 9 on D12
     data |= (((uint32_t)(PINC & B00010000)) << 5); // row 10 on A4
@@ -908,7 +898,7 @@ void dataOutput(uint16_t colData, uint16_t rowData)
     // pull RCLK high to latch the data
     PORTD |= B10000000;
 
-#ifdef AFTERGLOW_WHITESTAR
+#if (NUM_ROW > 8)
     // output the two additional rows directly on A2 and A3
     PORTC = ((PORTC & B11110011) | (uint8_t)(((rowData >> 8) & B00000011) << 2));
 #endif
@@ -942,7 +932,7 @@ uint32_t testModeInput(void)
     // populate the non strobed mask
     uint16_t nonStrobeMask = 0;
 
-#ifdef REPLAY_ENABLED
+#if REPLAY_ENABLED
     // test switch 2 activates the replay mode
     if ((PINB & B00000010) == 0)
     {
@@ -1045,7 +1035,7 @@ uint32_t testModeInput(void)
                 uint8_t l = (uint8_t)((sModeCycle * 4) % (NUM_COL * NUM_ROW));
                 uint8_t c = (l / NUM_ROW);
                 uint8_t r = (l % NUM_COL);
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
                 if (c == sStrobeLine)
                 {
                     nonStrobeMask = (1 << r);
@@ -1064,7 +1054,7 @@ uint32_t testModeInput(void)
     }
 
     // assign the column and row mask
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
     uint16_t colMask = strobeMask;
     uint16_t rowMask = nonStrobeMask;
 #else
@@ -1083,7 +1073,7 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
     bool validInput = true;
     *pStrobeLine = NUM_STROBE;
 
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
     uint16_t strobeMask = (inColMask & 0xff);
 #else
     uint16_t strobeMask = (inRowMask & 0x03ff);
@@ -1099,7 +1089,7 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
         case 0x0020: *pStrobeLine = 5; break;
         case 0x0040: *pStrobeLine = 6; break;
         case 0x0080: *pStrobeLine = 7; break;
-#ifdef AFTERGLOW_WHITESTAR
+#if (NUM_STROBE > 8)
         case 0x0100: *pStrobeLine = 8; break;
         case 0x0200: *pStrobeLine = 9; break;
 #endif
@@ -1144,7 +1134,7 @@ bool updateValid(uint16_t inColMask, uint16_t inRowMask)
     static uint16_t sLastUpdStrobeMask = 0x0000;
     bool valid = false;
 
-#ifndef AFTERGLOW_WHITESTAR
+#if (AFTERGLOW_WHITESTAR == 0)
     uint16_t strobeMask = inColMask;
 #else
     uint16_t strobeMask = inRowMask;
@@ -1456,7 +1446,7 @@ void debugOutput(byte outColMask, byte outRowMask)
 #endif
 
 
-#ifdef REPLAY_ENABLED
+#if REPLAY_ENABLED
 // Recording of the attract mode from a Creature of the Black Lagoon pinball.
 // Recorded from a modified pinmame version.
 const AG_LAMP_SWITCH_t kLampReplay[] PROGMEM =
