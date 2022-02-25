@@ -1,6 +1,6 @@
 /***********************************************************************
  *  afterglow:
- *      Copyright (c) 2018-2019 Christoph Schmid
+ *      Copyright (c) 2018-2022 bitfield labs
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
@@ -56,17 +56,18 @@
 
 #define AFTERGLOW_VERSION       110     // Afterglow version number
 #define AFTERGLOW_WHITESTAR       0     // Enable Afterglow Whitestar mode (PCB version >=2.0) when set to 1
-#define AFTERGLOW_BOARD_REV      15     // Afterglow WPC/Sys11/DE board revision
-#define AFTERGLOW_WS_BOARD_REV   21     // Afterglow Whitestar/AFTERGLOW_WHITESTARS.A.M. board revision
-#define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update
+#define AFTERGLOW_BOARD_REV      15     // Latest supported Afterglow WPC/Sys11/DE board revision
+#define AFTERGLOW_WS_BOARD_REV   21     // Latest supported Afterglow Whitestar/S.A.M. board revision
+#define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
 #define TTAG_INT_A              250     // Matrix update time interval, config A [us]
 #define TTAG_INT_B              500     // Matrix update time interval, config B [us]
 #define PWM_STEPS_A               8     // Number of brightness steps, config A
 #define PWM_STEPS_B               4     // Number of brightness steps, config B
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
-#define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
+#define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
 #define DEBUG_SERIAL              0     // Turn debug output via serial on/off
+#define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
 #define PROJECT_BUTTER            1     // Smooth as butter afterglow
 
 
@@ -199,7 +200,7 @@ int numReplays(void);
 static uint16_t sMatrixState[NUM_COL][NUM_ROW];
 
 #if PROJECT_BUTTER
-// Current step per matrix update for all lamps
+// Step per matrix update for all lamps
 static int32_t sMatrixSteps[NUM_COL][NUM_ROW];
 
 // Matrix value to brightness map
@@ -227,8 +228,10 @@ static uint32_t sBadStrobeCounter = 0;
 static uint32_t sBadStrobeOrderCounter = 0;
 static uint16_t sLastBadStrobeMask = 0;
 static byte sLastGoodStrobeLine = 0;
+#if CURRENT_MONITOR
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
+#endif
 #endif
 
 // afterglow configuration data definition
@@ -287,6 +290,7 @@ void setup()
     // current meas on A0 for AG <v2.0, WS2812 on AG >=v2.0
     DDRC = B00001110;
  #ifdef RGB_LED_A0
+    // WS2812 RGB LED on pin A0
     DDRC |= B00000001;
  #endif
     // Whitestar row 10 pin on A4 (enable pullup)
@@ -294,12 +298,14 @@ void setup()
     // keep OE high
     PORTC |= B00000010;
 
+#if CURRENT_MONITOR
     // Configure the ADC clock to 1MHz by setting the prescaler to 16.
     // This should allow for fast analog pin sampling without much loss of precision.
     // defines for setting and clearing register bits.
     _SFR_BYTE(ADCSRA) |= _BV(ADPS2);
     _SFR_BYTE(ADCSRA) &= ~_BV(ADPS1);
     _SFR_BYTE(ADCSRA) &= ~_BV(ADPS0);
+#endif
 
     // initialize the data
     memset(sMatrixState, 0, sizeof(sMatrixState));
@@ -445,18 +451,8 @@ ISR(TIMER1_COMPA_vect)
         driveLampMatrix();
     }
 
-// Current measurement is only available boards starting from v1.3, but not on Whitestar boards
-#if ((BOARD_REV >= 13) && (BOARD_REV < 20))
-    // Measure the current flowing through the current measurement resistor
-    // (R26 on AG v1.3).
-    int cm = analogRead(CURR_MEAS_PIN);
-#if DEBUG_SERIAL
-    sLastCurr = cm;
-    if (sLastCurr > sMaxCurr)
-    {
-        sMaxCurr = sLastCurr;
-    }
-#endif
+#if CURRENT_MONITOR
+    monitorCurrent();
 #endif
 
     // read/create the input data
@@ -465,37 +461,33 @@ ISR(TIMER1_COMPA_vect)
     {
         // testmode input simulation (jumper J1 active)
         inData = testModeInput();
-        sStatus = ((PINB & B00000010) == 0) ? AG_STATUS_REPLAY : AG_STATUS_TESTMODE;
     }
     else
     {
         // 74HC165 input sampling
         uint32_t inData = sampleInput();
-        sStatus = (sOverflowCount < 100) ? 
-                   ((sConsBadStrobeCounter < 100) ?
-                    (((PINB & B00001000) == 0) ? AG_STATUS_PASSTHROUGH : AG_STATUS_OK) : AG_STATUS_INVINPUT) : AG_STATUS_OVERRUN;
     }
-
     uint16_t inColMask = (uint16_t)(inData >> 16); // LSB is col 0, MSB is col 7
     uint16_t inRowMask = ~(uint16_t)inData; // high means OFF, LSB is row 0, bit 7 is row 7
 
-    // evaluate the column reading
-    // only one bit should be set as only one column can be active at a time
+    // evaluate the strobe line reading
+    // only one bit should be set as only one strobe line can be active at a time
     uint32_t strobeLine;
     bool validInput = checkValidStrobeMask(inColMask, inRowMask, &strobeLine);
 
-    // The matrix is updated only once per original strobe cycle. The code
-    // waits for a number of consecutive consistent information before updating the matrix.
+    // The input matrix values are updated only once per original strobe cycle. The code
+    // waits for a number of consecutive consistent information before adopting the new data.
     validInput &= updateValid(inColMask, inRowMask);
 
-    // Update only with a valid input. If the input is invalid the current
-    // matrix state is left unchanged.
+    // Update the input state only with a valid input. If the input is invalid the current
+    // input matrix state is left unchanged.
     if (validInput)
     {
-        // update the lamp matrix with the current strobe line
+        // update the input data with the current strobe line
         updateStrobe(strobeLine, inColMask, inRowMask);
 
 #if DEBUG_SERIAL
+        // monitor for bad strobe line input
         if ((strobeLine != (sLastGoodStrobeLine+1)) && (strobeLine!=(sLastGoodStrobeLine-NUM_STROBE+1)))
         {
             sBadStrobeOrderCounter++;
@@ -644,10 +636,12 @@ void loop()
         Serial.print(sBadStrobeOrderCounter);
         Serial.print(" last good: ");
         Serial.println(sLastGoodStrobeLine);
+#if CURRENT_MONITOR
         Serial.print("CM ");
         Serial.print(sLastCurr);
         Serial.print(" max ");
         Serial.println(sMaxCurr);
+#endif
         // data debugging
         debugInputs(sLastColMask, sLastRowMask);
         debugOutput(sLastOutColMask, sLastOutRowMask);
@@ -1521,7 +1515,23 @@ void saveCfgToEEPROM()
 //------------------------------------------------------------------------------
 void statusUpdate()
 {
+    // update the current status value
+    if ((PINB & B00000001) == 0)
+    {
+        // testmode input simulation (jumper J1 active)
+        sStatus = ((PINB & B00000010) == 0) ? AG_STATUS_REPLAY : AG_STATUS_TESTMODE;
+    }
+    else
+    {
+        // normal operation
+        sStatus = (sOverflowCount < 100) ? 
+                   ((sConsBadStrobeCounter < 100) ?
+                    (((PINB & B00001000) == 0) ? AG_STATUS_PASSTHROUGH : AG_STATUS_OK) : AG_STATUS_INVINPUT) : AG_STATUS_OVERRUN;
+    }
+
+    // display the status
 #ifdef RGB_LED_A0
+    // use the RGB LED to display the status
     if (sStatus != sLastStatus)
     {
         switch (sStatus)
@@ -1539,6 +1549,26 @@ void statusUpdate()
     }
 #endif
 }
+
+#if CURRENT_MONITOR
+//------------------------------------------------------------------------------
+void monitorCurrent()
+{
+    // Current measurement is only available boards starting from v1.3, but not on Whitestar boards
+#if ((BOARD_REV >= 13) && (BOARD_REV < 20))
+    // Measure the current flowing through the current measurement resistor
+    // (R26 on AG v1.3).
+    int cm = analogRead(CURR_MEAS_PIN);
+#if DEBUG_SERIAL
+    sLastCurr = cm;
+    if (sLastCurr > sMaxCurr)
+    {
+        sMaxCurr = sLastCurr;
+    }
+#endif
+#endif
+}
+#endif
 
 #ifdef RGB_LED_A0
 //------------------------------------------------------------------------------
