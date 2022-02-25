@@ -54,17 +54,20 @@
 //------------------------------------------------------------------------------
 // Setup
 
-#define AFTERGLOW_VERSION       109     // Afterglow version number
+#define AFTERGLOW_VERSION       110     // Afterglow version number
 #define AFTERGLOW_WHITESTAR       0     // Enable Afterglow Whitestar mode (PCB version >=2.0) when set to 1
 #define AFTERGLOW_BOARD_REV      15     // Afterglow WPC/Sys11/DE board revision
 #define AFTERGLOW_WS_BOARD_REV   21     // Afterglow Whitestar/AFTERGLOW_WHITESTARS.A.M. board revision
 #define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update
-#define TTAG_INT_A              250     // Matrix update time interval, config A [us], defines the matrix update frequency (1000000/TTAG_INT_A/8 Hz)
-#define TTAG_INT_B              500     // Matrix update time interval, config B [us], defines the matrix update frequency (1000000/TTAG_INT_B/8 Hz)
+#define TTAG_INT_A              250     // Matrix update time interval, config A [us]
+#define TTAG_INT_B              500     // Matrix update time interval, config B [us]
+#define PWM_STEPS_A               8     // Number of brightness steps, config A
+#define PWM_STEPS_B               4     // Number of brightness steps, config B
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
 #define DEBUG_SERIAL              0     // Turn debug output via serial on/off
+#define PROJECT_BUTTER            1     // Smooth as butter afterglow
 
 
 //------------------------------------------------------------------------------
@@ -194,7 +197,16 @@ int numReplays(void);
 
 // Lamp matrix 'memory'
 static uint16_t sMatrixState[NUM_COL][NUM_ROW];
-    
+
+#if PROJECT_BUTTER
+// Current step per matrix update for all lamps
+static int32_t sMatrixSteps[NUM_COL][NUM_ROW];
+
+// Matrix value to brightness map
+static uint16_t sBrightnessMap_A[PWM_STEPS_A];
+static uint16_t sBrightnessMap_B[PWM_STEPS_B];
+#endif
+
 // local time
 static uint32_t sTtag = 0;
 
@@ -304,12 +316,13 @@ void setup()
         saveCfgToEEPROM();
     }
 
+    // enable serial output at 115200 baudrate
+    Serial.begin(115200);
+
     // Apply the configuration
     // This will prepare all values for the interrupt handlers.
     applyCfg();
 
-    // enable serial output at 115200 baudrate
-    Serial.begin(115200);
     Serial.print("afterglow v");
     Serial.print(AFTERGLOW_VERSION);
 #if AFTERGLOW_WHITESTAR
@@ -491,6 +504,11 @@ ISR(TIMER1_COMPA_vect)
 #endif
     }
 
+#if PROJECT_BUTTER
+    // update the current output column with the values from the step matrix
+    updateOutCol();
+#endif
+
     // remember the last column and row samples
     sLastColMask = inColMask;
     sLastRowMask = inRowMask;
@@ -653,6 +671,39 @@ void loop()
     delay(500);
 }
 
+#if PROJECT_BUTTER
+//------------------------------------------------------------------------------
+void updateOutCol()
+{
+    // get a pointer to the matrix column
+    uint8_t outCol = (sTtag % NUM_COL);
+    uint16_t *pMx = &sMatrixState[outCol][0];
+    int32_t *pMxSt = &sMatrixSteps[outCol][0];
+
+    for (uint8_t r=0; r<NUM_ROW; r++)
+    {
+        // update the matrix value
+        uint16_t step;
+        bool on;
+        if (*pMxSt >= 0)
+        {
+            step = (uint16_t)*pMxSt;
+            on = true;
+        }
+        else
+        {
+            step = (uint16_t)(-(*pMxSt));
+            on = false;
+        }
+        updateMx(pMx, on, step);
+
+        // next row
+        pMx++;
+        pMxSt++;
+    }
+}
+#endif
+
 //------------------------------------------------------------------------------
 inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
 {
@@ -690,13 +741,14 @@ void updateCol(uint32_t col, uint16_t rowMask)
     {
         return;
     }
-    
+
+#if (PROJECT_BUTTER == 0)
     // get a pointer to the matrix column
     uint16_t *pMx = &sMatrixState[col][0];
     const uint16_t *pkStep = &sGlowSteps[col][0];
 
     // update all row values
-    for (uint32_t r=0; r<NUM_ROW; r++)
+    for (uint8_t r=0; r<NUM_ROW; r++)
     {
         // update the matrix value
         updateMx(pMx, (rowMask & 0x0001), *pkStep);
@@ -706,6 +758,23 @@ void updateCol(uint32_t col, uint16_t rowMask)
         pkStep++;
         rowMask >>= 1;
     }
+#else
+    // get a pointer to the matrix steps column
+    int32_t *pMxSt = &sMatrixSteps[col][0];
+    const uint16_t *pkStep = &sGlowSteps[col][0];
+
+    // update all row values
+    for (uint8_t r=0; r<NUM_ROW; r++)
+    {
+        // set the matrix step value
+        *pMxSt = (rowMask & 0x0001) ? *pkStep : -(*pkStep);
+
+        // next row
+        pMxSt++;
+        pkStep++;
+        rowMask >>= 1;
+    }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -716,13 +785,14 @@ void updateRow(uint32_t row, uint16_t colMask)
     {
         return;
     }
-    
+
+#if (PROJECT_BUTTER == 0)
     // get a pointer to the matrix row
     uint16_t *pMx = &sMatrixState[0][row];
     const uint16_t *pkStep = &sGlowSteps[0][row];
 
     // update all column values
-    for (uint32_t c=0; c<NUM_COL; c++)
+    for (uint8_t c=0; c<NUM_COL; c++)
     {
         // update the matrix value
         updateMx(pMx, (colMask & 0x0001), *pkStep);
@@ -732,6 +802,23 @@ void updateRow(uint32_t row, uint16_t colMask)
         pkStep += NUM_ROW;
         colMask >>= 1;
     }
+#else
+    // get a pointer to the matrix row
+    int32_t *pMxSt = &sMatrixSteps[0][row];
+    const uint16_t *pkStep = &sGlowSteps[0][row];
+
+    // update all column values
+    for (uint8_t c=0; c<NUM_COL; c++)
+    {
+        // update the matrix step value
+        *pMxSt = (colMask & 0x0001) ? *pkStep : -(*pkStep);
+
+        // next row
+        pMxSt += NUM_ROW;
+        pkStep += NUM_ROW;
+        colMask >>= 1;
+    }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -797,7 +884,7 @@ void driveLampMatrixPassThrough()
 
 //------------------------------------------------------------------------------
 void driveLampMatrix()
-{   
+{
     // turn off everything briefly to avoid ghosting
     // the scope says this takes ~20us at 16MHz
     dataOutput(0x0000, 0x0000);
@@ -805,24 +892,22 @@ void driveLampMatrix()
     // check which column we're currently updating
     uint32_t outCol = (sTtag % NUM_COL);
 
-    // The original cycle is divided into ORIG_CYCLES column sub cycles.
+    // The update interval is divided into UPD_CYCLES column sub cycles.
     // These cycles are used to do PWM in order to adjust the lamp brightness.
     //
-    // Illustration with ORIG_CYCLES==4 and four brightness steps B1-B4 and off (B0):
+    // Illustration with UPD_CYCLES==4 and four brightness steps B1-B4 and off (B0):
     //
     // * Lamp on
-    //                      2ms 2ms ...
-    // Orig col            1   2   3   4   5   6   7   8   1   2   3   4   5   6
-    // afterglow col       12345678123456781234567812345678123456781234567812345
-    // col cycle           1       2       3       4       1       2       3
+    // afterglow col       012345670123456701234567012345670123456701234567012345
+    // col cycle           0       1       2       3       0       1       2
     //
     // Brightness 1        *                               *
     // Brightness 2        *       *                       *       *
     // Brightness 3        *       *       *               *       *       *
     // Brightness 4        *       *       *       *       *       *       *
     uint32_t colCycle = (PINB & B00000100) ?
-        ((sTtag / NUM_COL) % ORIG_CYCLES_A) :
-        ((sTtag / NUM_COL) % ORIG_CYCLES_B);
+        ((sTtag / NUM_COL) % PWM_STEPS_A) :
+        ((sTtag / NUM_COL) % PWM_STEPS_B);
 
     // prepare the data
     // LSB is row/col 0, MSB is row/col 7
@@ -838,9 +923,8 @@ void driveLampMatrix()
         // nothing to do if the matrix value is zero (off)
         if (*pMx)
         {
-            uint16_t subCycle = (PINB & B00000100) ?
-                (*pMx / (65536 / ORIG_CYCLES_A)) :
-                (*pMx / (65536 / ORIG_CYCLES_B));
+            // Find the subcycle in the brightness map
+            uint8_t subCycle = findSubCycle(*pMx);
 
             // limit to the configured maximum brightness
             if (subCycle > *pMaxSubCycle)
@@ -865,6 +949,42 @@ void driveLampMatrix()
     sLastOutColMask = colData;
     sLastOutRowMask = rowData;
 #endif
+}
+
+//------------------------------------------------------------------------------
+uint8_t findSubCycle(uint16_t v)
+{
+#if (PROJECT_BUTTER == 0)
+    uint8_t subCycle = (PINB & B00000100) ?
+        (uint8_t)(v / (65536 / PWM_STEPS_A)) :
+        (uint8_t)(v / (65536 / PWM_STEPS_B));
+#else
+    // This is done in a non optimal way in order to
+    // maintain a constant runtime.
+    uint8_t subCycle;
+    const uint16_t *pkBM;
+    uint8_t numSteps;
+    if (PINB & B00000100)
+    {
+        pkBM = &sBrightnessMap_A[PWM_STEPS_A-1];
+        numSteps = PWM_STEPS_A;
+        subCycle = (PWM_STEPS_A-1);
+    }
+    else
+    {
+        pkBM = &sBrightnessMap_B[PWM_STEPS_B-1];
+        numSteps = PWM_STEPS_B;
+        subCycle = (PWM_STEPS_B-1);
+    }
+    for (int8_t i=(numSteps-2); i>=0; i--, pkBM--)
+    {
+        if (v < *pkBM)
+        {
+            subCycle = i;
+        }
+    }
+#endif
+    return subCycle;
 }
 
 //------------------------------------------------------------------------------
@@ -1171,6 +1291,18 @@ bool updateValid(uint16_t inColMask, uint16_t inRowMask)
 //------------------------------------------------------------------------------
 void applyCfg()
 {
+#if PROJECT_BUTTER
+    // calculate the logarithmic brightness maps
+    for (uint8_t i=0; i<PWM_STEPS_A; i++)
+    {
+        sBrightnessMap_A[i] = (uint16_t)(log10((float)i*10.0f/(float)(PWM_STEPS_A-1)) * 65535);
+    }
+    for (uint8_t i=0; i<PWM_STEPS_B; i++)
+    {
+        sBrightnessMap_B[i] = (uint16_t)(log10((float)i*10.0f/(float)(PWM_STEPS_B-1)) * 65535);
+    }
+#endif
+    
     // calculate the glow steps and maximum subcycles
     uint16_t *pGS = &sGlowSteps[0][0];
     uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
@@ -1180,17 +1312,29 @@ void applyCfg()
     {
         for (byte r=0; r<NUM_ROW; r++)
         {
-            // brightness step per lamp matrix update (assumes one update per original matrix step)
             uint32_t glowDur = (*pGlowDur * GLOWDUR_CFG_SCALE);
-            *pGS++ = (glowDur > 0) ?
-                ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_STROBE) : 0xffff;
 
             // translate maximum brightness into maximum lamp driving subcycle
-            *pMaxSubCycle++ = (PINB & B00000100) ?
-                (*pBrightness >> (8/ORIG_CYCLES_A-1)) :
-                (*pBrightness >> (8/ORIG_CYCLES_B-1));
+            *pMaxSubCycle = (PINB & B00000100) ?
+                (*pBrightness >> (8/PWM_STEPS_A-1)) :
+                (*pBrightness >> (8/PWM_STEPS_B-1));
+
+#if (PROJECT_BUTTER == 0)
+            // brightness step per lamp matrix update (assumes one update per original matrix step)
+            *pGS++ = (glowDur > 0) ?
+                ((uint16_t)(65535 / ((glowDur * 1000) / ORIG_INT)) * NUM_STROBE) : 0xffff;
+#else
+            // brightness step per lamp matrix update (assumes one update per matrix step)
+            uint16_t maxVal = (PINB & B00000100) ?
+                sBrightnessMap_A[*pMaxSubCycle] : sBrightnessMap_B[*pMaxSubCycle];
+            *pGS++ = (glowDur > 0) ?
+                (PINB & B00000100) ?
+                 ((uint16_t)(maxVal / ((glowDur * 1000) / TTAG_INT_A)) * NUM_COL) : 
+                 ((uint16_t)(maxVal / ((glowDur * 1000) / TTAG_INT_B)) * NUM_COL) : 0xffff;
+#endif
 
             // next
+            pMaxSubCycle++;
             pGlowDur++;
             pBrightness++;
         }
