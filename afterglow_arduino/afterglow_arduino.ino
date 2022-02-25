@@ -283,7 +283,8 @@ void setup()
     // 74HC595 LOAD, CLK and DATA are output
     DDRD = B11111001;
     // Whitestar row 9 on pin D12, testmode config on pins 8-11
-    DDRB = B00000000;
+    // Built-in LED on D13
+    DDRB = B00100000;
     // activate the pullups for the testmode and the whitestar pins
     PORTB |= B00011111;
     // OE on A1, Whitestar on A2 and A3
@@ -1531,7 +1532,7 @@ void statusUpdate()
 
     // display the status
 #ifdef RGB_LED_A0
-    // use the RGB LED to display the status
+    // use the RGB LED to show the status
     if (sStatus != sLastStatus)
     {
         switch (sStatus)
@@ -1546,6 +1547,43 @@ void statusUpdate()
             default: ws2812Update(0x00444444); break;
         }
         sLastStatus = sStatus;
+    }
+#else
+    // use the Arduino's built-in LED to signal the status
+    static uint16_t sStatusLEDCounter = 0;
+    static uint16_t sStatusLEDInt = 0;
+    uint16_t ttagInt = (PINB & B00000100) ? TTAG_INT_A : TTAG_INT_B;
+    if (sStatus != sLastStatus)
+    {
+        switch (sStatus)
+        {
+            case AG_STATUS_INIT: sStatusLEDInt = 0; break; // always off
+            case AG_STATUS_OK: sStatusLEDInt = 0xffff; break; // always on
+            case AG_STATUS_TESTMODE: sStatusLEDInt = (uint16_t)(1000000UL/ttagInt); break; // 1Hz
+            case AG_STATUS_INVINPUT: sStatusLEDInt = (uint16_t)(500000UL/ttagInt); break; // 4Hz
+            case AG_STATUS_OVERRUN: sStatusLEDInt = (uint16_t)(250000UL/ttagInt); break; // 2Hz
+            case AG_STATUS_PASSTHROUGH: sStatusLEDInt = (uint16_t)(1000000UL/ttagInt); break; // 1Hz
+            case AG_STATUS_REPLAY: sStatusLEDInt = (uint16_t)(1000000UL/ttagInt); break; // 1Hz
+            default: sStatusLEDInt = 0; break; // always off
+        }
+        sLastStatus = sStatus;
+    }
+    sStatusLEDCounter++;
+    if (sStatusLEDInt == 0)
+    {
+        // turn LED off
+        PORTB &= B11011111;
+    }
+    else if (sStatusLEDInt == 0xffff)
+    {
+        // turn LED on
+        PORTB |= B00100000;
+    }
+    else if (sStatusLEDCounter > sStatusLEDInt)
+    {
+        // toggle the LED state
+        PORTB ^= B00100000;
+        sStatusLEDCounter = 0;
     }
 #endif
 }
