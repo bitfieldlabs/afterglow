@@ -228,7 +228,6 @@ static uint32_t sBadStrobeCounter = 0;
 static uint32_t sBadStrobeOrderCounter = 0;
 static uint16_t sLastBadStrobeMask = 0;
 static byte sLastGoodStrobeLine = 0;
-static uint32_t sLastTimeMeas = 0;
 #if CURRENT_MONITOR
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
@@ -467,7 +466,7 @@ ISR(TIMER1_COMPA_vect)
     else
     {
         // 74HC165 input sampling
-        uint32_t inData = sampleInput();
+        inData = sampleInput();
     }
     uint16_t inColMask = (uint16_t)(inData >> 16); // LSB is col 0, MSB is col 7
     uint16_t inRowMask = ~(uint16_t)inData; // high means OFF, LSB is row 0, bit 7 is row 7
@@ -638,8 +637,6 @@ void loop()
         Serial.print(sBadStrobeOrderCounter);
         Serial.print(" last good: ");
         Serial.println(sLastGoodStrobeLine);
-        Serial.print(" tmeas: ");
-        Serial.println(sLastTimeMeas / 16);
 #if CURRENT_MONITOR
         Serial.print("CM ");
         Serial.print(sLastCurr);
@@ -857,7 +854,6 @@ uint32_t sampleInput(void)
     data |= (((uint32_t)(PINB & B00010000)) << 4); // row 9 on D12
     data |= (((uint32_t)(PINC & B00010000)) << 5); // row 10 on A4
 #endif
-
     return data;
 }
 
@@ -939,9 +935,7 @@ void driveLampMatrix()
 
     // turn off everything briefly to avoid ghosting
     // the scope says this takes ~20us at 16MHz
-    uint16_t startCnt = TCNT1;
     dataOutput(0x0000, 0x0000);
-    sLastTimeMeas = (TCNT1 - startCnt);
 
     // output the data
     dataOutput(colData, rowData);
