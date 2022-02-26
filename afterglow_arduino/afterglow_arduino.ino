@@ -66,9 +66,9 @@
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
-#define DEBUG_SERIAL              0     // Turn debug output via serial on/off
+#define DEBUG_SERIAL              1     // Turn debug output via serial on/off
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
-#define PROJECT_BUTTER            1     // Smooth as butter afterglow
+#define PROJECT_BUTTER            0     // Smooth as butter afterglow
 
 
 //------------------------------------------------------------------------------
@@ -228,6 +228,7 @@ static uint32_t sBadStrobeCounter = 0;
 static uint32_t sBadStrobeOrderCounter = 0;
 static uint16_t sLastBadStrobeMask = 0;
 static byte sLastGoodStrobeLine = 0;
+static uint32_t sLastTimeMeas = 0;
 #if CURRENT_MONITOR
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
@@ -637,6 +638,8 @@ void loop()
         Serial.print(sBadStrobeOrderCounter);
         Serial.print(" last good: ");
         Serial.println(sLastGoodStrobeLine);
+        Serial.print(" tmeas: ");
+        Serial.println(sLastTimeMeas / 16);
 #if CURRENT_MONITOR
         Serial.print("CM ");
         Serial.print(sLastCurr);
@@ -880,10 +883,6 @@ void driveLampMatrixPassThrough()
 //------------------------------------------------------------------------------
 void driveLampMatrix()
 {
-    // turn off everything briefly to avoid ghosting
-    // the scope says this takes ~20us at 16MHz
-    dataOutput(0x0000, 0x0000);
-
     // check which column we're currently updating
     uint32_t outCol = (sTtag % NUM_COL);
 
@@ -937,6 +936,12 @@ void driveLampMatrix()
         pMx++;
         pMaxSubCycle++;
     }
+
+    // turn off everything briefly to avoid ghosting
+    // the scope says this takes ~20us at 16MHz
+    uint16_t startCnt = TCNT1;
+    dataOutput(0x0000, 0x0000);
+    sLastTimeMeas = (TCNT1 - startCnt);
 
     // output the data
     dataOutput(colData, rowData);
@@ -1639,20 +1644,20 @@ void ws2812Update(uint32_t rgb)
 
 #if DEBUG_SERIAL
 //------------------------------------------------------------------------------
-void debugInputs(byte inColMask, byte inRowMask)
+void debugInputs(uint16_t inColMask, uint16_t inRowMask)
 {
     // output the data
     char msg[64];
-    sprintf(msg, "IN C 0x%02X R 0x%02X\n", inColMask, inRowMask);
+    sprintf(msg, "IN C 0x%04X R 0x%04X\n", inColMask, inRowMask);
     Serial.print(msg);
 }
 
 //------------------------------------------------------------------------------
-void debugOutput(byte outColMask, byte outRowMask)
+void debugOutput(uint16_t outColMask, uint16_t outRowMask)
 {
     // output the data
     char msg[64];
-    sprintf(msg, "OUT C 0x%02X R 0x%02X\n", outColMask, outRowMask);
+    sprintf(msg, "OUT C 0x%04X R 0x%04X\n", outColMask, outRowMask);
     Serial.print(msg);
 }
 #endif
