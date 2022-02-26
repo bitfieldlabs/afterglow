@@ -13,14 +13,14 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 ### Quick guide to the board revisions
 
 #### WPC, WPC-95, System 11, Data East, Sega
-* *PCB v1.3* This is the *preferred board revision* for these games.<br/>Dedicated power input (+18V, Ground) must be connected separately to power driver board
-* *PCB v1.4* Except for power input exactly the same as revision 1.3<br/>+18V taken from column input.<br/>⚠ Ground must still be connected to the PDB! Failure to do so will damage the board!
-* *PCB v1.5* Same as v1.4, but using a one-sided PCB. This should be easier/cheaper for automated production than v1.4.
+* *PCB v1.3*<br/>This is the *preferred board revision* for these games.<br/>Dedicated power input (+18V, Ground) must be connected separately to power driver board
+* *PCB v1.4*<br/>Except for power input exactly the same as revision 1.3<br/>+18V taken from column input.<br/>⚠ Ground must still be connected to the PDB! Failure to do so will damage the board!
+* *PCB v1.5*<br/>Same as v1.4, but using a one-sided PCB. This should be easier/cheaper for automated production than v1.4.
 
 #### Stern Whitestar (and possibly S.A.M.)
 * *PCB v2.1* Dedicated board which will only work with Stern Whitestar and possibly S.A.M. games
 
-### Nice Picture
+### Pictures
 
 #### PCB v1.3
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/pcb_v13_populated.jpg "Afterglow PCB v1.3")
