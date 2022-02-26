@@ -66,9 +66,9 @@
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
-#define DEBUG_SERIAL              1     // Turn debug output via serial on/off
+#define DEBUG_SERIAL              0     // Turn debug output via serial on/off
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
-#define PROJECT_BUTTER            1     // Smooth as butter afterglow
+#define PROJECT_BUTTER            0     // Smooth as butter brightness transitions
 
 
 //------------------------------------------------------------------------------
@@ -806,7 +806,7 @@ void updateRow(uint32_t row, uint16_t colMask)
     for (uint8_t c=0; c<NUM_COL; c++)
     {
         // update the matrix step value
-        *pMxSt = (colMask & 0x0001) ? *pkStep : -(*pkStep);
+        *pMxSt = (colMask & 0x0001) ? *pkStep : -(int32_t)(*pkStep);
 
         // next row
         pMxSt += NUM_ROW;
