@@ -68,7 +68,7 @@
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
 #define DEBUG_SERIAL              1     // Turn debug output via serial on/off
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
-#define PROJECT_BUTTER            0     // Smooth as butter afterglow
+#define PROJECT_BUTTER            1     // Smooth as butter afterglow
 
 
 //------------------------------------------------------------------------------
@@ -762,7 +762,7 @@ void updateCol(uint32_t col, uint16_t rowMask)
     for (uint8_t r=0; r<NUM_ROW; r++)
     {
         // set the matrix step value
-        *pMxSt = (rowMask & 0x0001) ? *pkStep : -(*pkStep);
+        *pMxSt = (rowMask & 0x0001) ? *pkStep : -(int32_t)(*pkStep);
 
         // next row
         pMxSt++;
