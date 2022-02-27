@@ -61,14 +61,14 @@
 #define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
 #define TTAG_INT_A              250     // Matrix update time interval, config A [us]
 #define TTAG_INT_B              500     // Matrix update time interval, config B [us]
-#define PWM_STEPS_A               8     // Number of brightness steps, config A
-#define PWM_STEPS_B               4     // Number of brightness steps, config B
+#define PWM_STEPS_A               8     // Number of brightness steps, config A (only 4, 8 an 16 are currently supported)
+#define PWM_STEPS_B               4     // Number of brightness steps, config B (only 4, 8 an 16 are currently supported)
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
-#define DEBUG_SERIAL              0     // Turn debug output via serial on/off
+#define DEBUG_SERIAL              1     // Turn debug output via serial on/off
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
-#define PROJECT_BUTTER            0     // Smooth as butter brightness transitions
+#define PROJECT_BUTTER            1     // Smooth as butter brightness transitions
 
 
 //------------------------------------------------------------------------------
@@ -194,6 +194,45 @@ int numReplays(void);
 
 
 //------------------------------------------------------------------------------
+// Brightness maps
+
+static const uint8_t skMap_256_8_log[256] PROGMEM =
+{
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+    2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+    3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,
+    5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7
+};
+
+static const uint8_t skMap_256_4_log[256] PROGMEM =
+{
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3
+};
+
+static const uint8_t skMap_256_16_log[256] =
+{
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+    3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+    4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,
+    6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,
+    8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,11,11,11,
+    11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,15
+};
+
+//------------------------------------------------------------------------------
 // global variables
 
 // Lamp matrix 'memory'
@@ -204,8 +243,7 @@ static uint16_t sMatrixState[NUM_COL][NUM_ROW];
 static int32_t sMatrixSteps[NUM_COL][NUM_ROW];
 
 // Matrix value to brightness map
-static uint16_t sBrightnessMap_A[PWM_STEPS_A];
-static uint16_t sBrightnessMap_B[PWM_STEPS_B];
+static const uint8_t *sBrightnessMap;
 #endif
 
 // local time
@@ -841,13 +879,56 @@ uint32_t sampleInput(void)
     PORTD |= B00010000;
     
     // clock in all 16 data bits from the shift register
-    for (byte i=0; i<16; i++)
-    {
-        data <<= (i == 8) ? 9 : 1;         // make way for the new bit, shift columns up to bit 16
-        PORTD &= B11110111;                // CLK low
-        data |= ((PIND & B00000100) >> 2); // read data bit
-        PORTD |= B00001000;                // CLK high
-    }
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 5); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 4); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 3); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 2); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 1); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100));      // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) >> 1); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) >> 2); // read data bit
+    PORTD |= B00001000;                // CLK high
+    data <<= 16;
+
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 5); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 4); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 3); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 2); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) << 1); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100));      // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) >> 1); // read data bit
+    PORTD |= B00001000;                // CLK high
+    PORTD &= B11110111;                // CLK low
+    data |= ((PIND & B00000100) >> 2); // read data bit
+    PORTD |= B00001000;                // CLK high
 
 #if (NUM_ROW > 8)
     // read the two extra rows
@@ -934,8 +1015,14 @@ void driveLampMatrix()
     }
 
     // turn off everything briefly to avoid ghosting
-    // the scope says this takes ~20us at 16MHz
+    uint16_t startCnt = TCNT1;
     dataOutput(0x0000, 0x0000);
+
+    // wait for 20us to pass
+    while ((TCNT1 - startCnt) < (20 * 16))
+    {
+
+    }
 
     // output the data
     dataOutput(colData, rowData);
@@ -955,28 +1042,7 @@ uint8_t findSubCycle(uint16_t v)
 #else
     // This is done in a non optimal way in order to
     // maintain a constant runtime.
-    uint8_t subCycle;
-    const uint16_t *pkBM;
-    uint8_t numSteps;
-    if (PINB & B00000100)
-    {
-        pkBM = &sBrightnessMap_A[PWM_STEPS_A-1];
-        numSteps = PWM_STEPS_A;
-        subCycle = (PWM_STEPS_A-1);
-    }
-    else
-    {
-        pkBM = &sBrightnessMap_B[PWM_STEPS_B-1];
-        numSteps = PWM_STEPS_B;
-        subCycle = (PWM_STEPS_B-1);
-    }
-    for (int8_t i=(numSteps-2); i>=0; i--, pkBM--)
-    {
-        if (v < *pkBM)
-        {
-            subCycle = i;
-        }
-    }
+    uint8_t subCycle = pgm_read_byte_near(sBrightnessMap + (v >> 8));
 #endif
     return subCycle;
 }
@@ -989,25 +1055,44 @@ void dataOutput(uint16_t colData, uint16_t rowData)
     // pull RCLK (OUT_LOAD) and CLK low to start sending data
     PORTD &= B00111111;
 
-    // prepare the data (8 bits from column and row)
-    uint16_t data = ((rowData << 8) | (colData & 0x00ff));
-    
     // clock out all data
-    for (uint16_t bitMask=0x8000; bitMask>0; bitMask>>=1)
-    {
-        PORTD &= B10111111; // CLK low
-        if (data & bitMask)
-        {
-            PORTD |= B00100000; // set data bit
-        }
-        else
-        {
-            PORTD &= B11011111; // clear data bit
-        }
-        PORTD |= B01000000; // CLK high
-    }
-
     PORTD &= B10111111; // CLK low
+    uint8_t pdh = (PORTD | B00100000);
+    uint8_t pdl = (PORTD & B11011111);
+
+    PORTD = (rowData & 0x80) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x40) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x20) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x10) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x08) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x04) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x02) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (rowData & 0x01) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+
+    PORTD = (colData & 0x80) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x40) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x20) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x10) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x08) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x04) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x02) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
+    PORTD = (colData & 0x01) ? pdh : pdl;
+    PORTD |= B01000000; // CLK high
 
     // pull RCLK high to latch the data
     PORTD |= B10000000;
@@ -1286,15 +1371,10 @@ bool updateValid(uint16_t inColMask, uint16_t inRowMask)
 void applyCfg()
 {
 #if PROJECT_BUTTER
-    // calculate the logarithmic brightness maps
-    for (uint8_t i=0; i<PWM_STEPS_A; i++)
-    {
-        sBrightnessMap_A[i] = (uint16_t)(log10((float)i*10.0f/(float)(PWM_STEPS_A-1)) * 65535);
-    }
-    for (uint8_t i=0; i<PWM_STEPS_B; i++)
-    {
-        sBrightnessMap_B[i] = (uint16_t)(log10((float)i*10.0f/(float)(PWM_STEPS_B-1)) * 65535);
-    }
+    // select the brightness map according to the current configuration
+    uint8_t pwmSteps = (PINB & B00000100) ? PWM_STEPS_A : PWM_STEPS_B;
+    sBrightnessMap = (pwmSteps == 4) ? skMap_256_4_log :
+                     (pwmSteps == 8) ? skMap_256_8_log : skMap_256_16_log;
 #endif
     
     // calculate the glow steps and maximum subcycles
@@ -1320,7 +1400,8 @@ void applyCfg()
 #else
             // brightness step per lamp matrix update (assumes one update per matrix step)
             uint16_t maxVal = (PINB & B00000100) ?
-                sBrightnessMap_A[*pMaxSubCycle] : sBrightnessMap_B[*pMaxSubCycle];
+                (uint16_t)(log10((float)(*pMaxSubCycle)*10.0f/(float)(PWM_STEPS_A-1)) * 65535) :
+                (uint16_t)(log10((float)(*pMaxSubCycle)*10.0f/(float)(PWM_STEPS_B-1)) * 65535);
             *pGS++ = (glowDur > 0) ?
                 (PINB & B00000100) ?
                  ((uint16_t)(maxVal / ((glowDur * 1000) / TTAG_INT_A)) * NUM_COL) : 
