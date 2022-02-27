@@ -63,6 +63,7 @@
 #define TTAG_INT_B              500     // Matrix update time interval, config B [us]
 #define PWM_STEPS_A               8     // Number of brightness steps, config A (only 4, 8 an 16 are currently supported)
 #define PWM_STEPS_B               4     // Number of brightness steps, config B (only 4, 8 an 16 are currently supported)
+#define ANTIGHOST_DURATION       20     // Duration of anti ghosting [us] (turning off all lamps briefly)
 #define DEFAULT_GLOWDUR         140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS        7     // Default maximum lamp brightness 0-7
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
@@ -1018,8 +1019,8 @@ void driveLampMatrix()
     uint16_t startCnt = TCNT1;
     dataOutput(0x0000, 0x0000);
 
-    // wait for 20us to pass
-    while ((TCNT1 - startCnt) < (20 * 16))
+    // wait for the anti ghosting time span to pass
+    while ((TCNT1 - startCnt) < (ANTIGHOST_DURATION * 16))
     {
 
     }
@@ -1273,7 +1274,7 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
     *pStrobeLine = NUM_STROBE;
 
 #if (AFTERGLOW_WHITESTAR == 0)
-    uint16_t strobeMask = (inColMask & 0xff);
+    uint16_t strobeMask = (inColMask & 0x00ff);
 #else
     uint16_t strobeMask = (inRowMask & 0x03ff);
 #endif
@@ -1318,6 +1319,7 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStr
         }
         break;
     }
+
     // restart the consecutive bad strobe counter
     if (validInput)
     {
