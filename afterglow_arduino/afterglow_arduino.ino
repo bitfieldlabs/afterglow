@@ -59,7 +59,11 @@
 #define AFTERGLOW_BOARD_REV      15     // Latest supported Afterglow WPC/Sys11/DE board revision
 #define AFTERGLOW_WS_BOARD_REV   21     // Latest supported Afterglow Whitestar/S.A.M. board revision
 #define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define TTAG_INT_A              125     // Matrix update time interval, config A [us]
+#if AFTERGLOW_WHITESTAR
+#  define TTAG_INT_A            250     // Matrix update time interval, config A [us]
+#else
+#  define TTAG_INT_A            125     // Matrix update time interval, config A [us]
+#endif
 #define TTAG_INT_B              250     // Matrix update time interval, config B [us]
 #define PWM_STEPS_A               8     // Number of brightness steps, config A (only 4, 8 an 16 are currently supported)
 #define PWM_STEPS_B               8     // Number of brightness steps, config B (only 4, 8 an 16 are currently supported)
@@ -197,7 +201,7 @@ int numReplays(void);
 //------------------------------------------------------------------------------
 // Brightness maps
 
-static const uint8_t skMap_256_4_log[256] =
+static const uint8_t skMap_256_4_log[256] PROGMEM =
 {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -209,7 +213,7 @@ static const uint8_t skMap_256_4_log[256] =
     2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3
 };
 
-static const uint8_t skMap_256_8_log[256] =
+static const uint8_t skMap_256_8_log[256] PROGMEM =
 {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -221,7 +225,7 @@ static const uint8_t skMap_256_8_log[256] =
     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7
 };
 
-static const uint8_t skMap_256_16_log[256] =
+static const uint8_t skMap_256_16_log[256] PROGMEM =
 {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,
@@ -311,6 +315,12 @@ typedef enum AFTERGLOW_STATUS_e
 // afterglow status
 static AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
 static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
+
+
+//------------------------------------------------------------------------------
+// function prototypes
+
+inline void updateMx(uint16_t *pMx, bool on, uint16_t step) __attribute__((always_inline));
 
 
 //------------------------------------------------------------------------------
@@ -741,11 +751,8 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     if (on)
     {
         // increase the stored brightness value
-        if (*pMx < (65535 - step))
-        {
-            *pMx += step;
-        }
-        else
+        *pMx += step;
+        if (*pMx < step)
         {
             *pMx = 0xffff;
         }
@@ -753,11 +760,8 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     else
     {
         // decrease the stored brightness value
+        *pMx -= step;
         if (*pMx > step)
-        {
-            *pMx -= step;
-        }
-        else
         {
             *pMx = 0;
         }
