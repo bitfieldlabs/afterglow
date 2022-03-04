@@ -60,9 +60,9 @@
 #define AFTERGLOW_WS_BOARD_REV   21     // Latest supported Afterglow Whitestar/S.A.M. board revision
 #define SINGLE_UPDATE_CONS        2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
 #if AFTERGLOW_WHITESTAR
-#  define TTAG_INT_A            250     // Matrix update time interval, config A [us]
+#  define TTAG_INT_A            200     // Matrix update time interval, config A [us]
 #else
-#  define TTAG_INT_A            125     // Matrix update time interval, config A [us]
+#  define TTAG_INT_A            150     // Matrix update time interval, config A [us]
 #endif
 #define TTAG_INT_B              250     // Matrix update time interval, config B [us]
 #define PWM_STEPS_A               8     // Number of brightness steps, config A (only 4, 8 an 16 are currently supported)
@@ -271,7 +271,7 @@ static uint16_t sLastOutRowMask = 0;
 static uint32_t sBadStrobeCounter = 0;
 static uint32_t sBadStrobeOrderCounter = 0;
 static uint16_t sLastBadStrobeMask = 0;
-static byte sLastGoodStrobeLine = 0;
+static uint8_t sLastGoodStrobeLine = 0;
 #if CURRENT_MONITOR
 static int sMaxCurr = 0;
 static int sLastCurr = 0;
@@ -321,6 +321,7 @@ static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 // function prototypes
 
 inline void updateMx(uint16_t *pMx, bool on, uint16_t step) __attribute__((always_inline));
+inline uint8_t findSubCycle(uint16_t v) __attribute__((always_inline));
 
 
 //------------------------------------------------------------------------------
@@ -530,7 +531,7 @@ ISR(TIMER1_COMPA_vect)
 
     // evaluate the strobe line reading
     // only one bit should be set as only one strobe line can be active at a time
-    uint32_t strobeLine;
+    uint8_t strobeLine;
     bool validInput = checkValidStrobeMask(inColMask, inRowMask, &strobeLine);
 
     // The input matrix values are updated only once per original strobe cycle. The code
@@ -704,12 +705,12 @@ void loop()
         debugInputs(sLastColMask, sLastRowMask);
         debugOutput(sLastOutColMask, sLastOutRowMask);
         // dump the full matrix
-        for (uint32_t c=0; c<NUM_COL; c++)
+        for (uint8_t c=0; c<NUM_COL; c++)
         {
             Serial.print("C");
             Serial.print(c);
             Serial.print(" + ");
-            for (uint32_t r=0; r<NUM_ROW; r++)
+            for (uint8_t r=0; r<NUM_ROW; r++)
             {
                 Serial.print(sMatrixState[c][r]);
                 Serial.print(" ");
@@ -751,25 +752,19 @@ inline void updateMx(uint16_t *pMx, bool on, uint16_t step)
     if (on)
     {
         // increase the stored brightness value
-        *pMx += step;
-        if (*pMx < step)
-        {
-            *pMx = 0xffff;
-        }
+        uint16_t v = (*pMx + step);
+        *pMx = (v < step) ? 0xffff : v;
     }
     else
     {
         // decrease the stored brightness value
-        *pMx -= step;
-        if (*pMx > step)
-        {
-            *pMx = 0;
-        }
+        uint16_t v = (*pMx - step);
+        *pMx = (v > step) ? 0 : v;
     }
 }
 
 //------------------------------------------------------------------------------
-void updateCol(uint32_t col, uint16_t rowMask)
+void updateCol(uint8_t col, uint16_t rowMask)
 {
     // paranoia check
     if (col >= NUM_COL)
@@ -816,7 +811,7 @@ void updateCol(uint32_t col, uint16_t rowMask)
 }
 
 //------------------------------------------------------------------------------
-void updateRow(uint32_t row, uint16_t colMask)
+void updateRow(uint8_t row, uint16_t colMask)
 {
     // paranoia check
     if (row >= NUM_ROW)
@@ -863,7 +858,7 @@ void updateRow(uint32_t row, uint16_t colMask)
 }
 
 //------------------------------------------------------------------------------
-void updateStrobe(uint32_t strobe, uint16_t colMask, uint16_t rowMask)
+void updateStrobe(uint8_t strobe, uint16_t colMask, uint16_t rowMask)
 {
 #if (AFTERGLOW_WHITESTAR == 0)
     updateCol(strobe, rowMask);
@@ -981,9 +976,9 @@ void driveLampMatrix(uint16_t outCol)
     // Brightness 2        *       *                       *       *
     // Brightness 3        *       *       *               *       *       *
     // Brightness 4        *       *       *       *       *       *       *
-    uint32_t colCycle = (PINB & B00000100) ?
-        ((sTtag / NUM_COL) % PWM_STEPS_A) :
-        ((sTtag / NUM_COL) % PWM_STEPS_B);
+    uint8_t colCycle = (PINB & B00000100) ?
+        (uint8_t)((sTtag / NUM_COL) % PWM_STEPS_A) :
+        (uint8_t)((sTtag / NUM_COL) % PWM_STEPS_B);
 
     // prepare the data
     // LSB is row/col 0, MSB is row/col 7
@@ -991,13 +986,13 @@ void driveLampMatrix(uint16_t outCol)
     uint16_t rowData = 0;
     uint16_t *pMx = &sMatrixState[outCol][0];
     byte *pMaxSubCycle = &sMaxSubcycle[outCol][0];
-    for (uint32_t r=0; r<NUM_ROW; r++)
+    for (uint8_t r=0; r<NUM_ROW; r++)
     {
         // make room for the next bit
         rowData >>= 1;
         
         // nothing to do if the matrix value is zero (off)
-        if (*pMx)
+        //if (*pMx)  // handling the case only down below as we want constant run time here
         {
             // Find the subcycle in the brightness map
             uint8_t subCycle = findSubCycle(*pMx);
@@ -1012,7 +1007,10 @@ void driveLampMatrix(uint16_t outCol)
             // and when the value is high enough for the current sub cycle.
             if (subCycle >= colCycle)
             {
-                rowData |= ((uint16_t)1 << (NUM_ROW-1));
+                if (*pMx) // handling the OFF state here in order to have a more constant run time
+                {
+                    rowData |= ((uint16_t)1 << (NUM_ROW-1));
+                }
             }
         }
         pMx++;
@@ -1026,7 +1024,7 @@ void driveLampMatrix(uint16_t outCol)
     // wait for the anti ghosting time span to pass
     while ((TCNT1 - startCnt) < (ANTIGHOST_DURATION * 16))
     {
-
+        // busy wait
     }
 
     // output the data
@@ -1038,7 +1036,7 @@ void driveLampMatrix(uint16_t outCol)
 }
 
 //------------------------------------------------------------------------------
-uint8_t findSubCycle(uint16_t v)
+inline uint8_t findSubCycle(uint16_t v)
 {
 #if (PROJECT_BUTTER == 0)
     uint8_t subCycle = (PINB & B00000100) ?
@@ -1272,7 +1270,7 @@ uint32_t testModeInput(void)
 }
 
 //------------------------------------------------------------------------------
-bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint32_t *pStrobeLine)
+bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint8_t *pStrobeLine)
 {
     bool validInput = true;
     *pStrobeLine = NUM_STROBE;
@@ -1705,7 +1703,7 @@ void ws2812Update(uint32_t rgb)
     uint8_t pcl = (PORTC & B11111110);
 
     // write all bits
-    for (int i=0; i<24; i++)
+    for (uint8_t i=0; i<24; i++)
     {
         // pull high
         PORTC = pch;
