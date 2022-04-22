@@ -73,7 +73,7 @@
 #define CURRENT_MONITOR           0     // Monitor the current (unfinished featured, only on board rev >=1.3 and <2.0)   
 #define DEBUG_SERIAL              0     // Turn debug output via serial on/off
 #define REPLAY_ENABLED            0     // Enable lamp replay in test mode when set to 1
-#define PROJECT_BUTTER            1     // Smooth as butter brightness transitions
+#define PROJECT_BUTTER            0     // Smooth as butter brightness transitions
 
 
 //------------------------------------------------------------------------------
