@@ -79,7 +79,7 @@ int FWUpdater::getRemoteVersion()
         if (file.open(QIODevice::ReadOnly))
         {
             QTextStream in(&file);
-            QRegularExpression re("#define AFTERGLOW_VERSION (\\d+)");
+            QRegularExpression re("#define AFTERGLOW_VERSION\\s+(\\d+)");
             while (!in.atEnd())
             {
                 QString line = in.readLine();

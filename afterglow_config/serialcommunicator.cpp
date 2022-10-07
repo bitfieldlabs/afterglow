@@ -26,7 +26,7 @@
 #include <QtEndian>
 
 // timeout for serial communication [ms]
-#define AG_SERIAL_TIMEOUT 2000
+#define AG_SERIAL_TIMEOUT 4000
 
 // write buffer size [bytes]
 #define AG_CMD_WRITE_BUF 32

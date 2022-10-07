@@ -619,6 +619,7 @@ void MainWindow::fetchGameList()
 void MainWindow::updateFW()
 {
     FWUpdater fwUpdater;
+    bool whitestar = (mCfg.version == 2); // is this a whitestar board?
 
     // check the version in the repository
     int v = fwUpdater.getRemoteVersion();
@@ -630,6 +631,10 @@ void MainWindow::updateFW()
         updStr += QString::number(mAGVersion);
         updStr += " to v";
         updStr += QString::number(v);
+        if (whitestar)
+        {
+            updStr += " (WHITESTAR)";
+        }
         updStr += "?";
         reply = QMessageBox::question(this, "Confirm", updStr,
                                       QMessageBox::Yes|QMessageBox::No);
@@ -655,7 +660,6 @@ void MainWindow::updateFW()
 #elif defined Q_OS_MACOS
             QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
 #endif
-            bool whitestar = (mCfg.version == 2); // is this a whitestar board?
             bool success = fwUpdater.update(portDeviceName, whitestar);
             if (success)
             {
@@ -679,7 +683,7 @@ void MainWindow::updateFW()
     {
         // error contacting the server
         QString errStr = "Could not retrieve the latest version from github: ";
-        errStr = fwUpdater.errorStr();
+        errStr += fwUpdater.errorStr();
         ticker(errStr, QColor("red"), QFont::Normal);
     }
 }
