@@ -44,8 +44,14 @@
 // github firmware binary
 #define GITHUB_ARDUINO_FW_URL "https://raw.githubusercontent.com/bitfieldlabs/afterglow/master/afterglow_arduino/bin/afterglow_arduino.ino.eightanaloginputs.hex"
 
+// github firmware binary for Whitestar boards
+#define GITHUB_ARDUINO_FW_URL_WHITESTAR "https://raw.githubusercontent.com/bitfieldlabs/afterglow/master/afterglow_arduino/bin/afterglow_arduino_whitestar.ino.eightanaloginputs.hex"
+
 // local firmware binary file name
 #define GITHUB_ARDUINO_FW_FILE "afterglow_arduino.eightanaloginputs.hex"
+
+// local firmware binary file name for Whitestar boards
+#define GITHUB_ARDUINO_FW_FILE_WHITESTAR "afterglow_arduino_whitestar.eightanaloginputs.hex"
 
 
 FWUpdater::FWUpdater()
@@ -96,11 +102,11 @@ int FWUpdater::getRemoteVersion()
     return version;
 }
 
-bool FWUpdater::update(const QString &portName)
+bool FWUpdater::update(const QString &portName, bool whitestar)
 {
     // download the firmware binary from github
     FileDownloader fd;
-    if (fd.download(QUrl(GITHUB_ARDUINO_FW_URL), GITHUB_ARDUINO_FW_FILE))
+    if (fd.download(QUrl(whitestar ? GITHUB_ARDUINO_FW_URL_WHITESTAR : GITHUB_ARDUINO_FW_URL), whitestar ? GITHUB_ARDUINO_FW_FILE_WHITESTAR : GITHUB_ARDUINO_FW_FILE))
     {
         // locate avrdude
         QString bin = AVRDUDE_BINARY;
@@ -117,7 +123,7 @@ bool FWUpdater::update(const QString &portName)
         args.append(portArg);
         args.append("-D");
         QString flashArg = "-Uflash:w:";
-        flashArg += GITHUB_ARDUINO_FW_FILE;
+        flashArg += whitestar ? GITHUB_ARDUINO_FW_FILE_WHITESTAR : GITHUB_ARDUINO_FW_FILE;
         flashArg += ":i";
         args.append(flashArg);
 

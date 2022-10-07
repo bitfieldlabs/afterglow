@@ -37,7 +37,7 @@ public:
     ~FWUpdater();
 
     int getRemoteVersion();
-    bool update(const QString &portName);
+    bool update(const QString &portName, bool whitestar);
     QString& errorStr() { return mErrorStr; }
     QString& responseStr() { return mResponseStr; }
 

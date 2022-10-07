@@ -148,10 +148,35 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
                 responseData += mSerialPort.readAll();
             }
 
-            // check the size
-            int cfgSize = sizeof(AFTERGLOW_CFG_t);
-            if (responseData.length() == cfgSize)
+            // check for v1 configuration
+            if (responseData.length() == sizeof(AFTERGLOW_CFG_V1_t))
             {
+                int cfgSize = sizeof(AFTERGLOW_CFG_V1_t);
+                const AFTERGLOW_CFG_V1_t *pkCfgV1 = (const AFTERGLOW_CFG_V1_t*)responseData.constData();
+                if (pkCfgV1->version == 1)
+                {
+                    // check the crc
+                    uint32_t crc = calculateCRC32((const uint8_t*)responseData.constData(), cfgSize-4);
+                    uint32_t crcInCfg = qFromLittleEndian(pkCfgV1->crc);
+                    if (crc == crcInCfg)
+                    {
+                        // copy the data, converting to current version
+                        pCfg->version = pkCfgV1->version;
+                        pCfg->crc = pkCfgV1->crc;
+                        for (int c=0; c<NUM_COL; c++)
+                        {
+                            memcpy(pCfg->lampBrightness[c], pkCfgV1->lampBrightness[c], sizeof(pkCfgV1->lampBrightness[c]));
+                            memcpy(pCfg->lampGlowDur[c], pkCfgV1->lampGlowDur[c], sizeof(pkCfgV1->lampGlowDur[c]));
+                        }
+                        res = true;
+                    }
+                }
+            }
+            // check for v2 configuration
+            else if (responseData.length() == sizeof(AFTERGLOW_CFG_t))
+            {
+                int cfgSize = sizeof(AFTERGLOW_CFG_t);
+
                 // copy the data
                 memcpy(pCfg, responseData.constData(), cfgSize);
 
@@ -206,12 +231,33 @@ bool SerialCommunicator::defaultCfg()
 
 bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
 {
+    AFTERGLOW_CFG_V1_t cfgV1;
+    const char *pkData = (const char*)pCfg;
+    int cfgSize = sizeof(AFTERGLOW_CFG_t);
     bool res = false;
 
-    // update the crc
-    int cfgSize = sizeof(AFTERGLOW_CFG_t);
-    uint32_t crc = calculateCRC32((const uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));
-    pCfg->crc = qToLittleEndian(crc);
+    // convert to config v1 if necessary
+    if (pCfg->version == 1)
+    {
+        cfgV1.version = pCfg->version;
+        for (int c=0; c<NUM_COL; c++)
+        {
+            memcpy(cfgV1.lampBrightness[c], pCfg->lampBrightness[c], sizeof(cfgV1.lampBrightness[c]));
+            memcpy(cfgV1.lampGlowDur[c], pCfg->lampGlowDur[c], sizeof(cfgV1.lampGlowDur[c]));
+        }
+        pkData = (const char*)&cfgV1;
+        cfgSize = sizeof(cfgV1);
+
+        // update the crc
+        uint32_t crc = calculateCRC32((const uint8_t*)&cfgV1, cfgSize-sizeof(cfgV1.crc));
+        cfgV1.crc = qToLittleEndian(crc);
+    }
+    else
+    {
+        // update the crc
+        uint32_t crc = calculateCRC32((const uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));
+        pCfg->crc = qToLittleEndian(crc);
+    }
 
     // clear the port
     mSerialPort.clear();
@@ -223,7 +269,6 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
 
     // send the configuration in small chunks
     int size = 0;
-    const char *pkData = (const char*)pCfg;
     while (size < cfgSize)
     {
         // wait for the data to be written

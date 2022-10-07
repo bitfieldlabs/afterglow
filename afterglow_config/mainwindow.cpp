@@ -35,6 +35,7 @@
 #include <QMessageBox>
 #include <QStyle>
 
+
 // interval for port enumeration [ms]
 #define ENUMERATION_INTERVAL 2000
 
@@ -292,7 +293,7 @@ void MainWindow::createGameList()
     ui->gameSelection->clear();
 
     // populate the list
-    QJsonArray::const_iterator it;
+    QJsonArray::iterator it;
     for (it=mGamesList.begin(); it!=mGamesList.end(); it++)
     {
         QJsonObject obj = (*it).toObject();
@@ -315,14 +316,15 @@ void MainWindow::updateGameDesc(int ix)
     {
         // update the matrix descriptions
         QJsonArray lamps = (*o).toArray();
-        for (int c=0; c<8; c++)
+        int numRows = (lamps.size() == 64) ? 8 : 10;
+        for (int c=0; c<NUM_COL; c++)
         {
-            for (int r=0; r<8; r++)
+            for (int r=0; r<numRows; r++)
             {
                 QTableWidgetItem *pTWI = ui->lampMatrix->item(r*2, c);
                 if (pTWI)
                 {
-                    pTWI->setText(lamps.at(c*8+r).toString());
+                    pTWI->setText(lamps.at(c*numRows+r).toString());
                 }
             }
         }
@@ -331,14 +333,14 @@ void MainWindow::updateGameDesc(int ix)
 
 void MainWindow::prepareLampMatrix()
 {
-    ui->lampMatrix->setRowCount(16);
-    ui->lampMatrix->setColumnCount(8);
+    ui->lampMatrix->setRowCount(2*NUM_ROW);
+    ui->lampMatrix->setColumnCount(NUM_COL);
     ui->lampMatrix->setWordWrap(true);
     ui->lampMatrix->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->lampMatrix->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    for (int c=0; c<8; c++)
+    for (int c=0; c<NUM_COL; c++)
     {
-        for (int r=0; r<16; r++)
+        for (int r=0; r<2*NUM_ROW; r++)
         {
             if (c==0)
             {
@@ -369,7 +371,7 @@ void MainWindow::prepareLampMatrix()
                     header->setText("");
                     ui->lampMatrix->setVerticalHeaderItem(r,header);
                 }
-                ui->lampMatrix->setItem(r, c, new QTableWidgetItem("Unknown"));
+                ui->lampMatrix->setItem(r, c, new QTableWidgetItem("N/A"));
                 QTableWidgetItem *pWI = ui->lampMatrix->item(r, c);
                 if (pWI)
                 {
@@ -378,7 +380,7 @@ void MainWindow::prepareLampMatrix()
                     QFont f= pWI->font();
                     f.setPointSize(8);
                     pWI->setFont(f);
-                    pWI->setTextColor(Qt::darkBlue);
+                    pWI->setForeground(Qt::darkBlue);
                 }
             }
         }
@@ -439,9 +441,9 @@ void MainWindow::updateTable(int parameter)
     ui->lampMatrix->clearSelection();
 
     // populate the table with the values from the configuration
-    for (int c=0; c<8; c++)
+    for (int c=0; c<NUM_COL; c++)
     {
-        for (int r=0; r<8; r++)
+        for (int r=0; r<NUM_ROW; r++)
         {
             // pick the right parameter
             uint32_t v;
@@ -457,6 +459,17 @@ void MainWindow::updateTable(int parameter)
             if (pWI)
             {
                 pWI->setText(QString::number(v, 10));
+            }
+
+            // disable unused items
+            if ((mCfg.version <= 1) && (r>7))
+            {
+                pWI->setFlags(pWI->flags() & ~Qt::ItemIsEnabled);
+                pWI->setBackground(Qt::Dense6Pattern);
+            }
+            else
+            {
+                pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
             }
         }
     }
@@ -515,9 +528,9 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
     if (ok)
     {
         // apply to all selected cells
-        for (int32_t c=0; c<8; c++)
+        for (int32_t c=0; c<NUM_COL; c++)
         {
-            for (int32_t r=0; r<8; r++)
+            for (int32_t r=0; r<NUM_ROW; r++)
             {
                 QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
                 if (pWI)
@@ -557,9 +570,9 @@ void MainWindow::selectByValue()
     if (pCWI)
     {
         // select all cells with the same value as the currently selected one
-        for (int32_t c=0; c<8; c++)
+        for (int32_t c=0; c<NUM_COL; c++)
         {
-            for (int32_t r=0; r<8; r++)
+            for (int32_t r=0; r<NUM_ROW; r++)
             {
                 QTableWidgetItem *pWI =ui->lampMatrix->item(r*2+1,c);
                 if (pWI)
@@ -642,7 +655,8 @@ void MainWindow::updateFW()
 #elif defined Q_OS_MACOS
             QString portDeviceName = "/dev/" + ui->serialPortSelection->currentText();
 #endif
-            bool success = fwUpdater.update(portDeviceName);
+            bool whitestar = (mCfg.version == 2); // is this a whitestar board?
+            bool success = fwUpdater.update(portDeviceName, whitestar);
             if (success)
             {
                 ticker("FW update done.", QColor("green"), QFont::Normal);
