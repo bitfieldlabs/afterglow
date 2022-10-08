@@ -34,6 +34,7 @@
 #include <QUrl>
 #include <QMessageBox>
 #include <QStyle>
+#include <QRandomGenerator>
 
 
 // interval for port enumeration [ms]
@@ -49,7 +50,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    mTimer(this)
+    mTimer(this),
+    mGlowTimer(this)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Not connected");
@@ -95,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->updateFWButton, SIGNAL(clicked()), SLOT(updateFW()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
+    connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));
 
     initData();
 
@@ -105,6 +108,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // start the port enumeration timer
     mTimer.start(ENUMERATION_INTERVAL);
+
+    // start the glow timer
+    mGlowRow = 0;
+    mGlowCol = 0;
+    mGlowFrame = 24;
+    mGlowTimer.start(100);
 }
 
 MainWindow::~MainWindow()
@@ -439,6 +448,39 @@ void MainWindow::enumSerialPorts()
         // enable the connect button
         ui->connectButton->setEnabled(ui->serialPortSelection->count()>0);
     }
+}
+
+void MainWindow::glow()
+{
+    if (mGlowFrame >= 0)
+    {
+        QTableWidgetItem *pWI = ui->lampMatrix->item(mGlowRow*2+1, mGlowCol);
+
+        // adjust the background color
+        QColor c;
+        if (mGlowFrame < 8)
+        {
+            c.setHsv(58, mGlowFrame*10, 255);
+            pWI->setBackground(c);
+        }
+        else if (mGlowFrame > 16)
+        {
+            c.setHsv(58, (24-mGlowFrame)*10, 255);
+            pWI->setBackground(c);
+        }
+
+        if (mGlowFrame == 24)
+        {
+            // clear the current target
+            pWI->setBackground(Qt::white);
+
+            // set a new target
+            mGlowFrame = -(QRandomGenerator::global()->generate() % 200);
+            mGlowCol = (QRandomGenerator::global()->generate() % NUM_COL);
+            mGlowRow = (QRandomGenerator::global()->generate() % NUM_ROW);
+        }
+    }
+    mGlowFrame++;
 }
 
 void MainWindow::updateTable(int parameter)

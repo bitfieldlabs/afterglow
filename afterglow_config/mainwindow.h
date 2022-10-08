@@ -58,6 +58,7 @@ private slots:
     void enumSerialPorts();
     void fetchGameList();
     void updateFW();
+    void glow();
 
 private:
     void createGameList();
@@ -76,6 +77,10 @@ private:
     int mAGCfgVersion;
     AFTERGLOW_CFG_t mCfg;
     QTimer mTimer;
+    QTimer mGlowTimer;
+    int mGlowRow;
+    int mGlowCol;
+    int mGlowFrame;
 };
 
 #endif // MAINWINDOW_H
