@@ -127,6 +127,7 @@ int SerialCommunicator::pollVersion(int *pCfgVersion)
 bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
 {
     bool res = false;
+    QByteArray responseData;
 
     // clear the port
     mSerialPort.clear();
@@ -142,7 +143,7 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
         // read response
         if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
         {
-            QByteArray responseData = mSerialPort.readAll();
+            responseData = mSerialPort.readAll();
             while (mSerialPort.waitForReadyRead(100))
             {
                 responseData += mSerialPort.readAll();
