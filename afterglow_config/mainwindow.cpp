@@ -319,12 +319,19 @@ void MainWindow::updateGameDesc(int ix)
         int numRows = (lamps.size() == 64) ? 8 : 10;
         for (int c=0; c<NUM_COL; c++)
         {
-            for (int r=0; r<numRows; r++)
+            for (int r=0; r<NUM_ROW; r++)
             {
                 QTableWidgetItem *pTWI = ui->lampMatrix->item(r*2, c);
                 if (pTWI)
                 {
-                    pTWI->setText(lamps.at(c*numRows+r).toString());
+                    if (r<numRows)
+                    {
+                        pTWI->setText(lamps.at(c*numRows+r).toString());
+                    }
+                    else
+                    {
+                        pTWI->setText("");
+                    }
                 }
             }
         }
@@ -470,6 +477,7 @@ void MainWindow::updateTable(int parameter)
             else
             {
                 pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
+                pWI->setBackground(Qt::NoBrush);
             }
         }
     }
@@ -619,12 +627,30 @@ void MainWindow::fetchGameList()
 void MainWindow::updateFW()
 {
     FWUpdater fwUpdater;
-    bool whitestar = (mCfg.version == 2); // is this a whitestar board?
 
     // check the version in the repository
     int v = fwUpdater.getRemoteVersion();
     if (v != 0)
     {
+        // ask for FW type if not known from configuration
+        bool whitestar = false;
+        if (mCfg.version == 0)
+        {
+            QMessageBox box;
+            box.setWindowTitle("Choose firmware type");
+            box.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+            QAbstractButton *pB1 = box.button(QMessageBox::Yes);
+            pB1->setText("WPC/Sys11/DE");
+            QAbstractButton *pB2 = box.button(QMessageBox::No);
+            pB2->setText("SAM/Whitestar");
+            box.exec();
+            whitestar = (box.clickedButton() == pB2);
+        }
+        else
+        {
+            whitestar = (mCfg.version == 2); // is this a whitestar board?
+        }
+
         // ask again
         QMessageBox::StandardButton reply;
         QString updStr = "Do you want to update from v";

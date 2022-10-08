@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>839</height>
+    <height>863</height>
    </rect>
   </property>
   <property name="palette">
@@ -678,7 +678,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="resources.qrc">:/images/images/flakie_transp.png</pixmap>
+           <pixmap resource="resources.qrc">:/images/images/vial_transparent_small.png</pixmap>
           </property>
          </widget>
         </item>
@@ -752,7 +752,7 @@
            <number>80</number>
           </attribute>
           <attribute name="verticalHeaderDefaultSectionSize">
-           <number>26</number>
+           <number>37</number>
           </attribute>
           <row/>
           <row/>

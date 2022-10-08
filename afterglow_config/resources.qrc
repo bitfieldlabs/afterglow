@@ -2,7 +2,7 @@
     <qresource prefix="/images">
         <file>images/afterglow.png</file>
         <file>images/a.ico</file>
-        <file>images/flakie_transp.png</file>
+        <file>images/vial_transparent_small.png</file>
     </qresource>
     <qresource prefix="/icons"/>
     <qresource prefix="/icon">
