@@ -54,7 +54,7 @@
 //------------------------------------------------------------------------------
 // Setup
 
-#define AFTERGLOW_VERSION       110     // Afterglow version number
+#define AFTERGLOW_VERSION 110           // Afterglow version number
 #define AFTERGLOW_WHITESTAR       0     // Enable Afterglow Whitestar mode (PCB version >=2.0) when set to 1
 #define AFTERGLOW_BOARD_REV      15     // Latest supported Afterglow WPC/Sys11/DE board revision
 #define AFTERGLOW_WS_BOARD_REV   21     // Latest supported Afterglow Whitestar/S.A.M. board revision
