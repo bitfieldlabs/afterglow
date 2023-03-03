@@ -1311,10 +1311,6 @@ bool checkValidStrobeMask(uint16_t inColMask, uint16_t inRowMask, uint8_t *pStro
                 sConsBadStrobeCounter++;
             }
 #if DEBUG_SERIAL
-            if (sConsBadStrobeCounter < 0xffffffff)
-            {
-                sBadStrobeCounter++;
-            }
             sLastBadStrobeMask = strobeMask;
 #endif
             validInput = false;
