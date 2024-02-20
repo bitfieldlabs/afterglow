@@ -497,11 +497,11 @@
         )
       )
     )
-    (symbol "Connector:Conn_01x12_Male" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
+    (symbol "Connector:Conn_01x11_Pin" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "J" (at 0 15.24 0)
         (effects (font (size 1.27 1.27)))
       )
-      (property "Value" "Conn_01x12_Male" (at 0 -17.78 0)
+      (property "Value" "Conn_01x11_Pin" (at 0 -15.24 0)
         (effects (font (size 1.27 1.27)))
       )
       (property "Footprint" "" (at 0 0 0)
@@ -510,24 +510,19 @@
       (property "Datasheet" "~" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
+      (property "ki_locked" "" (at 0 0 0)
+        (effects (font (size 1.27 1.27)))
+      )
       (property "ki_keywords" "connector" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_description" "Generic connector, single row, 01x12, script generated (kicad-library-utils/schlib/autogen/connector/)" (at 0 0 0)
+      (property "ki_description" "Generic connector, single row, 01x11, script generated" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "ki_fp_filters" "Connector*:*_1x??_*" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (symbol "Conn_01x12_Male_1_1"
-        (polyline
-          (pts
-            (xy 1.27 -15.24)
-            (xy 0.8636 -15.24)
-          )
-          (stroke (width 0.1524) (type default))
-          (fill (type none))
-        )
+      (symbol "Conn_01x11_Pin_1_1"
         (polyline
           (pts
             (xy 1.27 -12.7)
@@ -616,10 +611,6 @@
           (stroke (width 0.1524) (type default))
           (fill (type none))
         )
-        (rectangle (start 0.8636 -15.113) (end 0 -15.367)
-          (stroke (width 0.1524) (type default))
-          (fill (type outline))
-        )
         (rectangle (start 0.8636 -12.573) (end 0 -12.827)
           (stroke (width 0.1524) (type default))
           (fill (type outline))
@@ -675,10 +666,6 @@
         (pin passive line (at 5.08 -12.7 180) (length 3.81)
           (name "Pin_11" (effects (font (size 1.27 1.27))))
           (number "11" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 5.08 -15.24 180) (length 3.81)
-          (name "Pin_12" (effects (font (size 1.27 1.27))))
-          (number "12" (effects (font (size 1.27 1.27))))
         )
         (pin passive line (at 5.08 10.16 180) (length 3.81)
           (name "Pin_2" (effects (font (size 1.27 1.27))))
@@ -1170,12 +1157,12 @@
         )
       )
     )
-    (symbol "Device:Crystal" (pin_numbers hide) (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "Y" (at 0 3.81 0)
-        (effects (font (size 1.27 1.27)))
+    (symbol "Device:Crystal_GND24_Small" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
+      (property "Reference" "Y" (at 1.27 4.445 0)
+        (effects (font (size 1.27 1.27)) (justify left))
       )
-      (property "Value" "Crystal" (at 0 -3.81 0)
-        (effects (font (size 1.27 1.27)))
+      (property "Value" "Crystal_GND24_Small" (at 1.27 2.54 0)
+        (effects (font (size 1.27 1.27)) (justify left))
       )
       (property "Footprint" "" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
@@ -1186,58 +1173,70 @@
       (property "ki_keywords" "quartz ceramic resonator oscillator" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (property "ki_description" "Two pin crystal" (at 0 0 0)
+      (property "ki_description" "Four pin crystal, GND on pins 2 and 4, small symbol" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
       (property "ki_fp_filters" "Crystal*" (at 0 0 0)
         (effects (font (size 1.27 1.27)) hide)
       )
-      (symbol "Crystal_0_1"
-        (rectangle (start -1.143 2.54) (end 1.143 -2.54)
-          (stroke (width 0.3048) (type default))
+      (symbol "Crystal_GND24_Small_0_1"
+        (rectangle (start -0.762 -1.524) (end 0.762 1.524)
+          (stroke (width 0) (type default))
           (fill (type none))
         )
         (polyline
           (pts
-            (xy -2.54 0)
-            (xy -1.905 0)
+            (xy -1.27 -0.762)
+            (xy -1.27 0.762)
+          )
+          (stroke (width 0.381) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy 1.27 -0.762)
+            (xy 1.27 0.762)
+          )
+          (stroke (width 0.381) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -1.27 -1.27)
+            (xy -1.27 -1.905)
+            (xy 1.27 -1.905)
+            (xy 1.27 -1.27)
           )
           (stroke (width 0) (type default))
           (fill (type none))
         )
         (polyline
           (pts
-            (xy -1.905 -1.27)
-            (xy -1.905 1.27)
-          )
-          (stroke (width 0.508) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 1.905 -1.27)
-            (xy 1.905 1.27)
-          )
-          (stroke (width 0.508) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 2.54 0)
-            (xy 1.905 0)
+            (xy -1.27 1.27)
+            (xy -1.27 1.905)
+            (xy 1.27 1.905)
+            (xy 1.27 1.27)
           )
           (stroke (width 0) (type default))
           (fill (type none))
         )
       )
-      (symbol "Crystal_1_1"
-        (pin passive line (at -3.81 0 0) (length 1.27)
+      (symbol "Crystal_GND24_Small_1_1"
+        (pin passive line (at -2.54 0 0) (length 1.27)
           (name "1" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 0.762 0.762))))
         )
-        (pin passive line (at 3.81 0 180) (length 1.27)
+        (pin passive line (at 0 -2.54 90) (length 0.635)
           (name "2" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
+          (number "2" (effects (font (size 0.762 0.762))))
+        )
+        (pin passive line (at 2.54 0 180) (length 1.27)
+          (name "3" (effects (font (size 1.27 1.27))))
+          (number "3" (effects (font (size 0.762 0.762))))
+        )
+        (pin passive line (at 0 2.54 270) (length 0.635)
+          (name "4" (effects (font (size 1.27 1.27))))
+          (number "4" (effects (font (size 0.762 0.762))))
         )
       )
     )
@@ -3642,6 +3641,7 @@
   (no_connect (at 88.9 253.365) (uuid dc367047-978c-46c2-ac75-7f635738a971))
   (no_connect (at 272.415 186.69) (uuid dfb547ff-3533-4c89-b7cc-44602b08f7fd))
   (no_connect (at 88.9 241.935) (uuid eba43f2f-20f5-4730-bfb3-0305487dfecb))
+  (no_connect (at 24.765 165.735) (uuid ef20f8ff-8b99-49c8-b8de-c4d87e865193))
 
   (wire (pts (xy 111.125 76.2) (xy 111.125 77.47))
     (stroke (width 0) (type default))
@@ -4671,6 +4671,10 @@
     (stroke (width 0) (type default))
     (uuid 7d86e9e8-2ad0-4cd3-aa6e-6e329bd91864)
   )
+  (wire (pts (xy 120.015 105.41) (xy 120.015 115.57))
+    (stroke (width 0) (type default))
+    (uuid 7d8960f7-a0f6-4c27-869f-32c1e1cedc11)
+  )
   (wire (pts (xy 281.305 149.86) (xy 281.305 148.59))
     (stroke (width 0) (type default))
     (uuid 7f09e0c6-0208-49de-90d9-9e5a61b44f5b)
@@ -5063,6 +5067,10 @@
     (stroke (width 0) (type default))
     (uuid b0054ce1-b60e-41de-a6a2-bf712784dd39)
   )
+  (wire (pts (xy 136.525 110.49) (xy 136.525 111.76))
+    (stroke (width 0) (type default))
+    (uuid b0392359-87f9-486e-baf2-a2cc99b60df7)
+  )
   (wire (pts (xy 329.565 174.625) (xy 327.025 174.625))
     (stroke (width 0) (type default))
     (uuid b121f1ff-8472-460b-ab2d-5110ddd1ca28)
@@ -5159,7 +5167,7 @@
     (stroke (width 0) (type default))
     (uuid bd2ba66a-c86a-45c1-8614-b96fca5844b3)
   )
-  (wire (pts (xy 141.605 114.3) (xy 141.605 115.57))
+  (wire (pts (xy 141.605 113.03) (xy 141.605 115.57))
     (stroke (width 0) (type default))
     (uuid bdeb3026-685a-4cb8-a641-0f38d00682a1)
   )
@@ -5235,10 +5243,6 @@
     (stroke (width 0) (type default))
     (uuid c67ad10d-2f75-4ec6-a139-47058f7f06b2)
   )
-  (wire (pts (xy 120.015 105.41) (xy 120.015 115.57))
-    (stroke (width 0) (type default))
-    (uuid c69dc5a0-f694-4376-bbdc-c4bb8bd0435f)
-  )
   (wire (pts (xy 63.5 189.23) (xy 69.85 189.23))
     (stroke (width 0) (type default))
     (uuid c73c609f-594a-4524-a846-c863274f704a)
@@ -5274,6 +5278,10 @@
   (wire (pts (xy 85.09 74.295) (xy 85.09 71.755))
     (stroke (width 0) (type default))
     (uuid ca5b6af8-ca05-4338-b852-b51f2b49b1db)
+  )
+  (wire (pts (xy 139.065 110.49) (xy 136.525 110.49))
+    (stroke (width 0) (type default))
+    (uuid ca5f8b0a-84c5-48f1-8bc5-cedb07e859d0)
   )
   (wire (pts (xy 140.97 36.195) (xy 151.13 36.195))
     (stroke (width 0) (type default))
@@ -5563,6 +5571,10 @@
     (stroke (width 0) (type default))
     (uuid ee29d712-3378-4507-a00b-003526b29bb1)
   )
+  (wire (pts (xy 144.145 110.49) (xy 147.32 110.49))
+    (stroke (width 0) (type default))
+    (uuid ee4b6ef9-23df-4c2e-a04e-2ae3b426cfa9)
+  )
   (wire (pts (xy 272.415 173.99) (xy 272.415 172.72))
     (stroke (width 0) (type default))
     (uuid eef63bbb-1d88-41ed-b0f4-90d93c95944b)
@@ -5671,6 +5683,10 @@
     (stroke (width 0) (type default))
     (uuid fc83cd71-1198-4019-87a1-dc154bceead3)
   )
+  (wire (pts (xy 147.32 110.49) (xy 147.32 111.76))
+    (stroke (width 0) (type default))
+    (uuid fd4d2af2-a9f5-43e8-a418-c930aaa1bda2)
+  )
   (wire (pts (xy 166.37 193.675) (xy 184.15 193.675))
     (stroke (width 0) (type default))
     (uuid fd7cb0dd-25e1-4102-a372-14cffd1620a9)
@@ -5687,7 +5703,7 @@
     (stroke (width 0) (type default))
     (uuid fdc57161-f7f8-4584-b0ec-8c1aa24339c6)
   )
-  (wire (pts (xy 141.605 106.68) (xy 141.605 105.41))
+  (wire (pts (xy 141.605 105.41) (xy 141.605 107.95))
     (stroke (width 0) (type default))
     (uuid fe6e2045-441c-482a-ad56-9471bd9e72ca)
   )
@@ -5925,11 +5941,11 @@
     (effects (font (size 1.524 1.524)) (justify right bottom))
     (uuid 2030c04c-966d-4780-a502-c8884f9bdd6b)
   )
-  (label "RI3" (at 27.94 165.735 0) (fields_autoplaced)
+  (label "RI3" (at 24.765 168.275 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 2035ea48-3ef5-4d7f-8c3c-50981b30c89a)
   )
-  (label "RI10" (at 27.94 183.515 0) (fields_autoplaced)
+  (label "RI10" (at 24.765 186.055 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 2151a218-87ec-4d43-b5fa-736242c52602)
   )
@@ -5989,7 +6005,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 2b1d0e8c-13a2-40c0-b2a2-9a3b895f206a)
   )
-  (label "RI2" (at 27.94 163.195 0) (fields_autoplaced)
+  (label "RI2" (at 24.765 163.195 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 2e90e294-82e1-45da-9bf1-b91dfe0dc8f6)
   )
@@ -6289,7 +6305,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 6a4291c7-cac9-4f0f-b60e-22d14b5d30cf)
   )
-  (label "RI9" (at 27.94 180.975 0) (fields_autoplaced)
+  (label "RI9" (at 24.765 183.515 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 6aa022fb-09ce-49d9-86b1-c73b3ee817e2)
   )
@@ -6349,7 +6365,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 79edc219-5a07-4766-b582-90ca6357b8a6)
   )
-  (label "RI4" (at 27.94 168.275 0) (fields_autoplaced)
+  (label "RI4" (at 24.765 170.815 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 7a2f50f6-0c99-4e8d-9c2a-8f2f961d2e6d)
   )
@@ -6365,7 +6381,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 7d1540c4-0cd3-4c7f-b332-a15629e06994)
   )
-  (label "RI1" (at 27.94 160.655 0) (fields_autoplaced)
+  (label "RI1" (at 24.765 160.655 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 7e1217ba-8a3d-4079-8d7b-b45f90cfbf53)
   )
@@ -6477,7 +6493,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 9510668c-727e-4dd4-9cb9-18bc5078fa48)
   )
-  (label "RI6" (at 27.94 173.355 0) (fields_autoplaced)
+  (label "RI6" (at 24.765 175.895 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 9565d2ee-a4f1-4d08-b2c9-0264233a0d2b)
   )
@@ -6581,7 +6597,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid acc1a5e0-08c9-4e2b-a854-bd5b22d1430e)
   )
-  (label "RI5" (at 27.94 170.815 0) (fields_autoplaced)
+  (label "RI5" (at 24.765 173.355 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid ae0e6b31-27d7-4383-a4fc-7557b0a19382)
   )
@@ -6601,7 +6617,7 @@
     (effects (font (size 1.524 1.524)) (justify right bottom))
     (uuid b0271cdd-de22-4bf4-8f55-fc137cfbd4ec)
   )
-  (label "RI8" (at 27.94 178.435 0) (fields_autoplaced)
+  (label "RI8" (at 24.765 180.975 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid b287f145-851e-45cc-b200-e62677b551d5)
   )
@@ -6637,7 +6653,7 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid b86196d3-697f-492b-ad95-cd5e30c12295)
   )
-  (label "RI7" (at 27.94 175.895 0) (fields_autoplaced)
+  (label "RI7" (at 24.765 178.435 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid ba6fc20e-7eff-4d5f-81e4-d1fad93be155)
   )
@@ -7077,7 +7093,7 @@
   (symbol (lib_id "power:GND") (at 278.765 27.94 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000059ecc295)
-    (property "Reference" "#PWR037" (at 278.765 34.29 0)
+    (property "Reference" "#PWR041" (at 278.765 34.29 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 278.765 31.75 0)
@@ -7093,7 +7109,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR037") (unit 1)
+          (reference "#PWR041") (unit 1)
         )
       )
     )
@@ -7872,7 +7888,7 @@
   (symbol (lib_id "power:GND") (at 297.815 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005a54f7aa)
-    (property "Reference" "#PWR038" (at 297.815 66.04 0)
+    (property "Reference" "#PWR042" (at 297.815 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 297.815 63.5 0)
@@ -7888,7 +7904,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR038") (unit 1)
+          (reference "#PWR042") (unit 1)
         )
       )
     )
@@ -8361,7 +8377,7 @@
   (symbol (lib_id "power:GND") (at 271.145 64.77 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ba02cab)
-    (property "Reference" "#PWR035" (at 271.145 71.12 0)
+    (property "Reference" "#PWR039" (at 271.145 71.12 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 271.145 68.58 0)
@@ -8377,7 +8393,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR035") (unit 1)
+          (reference "#PWR039") (unit 1)
         )
       )
     )
@@ -8386,7 +8402,7 @@
   (symbol (lib_id "power:GND") (at 271.145 109.22 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005ba02d84)
-    (property "Reference" "#PWR036" (at 271.145 115.57 0)
+    (property "Reference" "#PWR040" (at 271.145 115.57 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 271.145 113.03 0)
@@ -8402,7 +8418,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR036") (unit 1)
+          (reference "#PWR040") (unit 1)
         )
       )
     )
@@ -8668,7 +8684,7 @@
   (symbol (lib_id "power:GND") (at 297.815 230.505 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005baef1e7)
-    (property "Reference" "#PWR039" (at 297.815 236.855 0)
+    (property "Reference" "#PWR043" (at 297.815 236.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 297.942 234.8992 0)
@@ -8684,7 +8700,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR039") (unit 1)
+          (reference "#PWR043") (unit 1)
         )
       )
     )
@@ -9031,7 +9047,7 @@
   (symbol (lib_id "power:GND") (at 327.025 194.945 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b371)
-    (property "Reference" "#PWR047" (at 327.025 201.295 0)
+    (property "Reference" "#PWR051" (at 327.025 201.295 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 198.755 0)
@@ -9047,7 +9063,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR047") (unit 1)
+          (reference "#PWR051") (unit 1)
         )
       )
     )
@@ -9056,7 +9072,7 @@
   (symbol (lib_id "power:GND") (at 327.025 175.895 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b8d5)
-    (property "Reference" "#PWR046" (at 327.025 182.245 0)
+    (property "Reference" "#PWR050" (at 327.025 182.245 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 179.705 0)
@@ -9072,7 +9088,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR046") (unit 1)
+          (reference "#PWR050") (unit 1)
         )
       )
     )
@@ -9081,7 +9097,7 @@
   (symbol (lib_id "power:GND") (at 327.025 156.845 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6bdec)
-    (property "Reference" "#PWR045" (at 327.025 163.195 0)
+    (property "Reference" "#PWR049" (at 327.025 163.195 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 160.655 0)
@@ -9097,7 +9113,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR045") (unit 1)
+          (reference "#PWR049") (unit 1)
         )
       )
     )
@@ -9106,7 +9122,7 @@
   (symbol (lib_id "power:GND") (at 327.025 137.795 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f9cb4f)
-    (property "Reference" "#PWR044" (at 327.025 144.145 0)
+    (property "Reference" "#PWR048" (at 327.025 144.145 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 141.605 0)
@@ -9122,7 +9138,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR044") (unit 1)
+          (reference "#PWR048") (unit 1)
         )
       )
     )
@@ -9131,7 +9147,7 @@
   (symbol (lib_id "power:GND") (at 327.025 117.475 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa08bf)
-    (property "Reference" "#PWR043" (at 327.025 123.825 0)
+    (property "Reference" "#PWR047" (at 327.025 123.825 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 121.285 0)
@@ -9147,7 +9163,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR043") (unit 1)
+          (reference "#PWR047") (unit 1)
         )
       )
     )
@@ -9156,7 +9172,7 @@
   (symbol (lib_id "power:GND") (at 327.025 99.695 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa3373)
-    (property "Reference" "#PWR042" (at 327.025 106.045 0)
+    (property "Reference" "#PWR046" (at 327.025 106.045 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 103.505 0)
@@ -9172,7 +9188,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR042") (unit 1)
+          (reference "#PWR046") (unit 1)
         )
       )
     )
@@ -9181,7 +9197,7 @@
   (symbol (lib_id "power:GND") (at 327.025 80.645 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbb3e3)
-    (property "Reference" "#PWR041" (at 327.025 86.995 0)
+    (property "Reference" "#PWR045" (at 327.025 86.995 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 84.455 0)
@@ -9197,7 +9213,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR041") (unit 1)
+          (reference "#PWR045") (unit 1)
         )
       )
     )
@@ -9206,7 +9222,7 @@
   (symbol (lib_id "power:GND") (at 327.025 61.595 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbdcba)
-    (property "Reference" "#PWR040" (at 327.025 67.945 0)
+    (property "Reference" "#PWR044" (at 327.025 67.945 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 65.405 0)
@@ -9222,7 +9238,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR040") (unit 1)
+          (reference "#PWR044") (unit 1)
         )
       )
     )
@@ -9231,7 +9247,7 @@
   (symbol (lib_id "power:GND") (at 380.365 234.315 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc616d)
-    (property "Reference" "#PWR057" (at 380.365 240.665 0)
+    (property "Reference" "#PWR061" (at 380.365 240.665 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 238.125 0)
@@ -9247,7 +9263,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR057") (unit 1)
+          (reference "#PWR061") (unit 1)
         )
       )
     )
@@ -9256,7 +9272,7 @@
   (symbol (lib_id "power:GND") (at 380.365 215.265 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc668f)
-    (property "Reference" "#PWR056" (at 380.365 221.615 0)
+    (property "Reference" "#PWR060" (at 380.365 221.615 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 219.075 0)
@@ -9272,7 +9288,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR056") (unit 1)
+          (reference "#PWR060") (unit 1)
         )
       )
     )
@@ -9281,7 +9297,7 @@
   (symbol (lib_id "power:GND") (at 380.365 196.215 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6a90)
-    (property "Reference" "#PWR055" (at 380.365 202.565 0)
+    (property "Reference" "#PWR059" (at 380.365 202.565 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 200.025 0)
@@ -9297,7 +9313,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR055") (unit 1)
+          (reference "#PWR059") (unit 1)
         )
       )
     )
@@ -9306,7 +9322,7 @@
   (symbol (lib_id "power:GND") (at 380.365 177.165 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6e7e)
-    (property "Reference" "#PWR054" (at 380.365 183.515 0)
+    (property "Reference" "#PWR058" (at 380.365 183.515 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 180.975 0)
@@ -9322,7 +9338,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR054") (unit 1)
+          (reference "#PWR058") (unit 1)
         )
       )
     )
@@ -9331,7 +9347,7 @@
   (symbol (lib_id "power:GND") (at 380.365 158.115 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc7277)
-    (property "Reference" "#PWR053" (at 380.365 164.465 0)
+    (property "Reference" "#PWR057" (at 380.365 164.465 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 161.925 0)
@@ -9347,7 +9363,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR053") (unit 1)
+          (reference "#PWR057") (unit 1)
         )
       )
     )
@@ -9356,7 +9372,7 @@
   (symbol (lib_id "power:GND") (at 380.365 139.065 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc8c0f)
-    (property "Reference" "#PWR052" (at 380.365 145.415 0)
+    (property "Reference" "#PWR056" (at 380.365 145.415 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 142.875 0)
@@ -9372,7 +9388,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR052") (unit 1)
+          (reference "#PWR056") (unit 1)
         )
       )
     )
@@ -9381,7 +9397,7 @@
   (symbol (lib_id "power:GND") (at 380.365 120.015 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc91bf)
-    (property "Reference" "#PWR051" (at 380.365 126.365 0)
+    (property "Reference" "#PWR055" (at 380.365 126.365 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 123.825 0)
@@ -9397,7 +9413,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR051") (unit 1)
+          (reference "#PWR055") (unit 1)
         )
       )
     )
@@ -9406,7 +9422,7 @@
   (symbol (lib_id "power:GND") (at 380.365 100.965 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc973d)
-    (property "Reference" "#PWR050" (at 380.365 107.315 0)
+    (property "Reference" "#PWR054" (at 380.365 107.315 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 104.775 0)
@@ -9422,7 +9438,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR050") (unit 1)
+          (reference "#PWR054") (unit 1)
         )
       )
     )
@@ -9431,7 +9447,7 @@
   (symbol (lib_id "power:GND") (at 380.365 81.915 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcd5ee)
-    (property "Reference" "#PWR049" (at 380.365 88.265 0)
+    (property "Reference" "#PWR053" (at 380.365 88.265 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 85.725 0)
@@ -9447,7 +9463,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR049") (unit 1)
+          (reference "#PWR053") (unit 1)
         )
       )
     )
@@ -9456,7 +9472,7 @@
   (symbol (lib_id "power:GND") (at 380.365 62.865 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcdafc)
-    (property "Reference" "#PWR048" (at 380.365 69.215 0)
+    (property "Reference" "#PWR052" (at 380.365 69.215 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 66.675 0)
@@ -9472,7 +9488,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR048") (unit 1)
+          (reference "#PWR052") (unit 1)
         )
       )
     )
@@ -9560,7 +9576,7 @@
   (symbol (lib_id "power:GND") (at 228.6 150.495 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 047e8e21-14c7-436f-89d7-15e9119132eb)
-    (property "Reference" "#PWR029" (at 228.6 156.845 0)
+    (property "Reference" "#PWR033" (at 228.6 156.845 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 228.727 154.8892 0)
@@ -9576,7 +9592,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR029") (unit 1)
+          (reference "#PWR033") (unit 1)
         )
       )
     )
@@ -9670,7 +9686,7 @@
   (symbol (lib_id "power:GND") (at 175.895 29.21 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0de0771a-02b9-4a4d-a996-149f08eb7f41)
-    (property "Reference" "#PWR026" (at 175.895 35.56 0)
+    (property "Reference" "#PWR027" (at 175.895 35.56 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 175.895 33.02 0)
@@ -9686,7 +9702,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR026") (unit 1)
+          (reference "#PWR027") (unit 1)
         )
       )
     )
@@ -9695,7 +9711,7 @@
   (symbol (lib_id "power:+3V3") (at 163.83 26.035 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0de388e1-92c1-4739-8d3a-0487dedcf77e)
-    (property "Reference" "#PWR025" (at 163.83 29.845 0)
+    (property "Reference" "#PWR026" (at 163.83 29.845 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 164.211 21.6408 0)
@@ -9711,7 +9727,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR025") (unit 1)
+          (reference "#PWR026") (unit 1)
         )
       )
     )
@@ -9723,7 +9739,7 @@
     (property "Reference" "C5" (at 127.5334 118.491 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "27p" (at 125.222 118.491 0)
+    (property "Value" "22p" (at 125.222 118.491 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 122.555 116.5352 0)
@@ -9732,7 +9748,7 @@
     (property "Datasheet" "~" (at 126.365 115.57 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "JLCPCB" "C107002" (at 126.365 115.57 0)
+    (property "JLCPCB" "C1555" (at 126.365 115.57 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 5ce74600-2aa7-4818-b0d6-9d9078b4a5fd))
@@ -9770,6 +9786,31 @@
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
           (reference "R26") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "power:GND") (at 136.525 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 0feba229-c0df-43b2-9fd7-b8a5af1789fd)
+    (property "Reference" "#PWR063" (at 136.525 118.11 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (at 136.652 116.1542 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 136.525 111.76 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 136.525 111.76 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 9feccc0b-5692-4627-8c3d-4bc275e5862a))
+    (instances
+      (project "afterglow"
+        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+          (reference "#PWR063") (unit 1)
         )
       )
     )
@@ -9910,7 +9951,7 @@
   (symbol (lib_id "power:GND") (at 269.875 222.885 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 13f39dee-e040-48e6-8ba8-96ad52a55878)
-    (property "Reference" "#PWR034" (at 269.875 229.235 0)
+    (property "Reference" "#PWR038" (at 269.875 229.235 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 273.685 224.155 0)
@@ -9926,7 +9967,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR034") (unit 1)
+          (reference "#PWR038") (unit 1)
         )
       )
     )
@@ -10081,7 +10122,7 @@
   (symbol (lib_id "power:GND") (at 160.02 163.195 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1a2e4e93-c3be-449c-bce2-2b160d8703c4)
-    (property "Reference" "#PWR024" (at 160.02 169.545 0)
+    (property "Reference" "#PWR025" (at 160.02 169.545 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 160.147 167.5892 0)
@@ -10097,7 +10138,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR024") (unit 1)
+          (reference "#PWR025") (unit 1)
         )
       )
     )
@@ -10615,7 +10656,7 @@
   (symbol (lib_id "power:GND") (at 202.565 71.755 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 378f0de8-a8a1-4aa9-9b08-f1095d35f649)
-    (property "Reference" "#PWR059" (at 202.565 78.105 0)
+    (property "Reference" "#PWR028" (at 202.565 78.105 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 202.692 76.1492 0)
@@ -10631,7 +10672,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR059") (unit 1)
+          (reference "#PWR028") (unit 1)
         )
       )
     )
@@ -10711,6 +10752,31 @@
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
           (reference "Q2") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "power:GND") (at 147.32 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 3d4f1b8f-206c-4d1e-bdce-33a3c4be7ffa)
+    (property "Reference" "#PWR062" (at 147.32 118.11 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (at 147.447 116.1542 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 147.32 111.76 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 147.32 111.76 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 62000813-c4ae-4848-9c56-c93f8b9bc956))
+    (instances
+      (project "afterglow"
+        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+          (reference "#PWR062") (unit 1)
         )
       )
     )
@@ -10918,7 +10984,7 @@
   (symbol (lib_id "power:GND") (at 215.265 71.755 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 49b56b27-b489-4914-af40-3b41ed0ec4d9)
-    (property "Reference" "#PWR058" (at 215.265 78.105 0)
+    (property "Reference" "#PWR030" (at 215.265 78.105 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 215.392 76.1492 0)
@@ -10934,7 +11000,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR058") (unit 1)
+          (reference "#PWR030") (unit 1)
         )
       )
     )
@@ -10943,7 +11009,7 @@
   (symbol (lib_id "power:GND") (at 120.015 118.11 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4aadca71-194d-4f2e-b595-6cb46a507065)
-    (property "Reference" "#PWR020" (at 120.015 124.46 0)
+    (property "Reference" "#PWR019" (at 120.015 124.46 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 120.142 122.5042 0)
@@ -10959,7 +11025,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR020") (unit 1)
+          (reference "#PWR019") (unit 1)
         )
       )
     )
@@ -11020,7 +11086,7 @@
   (symbol (lib_id "power:GND") (at 217.805 45.72 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4fa4fdcc-5c46-47cc-92db-a80becbd5f5b)
-    (property "Reference" "#PWR028" (at 217.805 52.07 0)
+    (property "Reference" "#PWR032" (at 217.805 52.07 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 217.932 50.1142 0)
@@ -11036,7 +11102,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR028") (unit 1)
+          (reference "#PWR032") (unit 1)
         )
       )
     )
@@ -11045,7 +11111,7 @@
   (symbol (lib_id "power:GND") (at 157.48 90.805 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 534e8e5e-520b-45fd-a940-d65f510bff9c)
-    (property "Reference" "#PWR060" (at 157.48 97.155 0)
+    (property "Reference" "#PWR024" (at 157.48 97.155 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 157.607 95.1992 0)
@@ -11061,7 +11127,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR060") (unit 1)
+          (reference "#PWR024") (unit 1)
         )
       )
     )
@@ -11249,6 +11315,41 @@
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
           (reference "R21") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Connector:Conn_01x11_Pin") (at 19.685 173.355 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid 5dbf8b3f-fb20-493d-a408-688ccb7f6879)
+    (property "Reference" "J1" (at 20.32 156.4345 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "Conn_01x11_Pin" (at 20.32 158.8587 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Connector_Molex:Molex_KK-254_AE-6410-11A_1x11_P2.54mm_Vertical" (at 19.685 173.355 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 19.685 173.355 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "7" (uuid 2748460c-f247-49b1-a1a6-9d9e34951495))
+    (pin "8" (uuid 46a6ba34-df7b-4e45-8145-a5aa4dbb6c9b))
+    (pin "1" (uuid 70257ab7-51fe-465d-8e95-a62406f68384))
+    (pin "5" (uuid c6e630b8-307a-4019-9ad5-c593f2e2c0a7))
+    (pin "4" (uuid 1beec658-df8b-4b32-a527-217d21e40f72))
+    (pin "3" (uuid f55ccd7a-a598-45c3-9c13-47ae27720f5c))
+    (pin "2" (uuid c5a99e33-dcd3-48a6-9737-647debb4dcb8))
+    (pin "10" (uuid df80310a-c01e-4746-b0d8-a2cea11a284a))
+    (pin "11" (uuid b490ae7e-4aae-4b54-b3df-1933b4f69559))
+    (pin "9" (uuid 0b592ee8-caa4-41ee-a3c1-600182d8dca3))
+    (pin "6" (uuid 881ce42a-ab0a-48b3-b599-b59a5142a1d7))
+    (instances
+      (project "afterglow"
+        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+          (reference "J1") (unit 1)
         )
       )
     )
@@ -11458,7 +11559,7 @@
   (symbol (lib_id "power:GND") (at 262.89 275.59 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 6b8c05b7-723e-48ff-ae29-6c1b59e91a47)
-    (property "Reference" "#PWR032" (at 262.89 281.94 0)
+    (property "Reference" "#PWR036" (at 262.89 281.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 259.08 276.86 0)
@@ -11474,7 +11575,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR032") (unit 1)
+          (reference "#PWR036") (unit 1)
         )
       )
     )
@@ -11565,7 +11666,7 @@
   (symbol (lib_id "power:GND") (at 204.47 263.525 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 76186a4a-a318-46de-b701-78ebac7fb39e)
-    (property "Reference" "#PWR027" (at 204.47 269.875 0)
+    (property "Reference" "#PWR029" (at 204.47 269.875 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 204.597 267.9192 0)
@@ -11581,7 +11682,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR027") (unit 1)
+          (reference "#PWR029") (unit 1)
         )
       )
     )
@@ -12872,35 +12973,6 @@
     )
   )
 
-  (symbol (lib_id "Device:Crystal") (at 141.605 110.49 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid b9b23aab-05a6-4e05-9df0-87f9ad962d8f)
-    (property "Reference" "Y1" (at 144.9324 109.3216 90)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "ABLS-12.000MHZ-B4-T" (at 135.255 102.87 90)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "RP2040_minimal:Crystal_SMD_HC49-US" (at 141.605 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 141.605 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "JLCPCB" "C390753" (at 141.605 110.49 90)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid b7350962-7a53-4261-a8a0-89a82212005e))
-    (pin "2" (uuid f132e03f-c0c9-4450-b395-99e60695b46e))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "Y1") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "power:+1V1") (at 114.3 136.525 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid beb484b4-91c8-469e-afdc-713bc0ce64f4)
@@ -13091,46 +13163,10 @@
     )
   )
 
-  (symbol (lib_id "Connector:Conn_01x12_Male") (at 17.145 173.355 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid c8887432-0d4e-4030-9fa0-2f58a25e55ca)
-    (property "Reference" "J1" (at 17.145 158.115 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "J12_IN_R" (at 17.145 192.405 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Connector_Molex:Molex_KK-396_5273-12A_1x12_P3.96mm_Vertical" (at 17.145 173.355 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 17.145 173.355 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 6761e8be-70cf-415e-b3c7-1ff886030256))
-    (pin "10" (uuid 24f2eb78-d1a1-475d-9c94-8d9fd7656dc7))
-    (pin "11" (uuid 82af1944-8681-48af-8434-d0a4db6177a5))
-    (pin "12" (uuid 8c98f44c-e267-4e6b-ae40-177069cb860b))
-    (pin "2" (uuid 08eb0243-66e6-415b-a0b2-fb642a5a4130))
-    (pin "3" (uuid 744f95bc-7fdf-4352-8d30-e2f487a74ac5))
-    (pin "4" (uuid 0d26db3f-6249-46bb-9dc9-7ed2ec2d1da0))
-    (pin "5" (uuid 68818aae-b01d-4178-b479-13895f6febbf))
-    (pin "6" (uuid c753ae0c-b6d3-437d-b37c-8d4c9f6481ea))
-    (pin "7" (uuid 6cc6d06b-2eee-4920-a0a1-910c7e51adb3))
-    (pin "8" (uuid fa1d2e59-6e3d-408f-a81b-31d779b2faf5))
-    (pin "9" (uuid a082e4e7-9f8c-4f78-bf2c-4f7dc5b8c30f))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "J1") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "power:GND") (at 269.24 247.65 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid cedc872f-6ba6-41a7-b889-e985dfefbde6)
-    (property "Reference" "#PWR033" (at 269.24 254 0)
+    (property "Reference" "#PWR037" (at 269.24 254 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 273.05 248.92 0)
@@ -13146,7 +13182,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR033") (unit 1)
+          (reference "#PWR037") (unit 1)
         )
       )
     )
@@ -13297,7 +13333,7 @@
   (symbol (lib_id "power:GND") (at 234.315 222.885 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d61ef680-3e82-48b1-8c10-d13336c55be9)
-    (property "Reference" "#PWR030" (at 234.315 229.235 0)
+    (property "Reference" "#PWR034" (at 234.315 229.235 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 238.125 224.155 0)
@@ -13313,7 +13349,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR030") (unit 1)
+          (reference "#PWR034") (unit 1)
         )
       )
     )
@@ -13322,7 +13358,7 @@
   (symbol (lib_id "power:+3V3") (at 262.89 236.22 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d6f083e8-cb7d-479b-9f53-7ce77a99b338)
-    (property "Reference" "#PWR031" (at 262.89 240.03 0)
+    (property "Reference" "#PWR035" (at 262.89 240.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 263.271 231.8258 0)
@@ -13338,7 +13374,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR031") (unit 1)
+          (reference "#PWR035") (unit 1)
         )
       )
     )
@@ -13374,7 +13410,7 @@
   (symbol (lib_id "power:GND") (at 215.265 92.075 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d9a5d70c-9407-4e40-b5e5-c833d6861f37)
-    (property "Reference" "#PWR061" (at 215.265 98.425 0)
+    (property "Reference" "#PWR031" (at 215.265 98.425 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 215.392 96.4692 0)
@@ -13390,7 +13426,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR061") (unit 1)
+          (reference "#PWR031") (unit 1)
         )
       )
     )
@@ -13477,6 +13513,37 @@
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
           (reference "R37") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Device:Crystal_GND24_Small") (at 141.605 110.49 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid e0deaa05-5b3b-4089-81d2-02a791ef1288)
+    (property "Reference" "Y2" (at 154.3555 107.7494 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "Crystal_GND24_Small" (at 154.3555 110.1736 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm" (at 141.605 110.49 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 141.605 110.49 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "JLCPCB" "C9002" (at 141.605 110.49 90)
+      (effects (font (size 1.524 1.524)) hide)
+    )
+    (pin "4" (uuid 880fdd36-400d-4e56-a5a3-cd45175acfd4))
+    (pin "3" (uuid 30f61e1b-77d5-47da-a3b2-b4b6a955885f))
+    (pin "1" (uuid b5b6f75c-4d51-46d3-921d-d12ae8c00eec))
+    (pin "2" (uuid 2fa2fa9b-4c05-4f26-a142-352fc8bd8e96))
+    (instances
+      (project "afterglow"
+        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+          (reference "Y2") (unit 1)
         )
       )
     )
@@ -13780,7 +13847,7 @@
     (property "Reference" "C4" (at 127.5334 108.331 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "27p" (at 125.222 108.331 0)
+    (property "Value" "22p" (at 125.222 108.331 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 122.555 106.3752 0)
@@ -13789,7 +13856,7 @@
     (property "Datasheet" "~" (at 126.365 105.41 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "JLCPCB" "C107002" (at 126.365 105.41 0)
+    (property "JLCPCB" "C1555" (at 126.365 105.41 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid edb468e2-3cea-4493-b29d-dd4240326f28))
@@ -13935,7 +14002,7 @@
   (symbol (lib_id "power:GND") (at 121.92 274.955 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f902b131-8398-474d-84cd-7c71126471d2)
-    (property "Reference" "#PWR019" (at 121.92 281.305 0)
+    (property "Reference" "#PWR020" (at 121.92 281.305 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 122.047 279.3492 0)
@@ -13951,7 +14018,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR019") (unit 1)
+          (reference "#PWR020") (unit 1)
         )
       )
     )
