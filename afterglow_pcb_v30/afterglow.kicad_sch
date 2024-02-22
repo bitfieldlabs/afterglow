@@ -2480,54 +2480,6 @@
         )
       )
     )
-    (symbol "Switch:SW_SPST" (pin_names (offset 0) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "SW" (at 0 3.175 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Value" "SW_SPST" (at 0 -2.54 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Footprint" "" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "switch lever" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Single Pole Single Throw (SPST) switch" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "SW_SPST_0_0"
-        (circle (center -2.032 0) (radius 0.508)
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy -1.524 0.254)
-            (xy 1.524 1.778)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (circle (center 2.032 0) (radius 0.508)
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-      )
-      (symbol "SW_SPST_1_1"
-        (pin passive line (at -5.08 0 0) (length 2.54)
-          (name "A" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 5.08 0 180) (length 2.54)
-          (name "B" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
     (symbol "Transistor_Array:ULN2803A" (in_bom yes) (on_board yes)
       (property "Reference" "U" (at 0 13.335 0)
         (effects (font (size 1.27 1.27)))
@@ -4238,7 +4190,7 @@
     (stroke (width 0) (type default))
     (uuid 4160bbf7-ffff-4c5c-a647-5ee58ddecf06)
   )
-  (wire (pts (xy 88.9 36.195) (xy 93.98 36.195))
+  (wire (pts (xy 86.36 36.195) (xy 93.98 36.195))
     (stroke (width 0) (type default))
     (uuid 41649948-c709-4d3c-bf9b-514a50107268)
   )
@@ -5779,6 +5731,10 @@
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid 29c105f5-55ce-47f7-9514-1520668ae7d6)
   )
+  (text "Each close to an IOVDD pin" (at 170.815 133.35 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 2ab1731a-967d-48ee-9c61-80e24cb9fd89)
+  )
   (text "Display Conn" (at 192.405 34.29 0)
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid 42eb4324-ea1c-4edd-abd9-011765c61c42)
@@ -5790,10 +5746,6 @@
   (text "Power" (at 73.66 25.4 0)
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid 80f8c1b4-10dd-40fe-b7f7-67988bc3ad81)
-  )
-  (text "Make sure C6 is close to pin 45 of RP2040" (at 83.185 130.175 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 8426689c-1223-430e-9e4e-ca65b4ffc8b1)
   )
   (text "Hat" (at 163.195 55.245 0)
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
@@ -5815,6 +5767,10 @@
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid c210293b-1d7a-4e96-92e9-058784106727)
   )
+  (text "Each close to an DVDD pin" (at 84.455 133.985 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid d4de2238-6208-44b0-b4e9-7420bec773a9)
+  )
   (text "Output Driver" (at 249.555 19.05 0)
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid e79eac07-149a-4a34-9775-58a4eb7a7af4)
@@ -5827,7 +5783,7 @@
     (effects (font (size 4 4) (thickness 0.8) bold) (justify left bottom))
     (uuid fc2e9f96-3bed-4896-b995-f56e799f1c77)
   )
-  (text "Make sure C9 is close to pin 44 of RP2040" (at 167.64 160.655 0)
+  (text "Make sure C10 is close to pin 44 of RP2040" (at 167.64 160.655 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid fcad6875-3c3e-46f0-a5a5-8a430ca32b34)
   )
@@ -7276,7 +7232,7 @@
   (symbol (lib_id "power:GND") (at 297.815 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005a54f7aa)
-    (property "Reference" "#PWR046" (at 297.815 66.04 0)
+    (property "Reference" "#PWR047" (at 297.815 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 297.815 63.5 0)
@@ -7292,7 +7248,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR046") (unit 1)
+          (reference "#PWR047") (unit 1)
         )
       )
     )
@@ -7434,7 +7390,7 @@
   (symbol (lib_id "power:GND") (at 297.815 230.505 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005baef1e7)
-    (property "Reference" "#PWR047" (at 297.815 236.855 0)
+    (property "Reference" "#PWR048" (at 297.815 236.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 297.942 234.8992 0)
@@ -7450,7 +7406,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR047") (unit 1)
+          (reference "#PWR048") (unit 1)
         )
       )
     )
@@ -7623,7 +7579,7 @@
   (symbol (lib_id "power:GND") (at 327.025 194.945 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b371)
-    (property "Reference" "#PWR055" (at 327.025 201.295 0)
+    (property "Reference" "#PWR056" (at 327.025 201.295 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 198.755 0)
@@ -7639,7 +7595,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR055") (unit 1)
+          (reference "#PWR056") (unit 1)
         )
       )
     )
@@ -7648,7 +7604,7 @@
   (symbol (lib_id "power:GND") (at 327.025 175.895 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b8d5)
-    (property "Reference" "#PWR054" (at 327.025 182.245 0)
+    (property "Reference" "#PWR055" (at 327.025 182.245 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 179.705 0)
@@ -7664,7 +7620,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR054") (unit 1)
+          (reference "#PWR055") (unit 1)
         )
       )
     )
@@ -7673,7 +7629,7 @@
   (symbol (lib_id "power:GND") (at 327.025 156.845 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6bdec)
-    (property "Reference" "#PWR053" (at 327.025 163.195 0)
+    (property "Reference" "#PWR054" (at 327.025 163.195 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 160.655 0)
@@ -7689,7 +7645,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR053") (unit 1)
+          (reference "#PWR054") (unit 1)
         )
       )
     )
@@ -7698,7 +7654,7 @@
   (symbol (lib_id "power:GND") (at 327.025 137.795 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f9cb4f)
-    (property "Reference" "#PWR052" (at 327.025 144.145 0)
+    (property "Reference" "#PWR053" (at 327.025 144.145 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 141.605 0)
@@ -7714,7 +7670,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR052") (unit 1)
+          (reference "#PWR053") (unit 1)
         )
       )
     )
@@ -7723,7 +7679,7 @@
   (symbol (lib_id "power:GND") (at 327.025 117.475 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa08bf)
-    (property "Reference" "#PWR051" (at 327.025 123.825 0)
+    (property "Reference" "#PWR052" (at 327.025 123.825 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 121.285 0)
@@ -7739,7 +7695,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR051") (unit 1)
+          (reference "#PWR052") (unit 1)
         )
       )
     )
@@ -7748,7 +7704,7 @@
   (symbol (lib_id "power:GND") (at 327.025 99.695 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa3373)
-    (property "Reference" "#PWR050" (at 327.025 106.045 0)
+    (property "Reference" "#PWR051" (at 327.025 106.045 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 103.505 0)
@@ -7764,7 +7720,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR050") (unit 1)
+          (reference "#PWR051") (unit 1)
         )
       )
     )
@@ -7773,7 +7729,7 @@
   (symbol (lib_id "power:GND") (at 327.025 80.645 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbb3e3)
-    (property "Reference" "#PWR049" (at 327.025 86.995 0)
+    (property "Reference" "#PWR050" (at 327.025 86.995 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 84.455 0)
@@ -7789,7 +7745,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR049") (unit 1)
+          (reference "#PWR050") (unit 1)
         )
       )
     )
@@ -7798,7 +7754,7 @@
   (symbol (lib_id "power:GND") (at 327.025 61.595 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbdcba)
-    (property "Reference" "#PWR048" (at 327.025 67.945 0)
+    (property "Reference" "#PWR049" (at 327.025 67.945 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 65.405 0)
@@ -7814,7 +7770,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR048") (unit 1)
+          (reference "#PWR049") (unit 1)
         )
       )
     )
@@ -7823,7 +7779,7 @@
   (symbol (lib_id "power:GND") (at 380.365 234.315 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc616d)
-    (property "Reference" "#PWR065" (at 380.365 240.665 0)
+    (property "Reference" "#PWR066" (at 380.365 240.665 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 238.125 0)
@@ -7839,7 +7795,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR065") (unit 1)
+          (reference "#PWR066") (unit 1)
         )
       )
     )
@@ -7848,7 +7804,7 @@
   (symbol (lib_id "power:GND") (at 380.365 215.265 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc668f)
-    (property "Reference" "#PWR064" (at 380.365 221.615 0)
+    (property "Reference" "#PWR065" (at 380.365 221.615 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 219.075 0)
@@ -7864,7 +7820,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR064") (unit 1)
+          (reference "#PWR065") (unit 1)
         )
       )
     )
@@ -7873,7 +7829,7 @@
   (symbol (lib_id "power:GND") (at 380.365 196.215 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6a90)
-    (property "Reference" "#PWR063" (at 380.365 202.565 0)
+    (property "Reference" "#PWR064" (at 380.365 202.565 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 200.025 0)
@@ -7889,7 +7845,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR063") (unit 1)
+          (reference "#PWR064") (unit 1)
         )
       )
     )
@@ -7898,7 +7854,7 @@
   (symbol (lib_id "power:GND") (at 380.365 177.165 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6e7e)
-    (property "Reference" "#PWR062" (at 380.365 183.515 0)
+    (property "Reference" "#PWR063" (at 380.365 183.515 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 180.975 0)
@@ -7914,7 +7870,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR062") (unit 1)
+          (reference "#PWR063") (unit 1)
         )
       )
     )
@@ -7923,7 +7879,7 @@
   (symbol (lib_id "power:GND") (at 380.365 158.115 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc7277)
-    (property "Reference" "#PWR061" (at 380.365 164.465 0)
+    (property "Reference" "#PWR062" (at 380.365 164.465 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 161.925 0)
@@ -7939,7 +7895,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR061") (unit 1)
+          (reference "#PWR062") (unit 1)
         )
       )
     )
@@ -7948,7 +7904,7 @@
   (symbol (lib_id "power:GND") (at 380.365 139.065 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc8c0f)
-    (property "Reference" "#PWR060" (at 380.365 145.415 0)
+    (property "Reference" "#PWR061" (at 380.365 145.415 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 142.875 0)
@@ -7964,7 +7920,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR060") (unit 1)
+          (reference "#PWR061") (unit 1)
         )
       )
     )
@@ -7973,7 +7929,7 @@
   (symbol (lib_id "power:GND") (at 380.365 120.015 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc91bf)
-    (property "Reference" "#PWR059" (at 380.365 126.365 0)
+    (property "Reference" "#PWR060" (at 380.365 126.365 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 123.825 0)
@@ -7989,7 +7945,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR059") (unit 1)
+          (reference "#PWR060") (unit 1)
         )
       )
     )
@@ -7998,7 +7954,7 @@
   (symbol (lib_id "power:GND") (at 380.365 100.965 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc973d)
-    (property "Reference" "#PWR058" (at 380.365 107.315 0)
+    (property "Reference" "#PWR059" (at 380.365 107.315 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 104.775 0)
@@ -8014,7 +7970,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR058") (unit 1)
+          (reference "#PWR059") (unit 1)
         )
       )
     )
@@ -8023,7 +7979,7 @@
   (symbol (lib_id "power:GND") (at 380.365 81.915 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcd5ee)
-    (property "Reference" "#PWR057" (at 380.365 88.265 0)
+    (property "Reference" "#PWR058" (at 380.365 88.265 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 85.725 0)
@@ -8039,7 +7995,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR057") (unit 1)
+          (reference "#PWR058") (unit 1)
         )
       )
     )
@@ -8048,7 +8004,7 @@
   (symbol (lib_id "power:GND") (at 380.365 62.865 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcdafc)
-    (property "Reference" "#PWR056" (at 380.365 69.215 0)
+    (property "Reference" "#PWR057" (at 380.365 69.215 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 66.675 0)
@@ -8064,7 +8020,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR056") (unit 1)
+          (reference "#PWR057") (unit 1)
         )
       )
     )
@@ -8273,7 +8229,7 @@
   (symbol (lib_id "Device:R") (at 333.375 60.325 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0befad97-535f-4091-8686-1fa7c6e7c2fa)
-    (property "Reference" "R92" (at 333.375 62.357 90)
+    (property "Reference" "R48" (at 333.375 62.357 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 60.325 90)
@@ -8293,7 +8249,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R92") (unit 1)
+          (reference "R48") (unit 1)
         )
       )
     )
@@ -8565,7 +8521,7 @@
   (symbol (lib_id "Transistor_FET:AO3401A") (at 334.645 55.245 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 14cae8c5-3c33-4751-a99c-fcfd42e85505)
-    (property "Reference" "Q1" (at 339.852 54.0329 0)
+    (property "Reference" "Q2" (at 339.852 54.0329 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "AO3401A" (at 339.852 56.4571 0)
@@ -8586,7 +8542,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "Q1") (unit 1)
+          (reference "Q2") (unit 1)
         )
       )
     )
@@ -8595,7 +8551,7 @@
   (symbol (lib_id "Device:R") (at 374.015 164.465 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 15d2739b-b969-4311-9e38-d3b6568be4b3)
-    (property "Reference" "R88" (at 374.015 166.497 90)
+    (property "Reference" "R89" (at 374.015 166.497 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 164.465 90)
@@ -8615,7 +8571,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R88") (unit 1)
+          (reference "R89") (unit 1)
         )
       )
     )
@@ -8679,32 +8635,6 @@
     )
   )
 
-  (symbol (lib_id "Switch:SW_SPST") (at 83.82 36.195 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 16c3f138-aa4f-44e3-95fc-f0aa7a352c13)
-    (property "Reference" "SW2" (at 83.82 30.3997 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "SW_SPST" (at 83.82 32.8239 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 83.82 36.195 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 83.82 36.195 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 8b0dbf09-553b-4f7d-9ca5-94793452d578))
-    (pin "2" (uuid 3c2a1611-c0e3-4f8c-b385-eaf0d413b986))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "SW2") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "Transistor_FET:AO3400A") (at 377.825 207.645 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 16d79312-fb21-4ce5-9b91-8a7991aa5162)
@@ -8738,7 +8668,7 @@
   (symbol (lib_id "Device:R") (at 368.935 169.545 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 17456922-6bbb-4b02-8051-955ac0fb6ee2)
-    (property "Reference" "R73" (at 368.935 171.577 90)
+    (property "Reference" "R75" (at 368.935 171.577 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 169.545 90)
@@ -8758,7 +8688,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R73") (unit 1)
+          (reference "R75") (unit 1)
         )
       )
     )
@@ -8966,7 +8896,7 @@
   (symbol (lib_id "Device:R") (at 67.31 123.825 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1e516820-3ead-4f85-bd65-7b72c8be304f)
-    (property "Reference" "R19" (at 67.31 118.5672 90)
+    (property "Reference" "R20" (at 67.31 118.5672 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 120.8786 90)
@@ -8986,7 +8916,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R19") (unit 1)
+          (reference "R20") (unit 1)
         )
       )
     )
@@ -9025,7 +8955,7 @@
   (symbol (lib_id "Device:C_Small") (at 292.1 76.2 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2002dc89-cbbd-4b25-908a-1ca9eda52bf8)
-    (property "Reference" "C17" (at 294.005 73.025 90)
+    (property "Reference" "C19" (at 294.005 73.025 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "0.1" (at 290.068 76.454 0)
@@ -9045,7 +8975,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "C17") (unit 1)
+          (reference "C19") (unit 1)
         )
       )
     )
@@ -9114,7 +9044,7 @@
   (symbol (lib_id "Transistor_FET:AO3401A") (at 334.645 74.295 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 22aa11ad-9f63-4f2d-8c5a-831a96f3d957)
-    (property "Reference" "Q2" (at 339.852 73.0829 0)
+    (property "Reference" "Q3" (at 339.852 73.0829 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "AO3401A" (at 339.852 75.5071 0)
@@ -9135,7 +9065,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "Q2") (unit 1)
+          (reference "Q3") (unit 1)
         )
       )
     )
@@ -9202,7 +9132,7 @@
   (symbol (lib_id "Device:R") (at 333.375 136.525 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 29200341-a926-4a75-a42d-37e31fbeb454)
-    (property "Reference" "R54" (at 333.375 138.557 90)
+    (property "Reference" "R56" (at 333.375 138.557 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 136.525 90)
@@ -9222,7 +9152,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R54") (unit 1)
+          (reference "R56") (unit 1)
         )
       )
     )
@@ -9496,7 +9426,7 @@
   (symbol (lib_id "Device:R") (at 374.015 202.565 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 361e8f93-45a8-43c5-9e28-d982dd3d5990)
-    (property "Reference" "R90" (at 374.015 204.597 90)
+    (property "Reference" "R91" (at 374.015 204.597 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 202.565 90)
@@ -9516,7 +9446,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R90") (unit 1)
+          (reference "R91") (unit 1)
         )
       )
     )
@@ -9690,7 +9620,7 @@
   (symbol (lib_id "Device:R") (at 333.375 117.475 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 3e454984-da73-4ae5-a322-1303ee58e1d3)
-    (property "Reference" "R52" (at 333.375 119.507 90)
+    (property "Reference" "R54" (at 333.375 119.507 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 117.475 90)
@@ -9710,7 +9640,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R52") (unit 1)
+          (reference "R54") (unit 1)
         )
       )
     )
@@ -9806,7 +9736,7 @@
   (symbol (lib_id "Device:R") (at 374.015 183.515 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4194946c-733d-4fd6-af99-55af9cb5aff5)
-    (property "Reference" "R89" (at 374.015 185.547 90)
+    (property "Reference" "R90" (at 374.015 185.547 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 183.515 90)
@@ -9826,7 +9756,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R89") (unit 1)
+          (reference "R90") (unit 1)
         )
       )
     )
@@ -9835,7 +9765,7 @@
   (symbol (lib_id "Device:R") (at 333.375 98.425 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 42843b2f-3c38-4d2b-83b1-8e75c6c39f49)
-    (property "Reference" "R50" (at 333.375 100.457 90)
+    (property "Reference" "R52" (at 333.375 100.457 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 98.425 90)
@@ -9855,7 +9785,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R50") (unit 1)
+          (reference "R52") (unit 1)
         )
       )
     )
@@ -9918,7 +9848,7 @@
   (symbol (lib_id "Device:R") (at 368.935 207.645 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 447aac10-73c8-494c-ba9f-4ded1aa2622e)
-    (property "Reference" "R77" (at 368.935 209.677 90)
+    (property "Reference" "R79" (at 368.935 209.677 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 207.645 90)
@@ -9938,7 +9868,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R77") (unit 1)
+          (reference "R79") (unit 1)
         )
       )
     )
@@ -10002,7 +9932,7 @@
   (symbol (lib_id "Device:R") (at 374.015 221.615 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 46920638-77dd-4873-8bc4-07ca08fe3c10)
-    (property "Reference" "R91" (at 374.015 223.647 90)
+    (property "Reference" "R92" (at 374.015 223.647 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 221.615 90)
@@ -10022,7 +9952,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R91") (unit 1)
+          (reference "R92") (unit 1)
         )
       )
     )
@@ -10031,7 +9961,7 @@
   (symbol (lib_id "Device:R") (at 67.31 210.82 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 46bb4a13-4af3-45e3-ab72-7072f5db7c6e)
-    (property "Reference" "R26" (at 67.31 205.5622 90)
+    (property "Reference" "R27" (at 67.31 205.5622 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 207.8736 90)
@@ -10051,7 +9981,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R26") (unit 1)
+          (reference "R27") (unit 1)
         )
       )
     )
@@ -10193,7 +10123,7 @@
   (symbol (lib_id "Device:R") (at 67.31 111.76 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4d48c900-c9d8-420f-bd92-6f6b71e40ff4)
-    (property "Reference" "R93" (at 67.31 106.5022 90)
+    (property "Reference" "R19" (at 67.31 106.5022 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 108.8136 90)
@@ -10213,7 +10143,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R93") (unit 1)
+          (reference "R19") (unit 1)
         )
       )
     )
@@ -10305,7 +10235,7 @@
   (symbol (lib_id "Transistor_FET:AO3401A") (at 334.01 112.395 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 515ed9da-84a7-47ca-bfea-f26ee2d4a2e5)
-    (property "Reference" "Q4" (at 339.217 111.1829 0)
+    (property "Reference" "Q1" (at 339.217 111.1829 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "AO3401A" (at 339.217 113.6071 0)
@@ -10326,7 +10256,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "Q4") (unit 1)
+          (reference "Q1") (unit 1)
         )
       )
     )
@@ -10335,7 +10265,7 @@
   (symbol (lib_id "Device:R") (at 368.935 131.445 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 521cb568-26df-4b3a-8391-723181dc120c)
-    (property "Reference" "R69" (at 368.935 133.477 90)
+    (property "Reference" "R71" (at 368.935 133.477 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 131.445 90)
@@ -10355,7 +10285,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R69") (unit 1)
+          (reference "R71") (unit 1)
         )
       )
     )
@@ -10758,7 +10688,7 @@
   (symbol (lib_id "Device:R") (at 67.31 148.59 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 67379a80-4526-4d2d-bab4-cf006e3a0912)
-    (property "Reference" "R21" (at 67.31 143.3322 90)
+    (property "Reference" "R22" (at 67.31 143.3322 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 145.6436 90)
@@ -10778,7 +10708,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R21") (unit 1)
+          (reference "R22") (unit 1)
         )
       )
     )
@@ -10948,7 +10878,7 @@
   (symbol (lib_id "Device:R") (at 333.375 193.675 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 707c2ac2-0c6c-4c5e-8c41-efed97afa4d7)
-    (property "Reference" "R60" (at 333.375 195.707 90)
+    (property "Reference" "R62" (at 333.375 195.707 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 193.675 90)
@@ -10968,7 +10898,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R60") (unit 1)
+          (reference "R62") (unit 1)
         )
       )
     )
@@ -10977,7 +10907,7 @@
   (symbol (lib_id "Device:R") (at 374.015 88.265 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 72e473a1-da14-456b-bacf-1727e874b027)
-    (property "Reference" "R84" (at 374.015 90.297 90)
+    (property "Reference" "R85" (at 374.015 90.297 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 88.265 90)
@@ -10997,7 +10927,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R84") (unit 1)
+          (reference "R85") (unit 1)
         )
       )
     )
@@ -11006,7 +10936,7 @@
   (symbol (lib_id "Device:R") (at 67.31 161.29 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 737998ce-c2a4-4387-bb00-655a14930ef5)
-    (property "Reference" "R22" (at 67.31 156.0322 90)
+    (property "Reference" "R23" (at 67.31 156.0322 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 158.3436 90)
@@ -11026,7 +10956,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R22") (unit 1)
+          (reference "R23") (unit 1)
         )
       )
     )
@@ -11511,7 +11441,7 @@
   (symbol (lib_id "Device:R") (at 368.935 188.595 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 89973620-70c3-4a51-9e18-21ceb4056f3f)
-    (property "Reference" "R75" (at 368.935 190.627 90)
+    (property "Reference" "R77" (at 368.935 190.627 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 188.595 90)
@@ -11531,7 +11461,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R75") (unit 1)
+          (reference "R77") (unit 1)
         )
       )
     )
@@ -11540,7 +11470,7 @@
   (symbol (lib_id "Device:R") (at 67.31 198.12 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 8a567737-bb35-4001-9434-3a905c41af1d)
-    (property "Reference" "R25" (at 67.31 192.8622 90)
+    (property "Reference" "R26" (at 67.31 192.8622 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 195.1736 90)
@@ -11560,7 +11490,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R25") (unit 1)
+          (reference "R26") (unit 1)
         )
       )
     )
@@ -11657,7 +11587,7 @@
   (symbol (lib_id "Device:R") (at 368.935 150.495 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 916d0a27-ef95-43e4-b1c6-107336ed8b00)
-    (property "Reference" "R71" (at 368.935 152.527 90)
+    (property "Reference" "R73" (at 368.935 152.527 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 150.495 90)
@@ -11677,7 +11607,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R71") (unit 1)
+          (reference "R73") (unit 1)
         )
       )
     )
@@ -11692,7 +11622,7 @@
     (property "Value" "100n" (at 96.901 144.018 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Button_Switch_SMD:SW_SPST_SKQG_WithStem" (at 94.9452 146.685 0)
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric" (at 94.9452 146.685 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 93.98 142.875 0)
@@ -11773,7 +11703,7 @@
   (symbol (lib_id "Device:C_Small") (at 269.24 241.3 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 975eef88-e84a-413b-a4fc-a067c0498034)
-    (property "Reference" "C19" (at 266.065 239.395 90)
+    (property "Reference" "C17" (at 266.065 239.395 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "0.1" (at 269.494 243.332 0)
@@ -11793,7 +11723,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "C19") (unit 1)
+          (reference "C17") (unit 1)
         )
       )
     )
@@ -11808,7 +11738,7 @@
     (property "Value" "Conn_Power" (at 113.03 43.815 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" (at 107.95 43.815 0)
+    (property "Footprint" "Connector_Molex:Molex_KK-396_5273-02A_1x02_P3.96mm_Vertical" (at 107.95 43.815 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 107.95 43.815 0)
@@ -11831,13 +11761,13 @@
   (symbol (lib_id "Switch:SW_Push") (at 210.82 261.62 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 98ea80df-1fb7-4d1f-a83a-27fa7803e94a)
-    (property "Reference" "SW3" (at 210.82 254.9992 0)
+    (property "Reference" "SW2" (at 210.82 254.9992 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "SW_Push" (at 210.82 257.5361 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Button_Switch_SMD:SW_SPST_B3U-1000P" (at 210.82 256.54 0)
+    (property "Footprint" "Button_Switch_SMD:SW_SPST_SKQG_WithStem" (at 210.82 256.54 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 210.82 256.54 0)
@@ -11851,7 +11781,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "SW3") (unit 1)
+          (reference "SW2") (unit 1)
         )
       )
     )
@@ -11889,7 +11819,7 @@
   (symbol (lib_id "Device:R") (at 67.31 223.52 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 994774b5-cef9-4912-b948-0bb9afee52dd)
-    (property "Reference" "R27" (at 67.31 218.2622 90)
+    (property "Reference" "R28" (at 67.31 218.2622 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 220.5736 90)
@@ -11909,7 +11839,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R27") (unit 1)
+          (reference "R28") (unit 1)
         )
       )
     )
@@ -11918,7 +11848,7 @@
   (symbol (lib_id "Device:Fuse") (at 120.65 26.035 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 995f9191-855b-48fa-be68-b3a90e3d0760)
-    (property "Reference" "F1" (at 120.65 28.067 90)
+    (property "Reference" "F2" (at 120.65 28.067 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5A SB" (at 120.65 24.13 90)
@@ -11938,7 +11868,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "F1") (unit 1)
+          (reference "F2") (unit 1)
         )
       )
     )
@@ -11976,7 +11906,7 @@
   (symbol (lib_id "Device:R") (at 67.31 173.99 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9beeef6f-6d26-428f-8853-f9fa1cbed6df)
-    (property "Reference" "R23" (at 67.31 168.7322 90)
+    (property "Reference" "R24" (at 67.31 168.7322 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 171.0436 90)
@@ -11996,7 +11926,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R23") (unit 1)
+          (reference "R24") (unit 1)
         )
       )
     )
@@ -12035,7 +11965,7 @@
   (symbol (lib_id "Device:R") (at 374.015 69.215 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9eae08c9-ce82-4e43-9a19-380b8ea9579c)
-    (property "Reference" "R28" (at 374.015 71.247 90)
+    (property "Reference" "R84" (at 374.015 71.247 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 69.215 90)
@@ -12055,7 +11985,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R28") (unit 1)
+          (reference "R84") (unit 1)
         )
       )
     )
@@ -12404,7 +12334,7 @@
   (symbol (lib_id "Device:R") (at 374.015 145.415 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid ae212085-653f-4c91-9bfa-edffe72c0f4f)
-    (property "Reference" "R87" (at 374.015 147.447 90)
+    (property "Reference" "R88" (at 374.015 147.447 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 145.415 90)
@@ -12424,7 +12354,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R87") (unit 1)
+          (reference "R88") (unit 1)
         )
       )
     )
@@ -12582,7 +12512,7 @@
   (symbol (lib_id "Device:R") (at 333.375 79.375 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b3436542-e33a-4376-ab53-a5de0cc5de77)
-    (property "Reference" "R48" (at 333.375 81.407 90)
+    (property "Reference" "R50" (at 333.375 81.407 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 79.375 90)
@@ -12602,7 +12532,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R48") (unit 1)
+          (reference "R50") (unit 1)
         )
       )
     )
@@ -12731,7 +12661,7 @@
   (symbol (lib_id "Device:R") (at 368.935 112.395 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b88cf3c3-1349-470e-bd65-157be9b4685a)
-    (property "Reference" "R67" (at 368.935 114.427 90)
+    (property "Reference" "R69" (at 368.935 114.427 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 112.395 90)
@@ -12751,7 +12681,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R67") (unit 1)
+          (reference "R69") (unit 1)
         )
       )
     )
@@ -12760,7 +12690,7 @@
   (symbol (lib_id "Device:R") (at 333.375 174.625 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b8f60983-14ac-4d7a-9672-b7c82e45a615)
-    (property "Reference" "R58" (at 333.375 176.657 90)
+    (property "Reference" "R60" (at 333.375 176.657 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 174.625 90)
@@ -12780,7 +12710,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R58") (unit 1)
+          (reference "R60") (unit 1)
         )
       )
     )
@@ -12789,7 +12719,7 @@
   (symbol (lib_id "Device:R") (at 67.31 186.055 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid bd08b848-8a36-4bec-a05d-9a20f14f9c6a)
-    (property "Reference" "R24" (at 67.31 180.7972 90)
+    (property "Reference" "R25" (at 67.31 180.7972 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 183.1086 90)
@@ -12809,7 +12739,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R24") (unit 1)
+          (reference "R25") (unit 1)
         )
       )
     )
@@ -12923,6 +12853,35 @@
     )
   )
 
+  (symbol (lib_id "Device:Fuse") (at 82.55 36.195 270) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid c0c20365-ed98-484b-b1f2-9c925967ce67)
+    (property "Reference" "F1" (at 82.55 38.227 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "5A SB" (at 82.55 34.29 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Fuse:Fuseholder_Clip-5x20mm_Schurter_OG_Lateral_P15.00x5.00mm_D1.3mm_Horizontal" (at 82.55 34.417 90)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 82.55 36.195 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "JLCPCB" "C3130" (at 82.55 36.195 90)
+      (effects (font (size 1.524 1.524)) hide)
+    )
+    (pin "1" (uuid 15ab6765-f5ad-4a07-ae06-1654bb58bc74))
+    (pin "2" (uuid 6d841be0-ad02-46bc-b498-bf0fafa3f1fe))
+    (instances
+      (project "afterglow"
+        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+          (reference "F1") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "Device:R") (at 78.74 76.835 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c4d85645-af39-4664-9802-436d5510edbb)
@@ -12955,7 +12914,7 @@
   (symbol (lib_id "Device:R") (at 67.31 135.89 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c54c32c3-206b-46fa-aaf4-2502dc3a1a09)
-    (property "Reference" "R20" (at 67.31 130.6322 90)
+    (property "Reference" "R21" (at 67.31 130.6322 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1k" (at 67.31 132.9436 90)
@@ -12975,7 +12934,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R20") (unit 1)
+          (reference "R21") (unit 1)
         )
       )
     )
@@ -13038,7 +12997,7 @@
   (symbol (lib_id "Device:R") (at 368.935 93.345 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid cb85aed2-e9a8-46b9-8862-2d4b576a8155)
-    (property "Reference" "R65" (at 368.935 95.377 90)
+    (property "Reference" "R67" (at 368.935 95.377 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 93.345 90)
@@ -13058,7 +13017,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R65") (unit 1)
+          (reference "R67") (unit 1)
         )
       )
     )
@@ -13096,7 +13055,7 @@
   (symbol (lib_id "Device:R") (at 374.015 126.365 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid cc0e6df5-a46d-46ba-be8c-566e14d16758)
-    (property "Reference" "R86" (at 374.015 128.397 90)
+    (property "Reference" "R87" (at 374.015 128.397 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 126.365 90)
@@ -13116,7 +13075,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R86") (unit 1)
+          (reference "R87") (unit 1)
         )
       )
     )
@@ -13204,7 +13163,7 @@
   (symbol (lib_id "Device:R") (at 368.935 74.295 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid cfeef7a4-1c5c-4f21-be0f-ea224ba9e5c2)
-    (property "Reference" "R62" (at 368.935 76.327 90)
+    (property "Reference" "R65" (at 368.935 76.327 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 74.295 90)
@@ -13224,7 +13183,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R62") (unit 1)
+          (reference "R65") (unit 1)
         )
       )
     )
@@ -13321,7 +13280,7 @@
   (symbol (lib_id "Device:R") (at 374.015 107.315 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d5eb7c52-408d-4ebb-8977-420b44e588a1)
-    (property "Reference" "R85" (at 374.015 109.347 90)
+    (property "Reference" "R86" (at 374.015 109.347 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 374.015 107.315 90)
@@ -13341,7 +13300,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R85") (unit 1)
+          (reference "R86") (unit 1)
         )
       )
     )
@@ -13538,7 +13497,7 @@
   (symbol (lib_id "Transistor_FET:AO3401A") (at 334.645 93.345 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid ddd4df28-19d5-42e2-b7f1-eb047e00b4ac)
-    (property "Reference" "Q3" (at 339.852 92.1329 0)
+    (property "Reference" "Q4" (at 339.852 92.1329 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "AO3401A" (at 339.852 94.5571 0)
@@ -13559,7 +13518,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "Q3") (unit 1)
+          (reference "Q4") (unit 1)
         )
       )
     )
@@ -13746,7 +13705,7 @@
   (symbol (lib_id "Device:R") (at 333.375 155.575 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e24c37c4-2007-4b23-a0f8-4e6e8f92cceb)
-    (property "Reference" "R56" (at 333.375 157.607 90)
+    (property "Reference" "R58" (at 333.375 157.607 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10k" (at 333.375 155.575 90)
@@ -13766,7 +13725,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R56") (unit 1)
+          (reference "R58") (unit 1)
         )
       )
     )
@@ -13833,7 +13792,7 @@
   (symbol (lib_id "power:GND") (at 295.91 76.2 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e6692a51-fd71-4a7b-ae5d-48359417b9b0)
-    (property "Reference" "#PWR066" (at 295.91 82.55 0)
+    (property "Reference" "#PWR046" (at 295.91 82.55 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 295.91 80.01 0)
@@ -13849,7 +13808,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR066") (unit 1)
+          (reference "#PWR046") (unit 1)
         )
       )
     )
@@ -14261,7 +14220,7 @@
   (symbol (lib_id "Device:R") (at 368.935 226.695 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f8c6c1b9-fb8b-4752-bd75-057df5e7fc2b)
-    (property "Reference" "R79" (at 368.935 228.727 90)
+    (property "Reference" "R81" (at 368.935 228.727 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "220" (at 368.935 226.695 90)
@@ -14281,7 +14240,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "R79") (unit 1)
+          (reference "R81") (unit 1)
         )
       )
     )
