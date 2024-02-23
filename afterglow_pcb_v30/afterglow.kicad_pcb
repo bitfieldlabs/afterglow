@@ -1550,7 +1550,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 1733dfb7-614c-4e83-ba9e-6949e9961efc)
-    (at 193.78 89.42)
+    (at 193.7725 89.37)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -3258,7 +3258,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 2f20dfbf-5c50-4298-9aa3-be214b94ad87)
-    (at 193.51 69.79)
+    (at 193.8325 72.21)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -4119,7 +4119,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 477764ef-a5d1-47e3-9bbd-e3d106f03eef)
-    (at 193.78 93.97)
+    (at 193.7725 93.35)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -5125,7 +5125,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 57b22971-3745-4883-8c23-042b3cb313f9)
-    (at 21.805 68.11)
+    (at 193.8325 68.23)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -6267,7 +6267,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 6c3b2312-af2f-4e6a-9a0d-1b72c86b73f4)
-    (at 193.78 98.52)
+    (at 193.7725 97.33)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -6679,7 +6679,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp 719db131-3580-4d82-8ac2-0c4853cbc5ed)
-    (at 193.39 74.56)
+    (at 193.8325 76.19)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -9214,7 +9214,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp aa74f503-6f6e-4c04-8955-ef37e727fe28)
-    (at 193.39 83.97)
+    (at 193.7725 85.39)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -10162,7 +10162,7 @@
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp f25375f7-d5ee-4639-b442-57a1d565956a)
     )
-    (fp_text value "Conn_Power" (at 1.98 6.35) (layer "F.Fab")
+    (fp_text value "Conn_Power" (at 2.9225 7.9) (layer "F.Fab")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 347838f4-95f7-4738-9e45-07051ea31d8b)
     )
@@ -11206,7 +11206,7 @@
 
   (footprint "Diode_SMD:D_SMA" (layer "F.Cu")
     (tstamp d0d615ee-4686-42c1-8b1c-6f106117540d)
-    (at 192.89 79.14)
+    (at 193.8325 80.17)
     (descr "Diode SMA (DO-214AC)")
     (tags "Diode SMA (DO-214AC)")
     (property "JLCPCB" "C22452")
@@ -12491,7 +12491,7 @@
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp b214f6ca-caa0-44c2-bfff-b5c2a7de18e1)
     )
-    (fp_text value "J137_IN_C" (at 15.84 6.35 90) (layer "F.Fab")
+    (fp_text value "J137_IN_C" (at 19.330001 11.15 90) (layer "F.Fab")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 70f4aa18-e04b-450d-9d06-ef4ea31db38f)
     )
