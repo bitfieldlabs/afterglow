@@ -5996,10 +5996,6 @@
     (effects (font (size 1.524 1.524)) (justify right bottom))
     (uuid 26db439d-516b-47ce-a758-975d033cc6d0)
   )
-  (label "18V" (at 330.835 230.505 180) (fields_autoplaced)
-    (effects (font (size 1.524 1.524)) (justify right bottom))
-    (uuid 275b6416-db29-42cc-9307-bf426917c3b4)
-  )
   (label "STATUS_LED" (at 184.15 259.715 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 28715d8b-4214-4956-bc08-e918d4eab713)
@@ -6804,10 +6800,6 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid d6911a26-ce3b-4faf-bd33-efb59bc9871c)
   )
-  (label "3V3" (at 314.325 230.505 180) (fields_autoplaced)
-    (effects (font (size 1.524 1.524)) (justify right bottom))
-    (uuid d8200a86-aa75-47a3-ad2a-7f4c9c999a6f)
-  )
   (label "MOS_RO9" (at 170.18 88.265 0) (fields_autoplaced)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid db31a32d-da5b-4eb1-ae38-3221a755b458)
@@ -7362,106 +7354,6 @@
     )
   )
 
-  (symbol (lib_id "Connector:TestPoint") (at 297.815 230.505 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid 00000000-0000-0000-0000-00005baeecc5)
-    (property "Reference" "TP2" (at 299.2882 227.457 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "TestPoint" (at 299.2882 229.7684 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" (at 302.895 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 302.895 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid a8991e3a-dd49-493b-9ff3-894f2c101b4f))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "TP2") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "power:GND") (at 297.815 230.505 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid 00000000-0000-0000-0000-00005baef1e7)
-    (property "Reference" "#PWR048" (at 297.815 236.855 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (at 297.942 234.8992 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (at 297.815 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (at 297.815 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 0bda8e65-6646-4497-9ec1-3b0975ca9ee0))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR048") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Connector:TestPoint") (at 314.325 230.505 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid 00000000-0000-0000-0000-00005baef2c6)
-    (property "Reference" "TP4" (at 315.7982 227.457 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "TestPoint" (at 315.7982 229.7684 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" (at 319.405 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 319.405 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid cb66653c-b779-4e81-9147-4ceecf00eaa7))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "TP4") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Connector:TestPoint") (at 330.835 230.505 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid 00000000-0000-0000-0000-00005bb00a1a)
-    (property "Reference" "TP6" (at 332.3082 227.457 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "TestPoint" (at 332.3082 229.7684 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" (at 335.915 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 335.915 230.505 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 0533ed9f-3723-4c5d-ad4e-95dafd6bdc94))
-    (instances
-      (project "afterglow"
-        (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "TP6") (unit 1)
-        )
-      )
-    )
-  )
-
   (symbol (lib_id "Switch:SW_DIP_x04") (at 46.355 260.35 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-00005bb93746)
@@ -7579,7 +7471,7 @@
   (symbol (lib_id "power:GND") (at 327.025 194.945 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b371)
-    (property "Reference" "#PWR056" (at 327.025 201.295 0)
+    (property "Reference" "#PWR055" (at 327.025 201.295 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 198.755 0)
@@ -7595,7 +7487,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR056") (unit 1)
+          (reference "#PWR055") (unit 1)
         )
       )
     )
@@ -7604,7 +7496,7 @@
   (symbol (lib_id "power:GND") (at 327.025 175.895 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6b8d5)
-    (property "Reference" "#PWR055" (at 327.025 182.245 0)
+    (property "Reference" "#PWR054" (at 327.025 182.245 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 179.705 0)
@@ -7620,7 +7512,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR055") (unit 1)
+          (reference "#PWR054") (unit 1)
         )
       )
     )
@@ -7629,7 +7521,7 @@
   (symbol (lib_id "power:GND") (at 327.025 156.845 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f6bdec)
-    (property "Reference" "#PWR054" (at 327.025 163.195 0)
+    (property "Reference" "#PWR053" (at 327.025 163.195 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 160.655 0)
@@ -7645,7 +7537,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR054") (unit 1)
+          (reference "#PWR053") (unit 1)
         )
       )
     )
@@ -7654,7 +7546,7 @@
   (symbol (lib_id "power:GND") (at 327.025 137.795 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061f9cb4f)
-    (property "Reference" "#PWR053" (at 327.025 144.145 0)
+    (property "Reference" "#PWR052" (at 327.025 144.145 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 141.605 0)
@@ -7670,7 +7562,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR053") (unit 1)
+          (reference "#PWR052") (unit 1)
         )
       )
     )
@@ -7679,7 +7571,7 @@
   (symbol (lib_id "power:GND") (at 327.025 117.475 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa08bf)
-    (property "Reference" "#PWR052" (at 327.025 123.825 0)
+    (property "Reference" "#PWR051" (at 327.025 123.825 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 121.285 0)
@@ -7695,7 +7587,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR052") (unit 1)
+          (reference "#PWR051") (unit 1)
         )
       )
     )
@@ -7704,7 +7596,7 @@
   (symbol (lib_id "power:GND") (at 327.025 99.695 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fa3373)
-    (property "Reference" "#PWR051" (at 327.025 106.045 0)
+    (property "Reference" "#PWR050" (at 327.025 106.045 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 103.505 0)
@@ -7720,7 +7612,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR051") (unit 1)
+          (reference "#PWR050") (unit 1)
         )
       )
     )
@@ -7729,7 +7621,7 @@
   (symbol (lib_id "power:GND") (at 327.025 80.645 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbb3e3)
-    (property "Reference" "#PWR050" (at 327.025 86.995 0)
+    (property "Reference" "#PWR049" (at 327.025 86.995 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 84.455 0)
@@ -7745,7 +7637,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR050") (unit 1)
+          (reference "#PWR049") (unit 1)
         )
       )
     )
@@ -7754,7 +7646,7 @@
   (symbol (lib_id "power:GND") (at 327.025 61.595 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fbdcba)
-    (property "Reference" "#PWR049" (at 327.025 67.945 0)
+    (property "Reference" "#PWR048" (at 327.025 67.945 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 327.025 65.405 0)
@@ -7770,7 +7662,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR049") (unit 1)
+          (reference "#PWR048") (unit 1)
         )
       )
     )
@@ -7779,7 +7671,7 @@
   (symbol (lib_id "power:GND") (at 380.365 234.315 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc616d)
-    (property "Reference" "#PWR066" (at 380.365 240.665 0)
+    (property "Reference" "#PWR065" (at 380.365 240.665 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 238.125 0)
@@ -7795,7 +7687,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR066") (unit 1)
+          (reference "#PWR065") (unit 1)
         )
       )
     )
@@ -7804,7 +7696,7 @@
   (symbol (lib_id "power:GND") (at 380.365 215.265 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc668f)
-    (property "Reference" "#PWR065" (at 380.365 221.615 0)
+    (property "Reference" "#PWR064" (at 380.365 221.615 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 219.075 0)
@@ -7820,7 +7712,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR065") (unit 1)
+          (reference "#PWR064") (unit 1)
         )
       )
     )
@@ -7829,7 +7721,7 @@
   (symbol (lib_id "power:GND") (at 380.365 196.215 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6a90)
-    (property "Reference" "#PWR064" (at 380.365 202.565 0)
+    (property "Reference" "#PWR063" (at 380.365 202.565 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 200.025 0)
@@ -7845,7 +7737,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR064") (unit 1)
+          (reference "#PWR063") (unit 1)
         )
       )
     )
@@ -7854,7 +7746,7 @@
   (symbol (lib_id "power:GND") (at 380.365 177.165 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc6e7e)
-    (property "Reference" "#PWR063" (at 380.365 183.515 0)
+    (property "Reference" "#PWR062" (at 380.365 183.515 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 180.975 0)
@@ -7870,7 +7762,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR063") (unit 1)
+          (reference "#PWR062") (unit 1)
         )
       )
     )
@@ -7879,7 +7771,7 @@
   (symbol (lib_id "power:GND") (at 380.365 158.115 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc7277)
-    (property "Reference" "#PWR062" (at 380.365 164.465 0)
+    (property "Reference" "#PWR061" (at 380.365 164.465 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 161.925 0)
@@ -7895,7 +7787,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR062") (unit 1)
+          (reference "#PWR061") (unit 1)
         )
       )
     )
@@ -7904,7 +7796,7 @@
   (symbol (lib_id "power:GND") (at 380.365 139.065 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc8c0f)
-    (property "Reference" "#PWR061" (at 380.365 145.415 0)
+    (property "Reference" "#PWR060" (at 380.365 145.415 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 142.875 0)
@@ -7920,7 +7812,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR061") (unit 1)
+          (reference "#PWR060") (unit 1)
         )
       )
     )
@@ -7929,7 +7821,7 @@
   (symbol (lib_id "power:GND") (at 380.365 120.015 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc91bf)
-    (property "Reference" "#PWR060" (at 380.365 126.365 0)
+    (property "Reference" "#PWR059" (at 380.365 126.365 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 123.825 0)
@@ -7945,7 +7837,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR060") (unit 1)
+          (reference "#PWR059") (unit 1)
         )
       )
     )
@@ -7954,7 +7846,7 @@
   (symbol (lib_id "power:GND") (at 380.365 100.965 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fc973d)
-    (property "Reference" "#PWR059" (at 380.365 107.315 0)
+    (property "Reference" "#PWR058" (at 380.365 107.315 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 104.775 0)
@@ -7970,7 +7862,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR059") (unit 1)
+          (reference "#PWR058") (unit 1)
         )
       )
     )
@@ -7979,7 +7871,7 @@
   (symbol (lib_id "power:GND") (at 380.365 81.915 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcd5ee)
-    (property "Reference" "#PWR058" (at 380.365 88.265 0)
+    (property "Reference" "#PWR057" (at 380.365 88.265 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 85.725 0)
@@ -7995,7 +7887,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR058") (unit 1)
+          (reference "#PWR057") (unit 1)
         )
       )
     )
@@ -8004,7 +7896,7 @@
   (symbol (lib_id "power:GND") (at 380.365 62.865 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 00000000-0000-0000-0000-000061fcdafc)
-    (property "Reference" "#PWR057" (at 380.365 69.215 0)
+    (property "Reference" "#PWR056" (at 380.365 69.215 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 380.365 66.675 0)
@@ -8020,7 +7912,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "#PWR057") (unit 1)
+          (reference "#PWR056") (unit 1)
         )
       )
     )
@@ -8065,7 +7957,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 314.325 215.265 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 029a3d8a-e97b-4ac8-9bc3-c7342108c5ed)
-    (property "Reference" "TP3" (at 315.7982 212.217 0)
+    (property "Reference" "TP2" (at 315.7982 212.217 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "TestPoint" (at 315.7982 214.5284 0)
@@ -8081,7 +7973,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "TP3") (unit 1)
+          (reference "TP2") (unit 1)
         )
       )
     )
@@ -14114,7 +14006,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 330.835 215.265 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f3adce28-e30b-455c-b375-c7412dc23a1c)
-    (property "Reference" "TP5" (at 332.3082 212.217 0)
+    (property "Reference" "TP3" (at 332.3082 212.217 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "TestPoint" (at 332.3082 214.5284 0)
@@ -14130,7 +14022,7 @@
     (instances
       (project "afterglow"
         (path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-          (reference "TP5") (unit 1)
+          (reference "TP3") (unit 1)
         )
       )
     )
