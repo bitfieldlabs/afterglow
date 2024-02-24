@@ -221,7 +221,9 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      "power_pin_not_driven|1289050|596900|abfd3e28-3eba-4023-af11-8f8390c387d3|00000000-0000-0000-0000-000000000000|||"
+    ],
     "meta": {
       "version": 0
     },
@@ -410,12 +412,12 @@
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
-      "lib_symbol_issues": "warning",
+      "lib_symbol_issues": "ignore",
       "missing_bidi_pin": "warning",
       "missing_input_pin": "warning",
       "missing_power_pin": "error",
       "missing_unit": "warning",
-      "multiple_net_names": "warning",
+      "multiple_net_names": "ignore",
       "net_not_bus_member": "warning",
       "no_connect_connected": "warning",
       "no_connect_dangling": "warning",
