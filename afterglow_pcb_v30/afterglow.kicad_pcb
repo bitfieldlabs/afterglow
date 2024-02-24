@@ -597,7 +597,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 05435726-38f1-4d0d-be23-7c2e561c6363)
-    (at 135.685 7.56)
+    (at 133.7275 108.385)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -901,7 +901,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 098a8d2b-c5ef-4548-96bd-9cda1495d20a)
-    (at 125.905 12.01)
+    (at 123.9475 112.835)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -1505,7 +1505,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 1505ca27-3b9c-481e-9f1a-b37e9800c66f)
-    (at 140.575 20.91)
+    (at 138.6175 121.735)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -1568,7 +1568,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 16763d83-9d80-48e3-9897-961cd85fe3ce)
-    (at 135.685 20.91)
+    (at 133.7275 121.735)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -2779,7 +2779,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 269e9276-d215-4e4d-99ab-6456d1f7f115)
-    (at 130.795 16.46)
+    (at 128.8375 117.285)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -3003,7 +3003,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 2b61ab94-2ae9-40ba-ba7a-d9a2560927cf)
-    (at 140.575 16.46)
+    (at 138.6175 117.285)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -4979,7 +4979,7 @@
 
   (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" (layer "F.Cu")
     (tstamp 523f2406-b79c-4297-89c7-66b4ed1d3732)
-    (at 140.055 97.935)
+    (at 144.125 82.12)
     (descr "SOIC, 16 Pin (JEDEC MS-012AC, https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/soic_narrow-r/r_16.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOIC SO")
     (property "JLCPCB" "C5947")
@@ -5328,7 +5328,7 @@
 
   (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (layer "F.Cu")
     (tstamp 5ac6bd6d-364d-46dd-98ef-99845b8e89b6)
-    (at 147.9 84.56)
+    (at 151 86.505)
     (descr "Through hole straight pin header, 1x04, 2.54mm pitch, single row")
     (tags "Through hole pin header THT 1x04 2.54mm single row")
     (property "Sheetfile" "afterglow.kicad_sch")
@@ -5817,7 +5817,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 5d0d5c28-5af9-47b4-94b1-233b2ac8346a)
-    (at 130.795 7.56)
+    (at 128.8375 108.385)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -6098,7 +6098,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 678bf2f7-a109-4ad0-87f1-6f5c89617241)
-    (at 125.905 16.46)
+    (at 128.3625 73.885)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -6230,7 +6230,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 6a009dab-21d2-4e73-9dd7-6e220ce4f405)
-    (at 140.575 7.56)
+    (at 138.6175 108.385)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -6642,7 +6642,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 70206f94-511e-42dc-a137-51759a0b2e2f)
-    (at 135.685 16.46)
+    (at 133.7275 117.285)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -8493,7 +8493,7 @@
 
   (footprint "Package_SO:SOIC-18W_7.5x11.6mm_P1.27mm" (layer "F.Cu")
     (tstamp 9446d66b-455f-4a26-8c20-fe6bea470f24)
-    (at 139.84 70.41)
+    (at 150.2 68.485)
     (descr "SOIC, 18 Pin (JEDEC MS-013AB, https://www.analog.com/media/en/package-pcb-resources/package/33254132129439rw_18.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOIC SO")
     (property "JLCPCB" "C845537")
@@ -8775,7 +8775,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp 9f4a38c2-c9b9-4eb3-8ec2-473e23b21203)
-    (at 123.9 111.2475 -90)
+    (at 123.55 106.5225 -90)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -8893,7 +8893,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp a3ce6768-2b85-4e22-b280-0a58bc222469)
-    (at 32.81 77.21)
+    (at 122.55 76.1475 90)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -8903,15 +8903,15 @@
     (property "ki_keywords" "N-Channel MOSFET")
     (path "/8cd0b204-34c7-4ac1-aefb-f5e23fee81aa")
     (attr smd)
-    (fp_text reference "Q9" (at 0 -2.4) (layer "F.SilkS")
+    (fp_text reference "Q9" (at 0 -2.4 90) (layer "F.SilkS")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 5f2f63cd-2929-4977-9f11-1e5a014ed1a5)
     )
-    (fp_text value "AO3400A" (at 0 2.4) (layer "F.Fab")
+    (fp_text value "AO3400A" (at 0 2.4 90) (layer "F.Fab")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 7d5c9bb9-4bc6-428f-98d0-68b72ec4b57a)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0 90) (layer "F.Fab")
         (effects (font (size 0.32 0.32) (thickness 0.05)))
       (tstamp 0360ec10-9dcd-4cbc-b2bb-6122fe6a5b6b)
     )
@@ -8941,11 +8941,11 @@
       (stroke (width 0.1) (type solid)) (layer "F.Fab") (tstamp f8dbaf11-610e-4719-b05d-49628c05656a))
     (fp_line (start 0.65 1.45) (end -0.65 1.45)
       (stroke (width 0.1) (type solid)) (layer "F.Fab") (tstamp ecc7ef83-ee89-45b2-8236-913bf4de25a4))
-    (pad "1" smd roundrect (at -0.9375 -0.95) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
+    (pad "1" smd roundrect (at -0.9375 -0.95 90) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
       (net 53 "Net-(Q9-G)") (pinfunction "G") (pintype "input") (tstamp d78d2450-8ff4-4b9f-af6f-43872ccb7e18))
-    (pad "2" smd roundrect (at -0.9375 0.95) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
+    (pad "2" smd roundrect (at -0.9375 0.95 90) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
       (net 2 "GND") (pinfunction "S") (pintype "passive") (tstamp adadf84d-4efc-4624-9b9e-f6705d06e6f0))
-    (pad "3" smd roundrect (at 0.9375 0) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
+    (pad "3" smd roundrect (at 0.9375 0 90) (size 1.475 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
       (net 67 "/MOS_RO1") (pinfunction "D") (pintype "passive") (tstamp 4558317c-5c61-4dc7-926e-07deb5a51bd4))
     (model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-23.wrl"
       (offset (xyz 0 0 0))
@@ -10254,7 +10254,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp bf1ebb4a-c2cb-4a9a-957d-fa3306c9e146)
-    (at 135.685 12.01)
+    (at 133.7275 112.835)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -10588,7 +10588,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp c38e876c-f32d-48f7-b6f0-408b39fd9ef1)
-    (at 125.905 20.91)
+    (at 123.9475 121.735)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -10706,7 +10706,7 @@
 
   (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" (layer "F.Cu")
     (tstamp c5e45854-8c58-4e9e-ad36-4de49381d341)
-    (at 140.135 84.925)
+    (at 157.7 81.685)
     (descr "SOIC, 16 Pin (JEDEC MS-012AC, https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/soic_narrow-r/r_16.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOIC SO")
     (property "JLCPCB" "C5947")
@@ -12056,7 +12056,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp e9827173-3e79-416c-b65c-8e8fe0c19f57)
-    (at 140.575 12.01)
+    (at 138.6175 112.835)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
@@ -12119,7 +12119,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp e9a5da42-11a4-4500-a92e-5b861ca1c6b3)
-    (at 130.795 12.01)
+    (at 128.8375 112.835)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C15127")
@@ -12493,7 +12493,7 @@
 
   (footprint "Package_TO_SOT_SMD:SOT-23" (layer "F.Cu")
     (tstamp f4ccfd0a-7312-463e-9854-e2dbb8bf63ea)
-    (at 130.795 20.91)
+    (at 128.8375 121.735)
     (descr "SOT, 3 Pin (https://www.jedec.org/system/files/docs/to-236h.pdf variant AB), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "SOT TO_SOT_SMD")
     (property "JLCPCB" "C20917")
