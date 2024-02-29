@@ -490,7 +490,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "afterglow_nano_v1.1.net",
-      "specctra_dsn": "",
+      "specctra_dsn": "afterglow.dsn",
       "step": "",
       "vrml": ""
     },
