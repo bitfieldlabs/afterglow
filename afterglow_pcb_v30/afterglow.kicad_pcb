@@ -2687,6 +2687,11 @@
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
+    (model ":KICAD7_3DMODEL_DIR:Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.wrl"
+      (offset (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (footprint "Capacitor_SMD:C_0402_1005Metric" (layer "F.Cu")
@@ -4611,6 +4616,11 @@
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
+    (model ":KICAD7_3DMODEL_DIR:Button_Switch_SMD.3dshapes/SW_SPST_TL3342.step"
+      (offset (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (footprint "Capacitor_SMD:C_0402_1005Metric" (layer "F.Cu")
@@ -5313,7 +5323,7 @@
       (net 126 "/QSPI_SD3") (pinfunction "IO3") (pintype "bidirectional") (tstamp 90c5eb15-0f14-482b-afd9-579265c0345f))
     (pad "8" smd roundrect (at 3.6 -1.905) (size 1.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25)
       (net 36 "+3V3") (pinfunction "VCC") (pintype "power_in") (tstamp e1d65a24-6f5c-4339-a261-524846c635d5))
-    (model "${KICAD6_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8_5.23x5.23mm_P1.27mm.wrl"
+    (model ":KICAD7_3DMODEL_DIR:Package_SO.3dshapes/SO-8_5.3x6.2mm_P1.27mm.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6070,9 +6080,9 @@
       (net 37 "Net-(D1-K)") (pintype "passive") (tstamp 0fc4e9db-10df-49bb-a1b7-9e95a4f1a258))
     (pad "2" thru_hole circle (at 15 5 90) (size 2.3 2.3) (drill 1.3) (layers "*.Cu" "*.Mask")
       (net 37 "Net-(D1-K)") (pintype "passive") (tstamp 22345a65-51de-4a73-ac35-44f0d09bb5b8))
-    (model "${KICAD6_3DMODEL_DIR}/Fuse.3dshapes/Fuseholder_Clip-5x20mm_Schurter_OG_Lateral_P15.00x5.00mm_D1.3mm_Horizontal.wrl"
-      (offset (xyz 0 0 0))
-      (scale (xyz 1 1 1))
+    (model ":KICAD7_3DMODEL_DIR:Fuse.3dshapes/Fuseholder_Cylinder-5x20mm_Schurter_0031_8201_Horizontal_Open.step"
+      (offset (xyz -1.5 -2.5 0))
+      (scale (xyz 0.85 0.8 1))
       (rotate (xyz 0 0 0))
     )
   )
