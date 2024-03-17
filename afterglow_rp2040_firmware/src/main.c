@@ -35,7 +35,7 @@
 //------------------------------------------------------------------------------
 // local variables
 
-// The 250us timer is the realtime task of this software
+// The timer is the realtime task of this software
 static repeating_timer_t sHeartbeatTimer;
 
 
@@ -78,14 +78,16 @@ int main(void)
     gpio_set_pulls(AGPIN_IN_DATA, true, false); // pull up
 
     // output pins
-    for (uint32_t pin=AGPIN_CO1; pin<(AGPIN_CO1+NUM_COL_PINS); pin++)
+    for (uint32_t p=0; p<NUM_COL_PINS; p++)
     {
+        uint pin = skAGColOutPins[p];
         gpio_init(pin);
         gpio_put(pin, false);
         gpio_set_dir(pin, GPIO_OUT);
     }
-    for (uint32_t pin=AGPIN_RO1; pin<(AGPIN_RO1+NUM_ROW_PINS); pin++)
+    for (uint32_t p=0; p<NUM_ROW_PINS; p++)
     {
+        uint pin = skAGRowOutPins[p];
         gpio_init(pin);
         gpio_put(pin, false);
         gpio_set_dir(pin, GPIO_OUT);
@@ -135,8 +137,5 @@ int main(void)
         sleep_ms(500);
         gpio_put(AGPIN_STAT_LED, 0);
         sleep_ms(500);
-
-        // some PIO debugging
-        //pio_debug();
     }
 }

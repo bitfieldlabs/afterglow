@@ -45,6 +45,7 @@
  *  +------------+-----------------+------------+-----------+
 */
 
+#include <stdio.h>
 
 #define NUM_COL_PINS     8             // Number of column pins
 #define NUM_ROW_PINS    10             // Number of row pins
@@ -84,3 +85,16 @@
 
 #define AGPIN_D_SCL     28             // Display SCL
 #define AGPIN_D_SDA     29             // Display SDA
+
+//------------------------------------------------------------------------------
+// utility macros
+
+#define AGPIN_OUT_ALL_MASK ((1 << AGPIN_CO1) | (1 << AGPIN_CO2) | (1 << AGPIN_CO3) | (1 << AGPIN_CO4) | \
+                            (1 << AGPIN_CO5) | (1 << AGPIN_CO6) | (1 << AGPIN_CO7) | (1 << AGPIN_CO8) | \
+                            (1 << AGPIN_RO1) | (1 << AGPIN_RO2) | (1 << AGPIN_RO3) | (1 << AGPIN_RO4) | \
+                            (1 << AGPIN_RO5) | (1 << AGPIN_RO6) | (1 << AGPIN_RO7) | (1 << AGPIN_RO8) | \
+                            (1 << AGPIN_RO9) | (1 << AGPIN_RO10))
+
+
+extern const uint8_t skAGColOutPins[NUM_COL_PINS];
+extern const uint8_t skAGRowOutPins[NUM_ROW_PINS];
