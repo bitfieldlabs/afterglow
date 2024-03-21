@@ -118,7 +118,10 @@ int main(void)
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
     // set up the row output PIO
-    rowout_initpio();
+    if (!rowout_initpio())
+    {
+        panic_mode();
+    }
 
     // afterglow init
     ag_init();

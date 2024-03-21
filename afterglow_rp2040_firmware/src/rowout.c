@@ -26,6 +26,18 @@
  ***********************************************************************/
 
 #include "rowout.h"
+#include "hardware/pio.h"
+#include "pindef.h"
+#include "rowout.pio.h"
+
+
+//------------------------------------------------------------------------------
+// Local data
+
+// Column/row reading, blanking and WS2812 on PIO 0
+static PIO sPioRowOut = pio0;
+static int sSmRowOut = -1;
+static int sSmRowOutOffset = -1;
 
 
 //------------------------------------------------------------------------------
@@ -35,7 +47,13 @@ void rowout_prepareData(uint8_t rowDur[NUM_ROW])
 }
 
 //------------------------------------------------------------------------------
-void rowout_initpio()
+bool rowout_initpio()
 {
+    // Find a place for the PIO program in the instruction memory
+    sSmRowOutOffset = pio_add_program(sPioRowOut, &rowout_program);
+    // Claim an unused state machine for the row output and run the program
+    sSmRowOut = pio_claim_unused_sm(sPioRowOut, true);
+    rowout_program_init(sPioRowOut, sSmRowOut, sSmRowOutOffset);
 
+    return (sSmRowOut != -1);
 }

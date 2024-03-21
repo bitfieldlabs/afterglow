@@ -30,5 +30,5 @@
 
 void rowout_prepareData(uint8_t rowDur[NUM_ROW]);
 
-void rowout_initpio();
+bool rowout_initpio();
 
