@@ -30,6 +30,7 @@
 #include "pico/time.h"
 #include "pindef.h"
 #include "afterglow.h"
+#include "rowout.h"
 
 
 //------------------------------------------------------------------------------
@@ -115,6 +116,9 @@ int main(void)
     gpio_init(AGPIN_D_SDA);
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
+
+    // set up the row output PIO
+    rowout_initpio();
 
     // afterglow init
     ag_init();

@@ -31,6 +31,7 @@
 #include "afterglow.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
+#include "def.h"
 #include "pindef.h"
 
 //------------------------------------------------------------------------------
@@ -38,12 +39,6 @@
 
 // Afterglow configuration version
 #define AFTERGLOW_CFG_VERSION 3
-
-// number of columns in the lamp matrix
-#define NUM_COL 8
-
-// number of rows in the lamp matrix
-#define NUM_ROW 10
 
 // glow duration scaling in the configuration
 #define GLOWDUR_CFG_SCALE 10
@@ -247,6 +242,8 @@ uint32_t ag_dataRead()
     for (uint i=0; i<24; i++)
     {
         gpio_put(AGPIN_IN_CLK, false);             // CLK low
+        data+= 17;
+        data-= 17;
         data |= gpio_get(AGPIN_IN_DATA) ? 1 : 0;   // read data bit
         gpio_put(AGPIN_IN_CLK, true);              // CLK high
         data <<= 1;
@@ -259,9 +256,9 @@ uint32_t ag_dataRead()
 void ag_sercomm()
 {
     uint32_t m = to_ms_since_boot(get_absolute_time());
-    if ((m - sLastDebugTTag) > 5000)
+    if ((m - sLastDebugTTag) > 2000)
     {
-        printf("data: %d\n", sLastData);
+        printf("data: %08x\n", sLastData);
         sLastDebugTTag = m;
     }
 }
