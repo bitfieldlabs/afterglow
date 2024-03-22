@@ -27,18 +27,24 @@
 
 #include <stdio.h> 
 
+
 //------------------------------------------------------------------------------
 // Setup
 
-#define AFTERGLOW_RP2040_VERSION  100     // Afterglow RP2040 version number
-#define BOARD_REV                  30     // Latest supported Afterglow board revision. Currently v1.3
 #define SINGLE_UPDATE_CONS          2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define TTAG_INT                  125     // Matrix update time interval [us]
 #define ANTIGHOST_DURATION         20     // Duration of anti ghosting [us] (turning off all lamps briefly)
 #define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-#define DEBUG_SERIAL                1     // Turn debug output via serial on/off
 
+
+//------------------------------------------------------------------------------
+// Derived configuration
+// DO NOT CHANGE THESE VALUES DIRECTLY
+
+#define TTAG_INT (LED_FREQ / 8)     // Matrix update time interval [us]
+
+
+//------------------------------------------------------------------------------
 
 // Initialize the afterglow engine
 void ag_init();

@@ -25,13 +25,11 @@
 ;*  If not, see <http://www.gnu.org/licenses/>.
 ;***********************************************************************
 
-.program rowout
+.program matrixout
 .wrap_target
     pull block            ; wait for new data in the FIFO
-    out pins, 10
-    out null, 6
-    out pins, 10
-    out null, 6
+    out pins, 18
+    out null, 14
 .wrap                     ; there's no stopping!
 
 
@@ -39,25 +37,34 @@
 // this is a raw helper function for use by the user which sets up the GPIO output, and configures the SM to output on a particular pin
 
 #include "pindef.h"
+#include "hardware/clocks.h"
 
-void rowout_program_init(PIO pio, uint sm, uint offset)
+// Cycle per matrix output, must match the PIO code above
+#define CYCLE_PER_MATRIX_OUTPUT 3
+
+void matrixout_program_init(PIO pio, uint sm, uint offset)
 {
     // initialize the output pins
+    for (uint32_t i=0; i<NUM_COL_PINS; i++)
+    {
+        pio_gpio_init(pio, skAGColOutPins[i]);
+    }
     for (uint32_t i=0; i<NUM_ROW_PINS; i++)
     {
         pio_gpio_init(pio, skAGRowOutPins[i]);
     }
 
     // output pins
+    pio_sm_set_consecutive_pindirs(pio, sm, AGPIN_CO1, NUM_COL_PINS, true);
     pio_sm_set_consecutive_pindirs(pio, sm, AGPIN_RO1, NUM_ROW_PINS, true);
 
     // configure the state machine
-    pio_sm_config c = rowout_program_get_default_config(offset);
-    sm_config_set_out_pins(&c, AGPIN_RO1, NUM_ROW_PINS); // data out
+    pio_sm_config c = matrixout_program_get_default_config(offset);
+    sm_config_set_out_pins(&c, AGPIN_CO1, NUM_COL_PINS+NUM_ROW_PINS); // data out
     sm_config_set_in_shift(&c, false, false, 32);
     sm_config_set_out_shift(&c, true, false, 32);
     
-    // run at 80kHz
+    // run at 128 * 8 * CYCLE_PER_MATRIX_OUTPUT * MATRIX_UPDATE_FREQ
     static const float pio_freq = 80000;
     float div = (float)clock_get_hz(clk_sys) / pio_freq;
     sm_config_set_clkdiv(&c, div);

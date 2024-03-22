@@ -30,7 +30,7 @@
 #include "pico/time.h"
 #include "pindef.h"
 #include "afterglow.h"
-#include "rowout.h"
+#include "matrixout.h"
 
 
 //------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ int main(void)
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
     // set up the row output PIO
-    if (!rowout_initpio())
+    if (!matrixout_initpio())
     {
         panic_mode();
     }

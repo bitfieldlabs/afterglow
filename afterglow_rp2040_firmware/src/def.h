@@ -30,3 +30,16 @@
 
 // number of rows in the lamp matrix
 #define NUM_ROW 10
+
+// LED driving frequency [Hz]
+// This frequency must be a multiple of 8
+#define LED_FREQ 1000
+
+// Turn debug output via serial on/off
+#define DEBUG_SERIAL                1
+
+// Afterglow RP2040 version number
+#define AFTERGLOW_RP2040_VERSION  100
+
+// Latest supported Afterglow board revision. Currently v1.3
+#define BOARD_REV                  30

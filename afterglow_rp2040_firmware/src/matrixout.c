@@ -25,10 +25,36 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h>
-#include "def.h"
+#include "matrixout.h"
+#include "hardware/pio.h"
+#include "hardware/dma.h"
+#include "pindef.h"
+#include "matrixout.pio.h"
 
-void rowout_prepareData(uint8_t rowDur[NUM_ROW]);
 
-bool rowout_initpio();
+//------------------------------------------------------------------------------
+// Local data
 
+// Matrix output on PIO 0
+static PIO sPioMatrixOut = pio0;
+static int sSmMatrixOut = -1;
+static int sSmMatrixOutOffset = -1;
+
+
+//------------------------------------------------------------------------------
+void matrixout_prepareData(uint col, uint8_t rowDur[NUM_ROW])
+{
+
+}
+
+//------------------------------------------------------------------------------
+bool matrixout_initpio()
+{
+    // Find a place for the PIO program in the instruction memory
+    sSmMatrixOutOffset = pio_add_program(sPioMatrixOut, &matrixout_program);
+    // Claim an unused state machine for the matrix output and run the program
+    sSmMatrixOut = pio_claim_unused_sm(sPioMatrixOut, true);
+    matrixout_program_init(sPioMatrixOut, sSmMatrixOut, sSmMatrixOutOffset);
+
+    return (sSmMatrixOut != -1);
+}

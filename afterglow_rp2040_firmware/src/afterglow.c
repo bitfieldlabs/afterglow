@@ -34,6 +34,7 @@
 #include "def.h"
 #include "pindef.h"
 
+
 //------------------------------------------------------------------------------
 // Some definitions
 
@@ -258,7 +259,7 @@ void ag_sercomm()
     uint32_t m = to_ms_since_boot(get_absolute_time());
     if ((m - sLastDebugTTag) > 2000)
     {
-        printf("data: %08x\n", sLastData);
+        printf("data: %08lx\n", sLastData);
         sLastDebugTTag = m;
     }
 }
