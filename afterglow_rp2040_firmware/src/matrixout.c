@@ -26,6 +26,7 @@
  ***********************************************************************/
 
 #include "matrixout.h"
+#include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
 #include "def.h"
@@ -36,7 +37,20 @@
 //------------------------------------------------------------------------------
 // Local definitions
 
-#define ANTI_GHOSTING_STEPS ((((1000000 / LED_FREQ) / 8) * ANTIGHOST_DURATION) / PWM_RES)
+// |<----------------------- TTAG_INT ---------------------------->|
+//
+//   ANTI       ROW
+//   GHOST      PWM
+// |---------|-----------------------------------------------------|
+//           |<------------------ PWM_RES steps ------------------>|
+// |<------->| ANTI_GHOSTING_STEPS
+// |<------------------ MATRIXOUT_PIO_STEPS ---------------------->|
+
+// Steps of the matrix PIO for anti-ghosting
+#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (TTAG_INT - ANTIGHOST_DURATION))
+
+// Steps per matrix output PIO run
+#define MATRIXOUT_PIO_STEPS (ANTI_GHOSTING_STEPS + PWM_RES)
 
 
 //------------------------------------------------------------------------------
@@ -50,51 +64,49 @@ static int sSmMatrixOutOffset = -1;
 static int sDMAChan = -1;
 static dma_channel_config sDMAChanConfig;
 
-static uint32_t sMatrixDataBuf[PWM_RES] = { 0 };
+static uint32_t sMatrixDataBuf[MATRIXOUT_PIO_STEPS] = { 0 };
 
 
 //------------------------------------------------------------------------------
-void matrixout_prepareData(uint col, uint8_t rowDur[NUM_ROW])
+void matrixout_prepareData(uint col, uint8_t *pRowDur)
 {
     // Anti-ghosting: turn off everything for some time
+    // No need to do anything here - sMatrixDataBuf has already an empty buffer at the beginning
+    /*
     uint32_t *pD = sMatrixDataBuf;
-    for (uint i=0; i<ANTI_GHOSTING_STEPS; i++, pD++)
+    for (uint s=0; s<ANTI_GHOSTING_STEPS; s++, pD++)
     {
         *pD = 0;
     }
+    */
 
-    static int32_t s = 0;
-    static int32_t sd = 1;
-
-    // column output
-    uint32_t col_only = (1ul << col);
-    for (uint i=ANTI_GHOSTING_STEPS; i<PWM_RES; i++, pD++)
+    // prepare the column and row data for all PWM steps
+    uint32_t *pDS = &sMatrixDataBuf[ANTI_GHOSTING_STEPS];
+    uint32_t *pD = pDS;
+    for (uint s=0; s<PWM_RES; s++)
     {
-        uint32_t d = col_only;
-        /*
-        for (uint r=0; r<NUM_ROW; r++)
+        *pD++ = colBit;
+    }
+    for (uint r=0; r<NUM_ROW; r++)
+    {
+        uint rd = *pRowDur;
+        pD = pDS;
+        uint32_t rbitm = ~rbit;
+        uint s = rd;
+        while (s--)
         {
-
+            *pD |= rbit;
+            pD++;
         }
-        */
-        //if (i < (s>>8))
-        if ((col % 2) && (i < (s>>8)))
+        s = (PWM_RES-rd);
+        while (s--)
         {
-            d |= 0x0003ff00;
+            *pD &= rbitm;
+            pD++;
         }
-        *pD = d;
+        pRowDur++;
+        rbit <<= 1;
     }
-
-    s += sd;
-    if (s>=(PWM_RES<<8))
-    {
-        sd = -1;
-    }
-    else if (s < (ANTI_GHOSTING_STEPS<<8))
-    {
-        sd = 1;
-    }
-
 }
 
 //------------------------------------------------------------------------------

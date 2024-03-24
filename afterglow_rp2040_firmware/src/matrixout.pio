@@ -65,8 +65,21 @@ void matrixout_program_init(PIO pio, uint sm, uint offset)
     sm_config_set_in_shift(&c, false, false, 32);
     sm_config_set_out_shift(&c, true, false, 32);
     
-    // run at PWM_RES * NUM_COL * CYCLE_PER_MATRIX_OUTPUT * MATRIX_UPDATE_FREQ
-    static const float pio_freq = (PWM_RES * NUM_COL * CYCLE_PER_MATRIX_OUTPUT * LED_FREQ);
+    // run at PWM_RES * NUM_COL * LED_FREQ * CYCLE_PER_MATRIX_OUTPUT
+    float pio_freq = (PWM_RES * NUM_COL * LED_FREQ * CYCLE_PER_MATRIX_OUTPUT);
+    
+    // adjust for the anti-ghosting off time
+    // the goal is to have PWM_RES complete pio cycles for the row line PWM
+    //
+    //   ANTI       ROW
+    //   GHOST      PWM
+    // |---------|-----------------------------------------------------|
+    //           |<------------------ PWM_RES steps ------------------>|
+    // |<----------------------- TTAG_INT ---------------------------->|
+
+    pio_freq *= ((float)TTAG_INT / (float)(TTAG_INT - ANTIGHOST_DURATION));
+    
+    // calculate the divider value
     float div = (float)clock_get_hz(clk_sys) / pio_freq;
     sm_config_set_clkdiv(&c, div);
 

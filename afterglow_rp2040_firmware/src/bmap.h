@@ -25,35 +25,31 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-// number of columns in the lamp matrix
-#define NUM_COL 8
+#include <stdio.h>
+#include "def.h"
 
-// number of rows in the lamp matrix
-#define NUM_ROW 10
+extern const uint8_t skMap_256_4[256];
+extern const uint8_t skMap_256_8[256];
+extern const uint8_t skMap_256_16[256];
+extern const uint8_t skMap_256_32[256];
+extern const uint8_t skMap_256_64[256];
+extern const uint8_t skMap_256_128[256];
+extern const uint8_t skMap_256_256[256];
 
-// LED driving frequency [Hz]
-// This frequency must be a multiple of 8
-#define LED_FREQ 1000
-
-// PWM resolution (brightness steps)
-#define PWM_RES 64
-
-// Duration of anti ghosting [us] (turning off all lamps briefly)
-#define ANTIGHOST_DURATION         20
-
-// Turn debug output via serial on/off
-#define DEBUG_SERIAL                1
-
-// Afterglow RP2040 version number
-#define AFTERGLOW_RP2040_VERSION  100
-
-// Latest supported Afterglow board revision. Currently v1.3
-#define BOARD_REV                  30
-
-
-//------------------------------------------------------------------------------
-// Derived configuration
-// DO NOT CHANGE THESE VALUES DIRECTLY
-
-// Matrix update time interval [us]
-#define TTAG_INT ((1000000 / LED_FREQ) / NUM_COL)
+#if (PWM_RES == 4)
+#define skBrightnessMap skMap_256_4
+#elif (PWM_RES == 8)
+#define skBrightnessMap skMap_256_8
+#elif (PWM_RES == 16)
+#define skBrightnessMap skMap_256_16
+#elif (PWM_RES == 32)
+#define skBrightnessMap skMap_256_32
+#elif (PWM_RES == 64)
+#define skBrightnessMap skMap_256_64
+#elif (PWM_RES == 128)
+#define skBrightnessMap skMap_256_128
+#elif (PWM_RES == 256)
+#define skBrightnessMap skMap_256_256
+#else
+#error "No brightness map defined for this PWM resolution!"
+#endif

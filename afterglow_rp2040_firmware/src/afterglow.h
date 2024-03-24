@@ -37,13 +37,6 @@
 
 
 //------------------------------------------------------------------------------
-// Derived configuration
-// DO NOT CHANGE THESE VALUES DIRECTLY
-
-#define TTAG_INT ((1000000 / LED_FREQ) / 8)     // Matrix update time interval [us]
-
-
-//------------------------------------------------------------------------------
 
 // Initialize the afterglow engine
 void ag_init();
