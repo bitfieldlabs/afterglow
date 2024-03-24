@@ -28,8 +28,15 @@
 #include "matrixout.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
+#include "def.h"
 #include "pindef.h"
 #include "matrixout.pio.h"
+
+
+//------------------------------------------------------------------------------
+// Local definitions
+
+#define ANTI_GHOSTING_STEPS ((((1000000 / LED_FREQ) / 8) * ANTIGHOST_DURATION) / PWM_RES)
 
 
 //------------------------------------------------------------------------------
@@ -40,21 +47,87 @@ static PIO sPioMatrixOut = pio0;
 static int sSmMatrixOut = -1;
 static int sSmMatrixOutOffset = -1;
 
+static int sDMAChan = -1;
+static dma_channel_config sDMAChanConfig;
+
+static uint32_t sMatrixDataBuf[PWM_RES] = { 0 };
+
 
 //------------------------------------------------------------------------------
 void matrixout_prepareData(uint col, uint8_t rowDur[NUM_ROW])
 {
+    // Anti-ghosting: turn off everything for some time
+    uint32_t *pD = sMatrixDataBuf;
+    for (uint i=0; i<ANTI_GHOSTING_STEPS; i++, pD++)
+    {
+        *pD = 0;
+    }
 
+    static int32_t s = 0;
+    static int32_t sd = 1;
+
+    // column output
+    uint32_t col_only = (1ul << col);
+    for (uint i=ANTI_GHOSTING_STEPS; i<PWM_RES; i++, pD++)
+    {
+        uint32_t d = col_only;
+        /*
+        for (uint r=0; r<NUM_ROW; r++)
+        {
+
+        }
+        */
+        //if (i < (s>>8))
+        if ((col % 2) && (i < (s>>8)))
+        {
+            d |= 0x0003ff00;
+        }
+        *pD = d;
+    }
+
+    s += sd;
+    if (s>=(PWM_RES<<8))
+    {
+        sd = -1;
+    }
+    else if (s < (ANTI_GHOSTING_STEPS<<8))
+    {
+        sd = 1;
+    }
+
+}
+
+//------------------------------------------------------------------------------
+void matrixout_sendData()
+{
+    dma_channel_transfer_from_buffer_now(sDMAChan, sMatrixDataBuf, count_of(sMatrixDataBuf));
 }
 
 //------------------------------------------------------------------------------
 bool matrixout_initpio()
 {
-    // Find a place for the PIO program in the instruction memory
+    // find a place for the PIO program in the instruction memory
     sSmMatrixOutOffset = pio_add_program(sPioMatrixOut, &matrixout_program);
-    // Claim an unused state machine for the matrix output and run the program
+    // claim an unused state machine for the matrix output and run the program
     sSmMatrixOut = pio_claim_unused_sm(sPioMatrixOut, true);
     matrixout_program_init(sPioMatrixOut, sSmMatrixOut, sSmMatrixOutOffset);
 
-    return (sSmMatrixOut != -1);
+    // claim and configure a free dma channel
+    sDMAChan = dma_claim_unused_channel(false);
+    sDMAChanConfig = dma_channel_get_default_config(sDMAChan);
+    channel_config_set_transfer_data_size(&sDMAChanConfig, DMA_SIZE_32);
+    channel_config_set_read_increment(&sDMAChanConfig, true);    // Read pointer increments with every step
+    channel_config_set_write_increment(&sDMAChanConfig, false);  // Write pointer always points to PIO FIFO
+    channel_config_set_dreq(&sDMAChanConfig, pio_get_dreq(sPioMatrixOut, sSmMatrixOut, true));  // Wait for the PIO to finish before writing
+
+    dma_channel_configure(
+        sDMAChan,                           // channel to be configured
+        &sDMAChanConfig,                    // the channel's configuration
+        &sPioMatrixOut->txf[sSmMatrixOut],  // write to the PIO TX FIFO
+        sMatrixDataBuf,                     // read from the output data buffer
+        count_of(sMatrixDataBuf),           // number of transfers
+        false                               // don't start yet
+    );
+
+    return ((sSmMatrixOut != -1) && (sDMAChan != -1));
 }

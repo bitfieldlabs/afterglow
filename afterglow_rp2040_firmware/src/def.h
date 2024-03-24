@@ -35,6 +35,12 @@
 // This frequency must be a multiple of 8
 #define LED_FREQ 1000
 
+// PWM resolution (brightness steps)
+#define PWM_RES 128
+
+// Duration of anti ghosting [us] (turning off all lamps briefly)
+#define ANTIGHOST_DURATION         20
+
 // Turn debug output via serial on/off
 #define DEBUG_SERIAL                1
 

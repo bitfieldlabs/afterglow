@@ -33,6 +33,7 @@
 #include "pico/time.h"
 #include "def.h"
 #include "pindef.h"
+#include "matrixout.h"
 
 
 //------------------------------------------------------------------------------
@@ -161,7 +162,6 @@ static uint32_t sLastDebugTTag = 0;
 // function prototypes
 
 static void ag_handleCol(uint32_t col);
-static void ag_dataOutputOff();
 static uint32_t ag_dataRead();
 
 
@@ -180,6 +180,9 @@ void ag_init()
 // This is the realtime task update. All the afterglow magic happens here.
 void ag_update()
 {
+    // send the prepared data
+    matrixout_sendData();
+
     // handle one column with each update
     ag_handleCol(sCol);
 
@@ -199,29 +202,9 @@ void ag_update()
 //------------------------------------------------------------------------------
 void ag_handleCol(uint32_t col)
 {
-    // turn off everything briefly to avoid ghosting
-    ag_dataOutputOff();
-    busy_wait_us(ANTIGHOST_DURATION);
-
-    // turn on current column
-    gpio_put(skAGColOutPins[sCol], true);
-
-    // enable the rows
-    gpio_put(skAGRowOutPins[0], true);
-    gpio_put(skAGRowOutPins[1], true);
-    gpio_put(skAGRowOutPins[2], true);
-    gpio_put(skAGRowOutPins[3], true);
-    gpio_put(skAGRowOutPins[4], true);
-    gpio_put(skAGRowOutPins[5], true);
-    gpio_put(skAGRowOutPins[6], true);
-    gpio_put(skAGRowOutPins[7], true);
-}
-
-//------------------------------------------------------------------------------
-void ag_dataOutputOff()
-{
-    // turn all columns and row drives off
-    gpio_put_masked(AGPIN_OUT_ALL_MASK, false);
+    // prepare the data for the next run
+    uint8_t rowDur[NUM_ROW] = { 0 };
+    matrixout_prepareData(col, rowDur);
 }
 
 //------------------------------------------------------------------------------

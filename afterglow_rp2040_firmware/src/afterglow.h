@@ -32,7 +32,6 @@
 // Setup
 
 #define SINGLE_UPDATE_CONS          2     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define ANTIGHOST_DURATION         20     // Duration of anti ghosting [us] (turning off all lamps briefly)
 #define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
 
@@ -41,7 +40,7 @@
 // Derived configuration
 // DO NOT CHANGE THESE VALUES DIRECTLY
 
-#define TTAG_INT (LED_FREQ / 8)     // Matrix update time interval [us]
+#define TTAG_INT ((1000000 / LED_FREQ) / 8)     // Matrix update time interval [us]
 
 
 //------------------------------------------------------------------------------
