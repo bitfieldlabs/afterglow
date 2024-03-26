@@ -138,6 +138,16 @@ void ag_init()
     sTTag = 0;
     sCol = 0;
 
+    uint16_t b = 0;
+    for (uint c=0; c<NUM_COL; c++)
+    {
+        for (uint r=0; r<NUM_ROW; r++)
+        {
+            sLampMatrix[c][r] = b;
+            b += 1024;
+        }
+    }
+
     // enable serial output at 115200 baudrate
     printf("afterglow RP2040 v%d  (c) 2024 bitfield labs\n", AFTERGLOW_RP2040_VERSION);
 }

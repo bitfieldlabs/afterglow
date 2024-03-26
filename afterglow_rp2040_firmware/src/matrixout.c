@@ -71,16 +71,12 @@ static uint32_t sMatrixDataBuf[MATRIXOUT_PIO_STEPS] = { 0 };
 void matrixout_prepareData(uint col, uint8_t *pRowDur)
 {
     // Anti-ghosting: turn off everything for some time
-    // No need to do anything here - sMatrixDataBuf has already an empty buffer at the beginning
-    /*
-    uint32_t *pD = sMatrixDataBuf;
-    for (uint s=0; s<ANTI_GHOSTING_STEPS; s++, pD++)
-    {
-        *pD = 0;
-    }
-    */
+    // No need to do anything here - sMatrixDataBuf has already an empty buffer
+    // of ANTI_GHOSTING_STEPS entries at the beginning
 
     // prepare the column and row data for all PWM steps
+    uint32_t rbit = 0x00000100;
+    uint32_t colBit = (1ul << col);
     uint32_t *pDS = &sMatrixDataBuf[ANTI_GHOSTING_STEPS];
     uint32_t *pD = pDS;
     for (uint s=0; s<PWM_RES; s++)
