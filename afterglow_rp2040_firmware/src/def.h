@@ -31,15 +31,20 @@
 // number of rows in the lamp matrix
 #define NUM_ROW 10
 
-// LED driving frequency [Hz]
-// This frequency must be a multiple of 8
+// Lamp matrix update frequency [Hz]
+#define MATRIX_UPDATE_FREQ 100
+
+// Input sampling frequency [Hz]
+#define INPUT_SAMPLING_FREQ 4000
+
+// LED PWM frequency [Hz]
 #define LED_FREQ 1000
 
 // PWM resolution (brightness steps)
-#define PWM_RES 64
+#define PWM_RES 128
 
 // Duration of anti ghosting [us] (turning off all lamps briefly)
-#define ANTIGHOST_DURATION         20
+#define ANTIGHOST_DURATION         18
 
 // Turn debug output via serial on/off
 #define DEBUG_SERIAL                1
@@ -52,8 +57,18 @@
 
 
 //------------------------------------------------------------------------------
-// Derived configuration
-// DO NOT CHANGE THESE VALUES DIRECTLY
+// derived values
+// DO NOT MODIFY
 
 // Matrix update time interval [us]
-#define TTAG_INT ((1000000 / LED_FREQ) / NUM_COL)
+#define MATRIX_UPDATE_INT (1000000 / MATRIX_UPDATE_FREQ)
+
+// Input sampling interval time interval [us]
+#define INPUT_SAMPLE_INT (1000000 / INPUT_SAMPLING_FREQ)
+
+// Input sampling to matrix update ratio
+#define SAMPLE_TO_UPDATE_RATIO (INPUT_SAMPLING_FREQ / MATRIX_UPDATE_FREQ)
+// This ratio must be integer
+#if ((SAMPLE_TO_UPDATE_RATIO * MATRIX_UPDATE_FREQ) != INPUT_SAMPLING_FREQ)
+#error "The input sampling frequency must be an integer multiple of the matrix update frequency!"
+#endif

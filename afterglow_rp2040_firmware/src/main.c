@@ -29,22 +29,34 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pindef.h"
-#include "afterglow.h"
+#include "lampmatrix.h"
 #include "matrixout.h"
 
 
 //------------------------------------------------------------------------------
 // local variables
 
-// The timer is the realtime task of this software
-static repeating_timer_t sHeartbeatTimer;
+// The timer is the trigger for the input sampling and the matrix update
+static repeating_timer_t sInputSamplingTimer;
+static uint32_t sTtag = 0;
 
 
 //------------------------------------------------------------------------------
-bool heartbeat(struct repeating_timer *t)
+bool sample_input(struct repeating_timer *t)
 {
-    // afterglow update
-    ag_update();
+    // sample and process the the inputs
+    lm_inputUpdate();
+
+    // trigger an update of the output data
+    if ((sTtag % SAMPLE_TO_UPDATE_RATIO) == 0)
+    {
+        // send the current matrix state to the thread on CPU1
+        
+    }
+
+    // time is ticking
+    sTtag++;
+
     return true;
 }
 
@@ -117,17 +129,17 @@ int main(void)
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
-    // set up the row output PIO
+    // set up the matrix output DMA and PIO
     if (!matrixout_initpio())
     {
         panic_mode();
     }
 
-    // afterglow init
-    ag_init();
+    // lamp matrix initialisation
+    lm_init();
 
     // Heartbeat setup
-    if (!add_repeating_timer_us(-TTAG_INT, heartbeat, NULL, &sHeartbeatTimer))
+    if (!add_repeating_timer_us(-INPUT_SAMPLE_INT, sample_input, NULL, &sInputSamplingTimer))
     {
         printf("Failed to start the heartbeat!\n");
         panic_mode();
@@ -137,7 +149,7 @@ int main(void)
     while (true)
     {
         // afterglow serial communication
-        ag_sercomm();
+        //ag_sercomm();
 
         // every device needs a blinking LED
         gpio_put(AGPIN_STAT_LED, 1);

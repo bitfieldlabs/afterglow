@@ -37,7 +37,6 @@
 //------------------------------------------------------------------------------
 // Local definitions
 
-// |<----------------------- TTAG_INT ---------------------------->|
 //
 //   ANTI       ROW
 //   GHOST      PWM
@@ -47,7 +46,7 @@
 // |<------------------ MATRIXOUT_PIO_STEPS ---------------------->|
 
 // Steps of the matrix PIO for anti-ghosting
-#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (TTAG_INT - ANTIGHOST_DURATION))
+#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (MATRIX_UPDATE_INT - ANTIGHOST_DURATION))
 
 // Steps per matrix output PIO run
 #define MATRIXOUT_PIO_STEPS (ANTI_GHOSTING_STEPS + PWM_RES)
@@ -64,7 +63,7 @@ static int sSmMatrixOutOffset = -1;
 static int sDMAChan = -1;
 static dma_channel_config sDMAChanConfig;
 
-static uint32_t sMatrixDataBuf[MATRIXOUT_PIO_STEPS] = { 0 };
+static uint32_t sMatrixDataBuf[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
 
 
 //------------------------------------------------------------------------------
@@ -106,9 +105,13 @@ void matrixout_prepareData(uint col, uint8_t *pRowDur)
 }
 
 //------------------------------------------------------------------------------
-void matrixout_sendData()
+void matrix_transfer_complete()
 {
-    dma_channel_transfer_from_buffer_now(sDMAChan, sMatrixDataBuf, count_of(sMatrixDataBuf));
+    // clear the interrupt request
+    dma_hw->ints0 = (1u << sDMAChan);
+
+    // set the buffer address and retrigger
+    dma_channel_set_read_addr(sDMAChan, sMatrixDataBuf, true);
 }
 
 //------------------------------------------------------------------------------
@@ -136,6 +139,14 @@ bool matrixout_initpio()
         count_of(sMatrixDataBuf),           // number of transfers
         false                               // don't start yet
     );
+
+    // raise IRQ 0 when the transfer finishes
+    dma_channel_set_irq0_enabled(sDMAChan, true);
+    irq_set_exclusive_handler(DMA_IRQ_0, matrix_transfer_complete);
+    irq_set_enabled(DMA_IRQ_0, true);
+
+    // start the infinite loop
+    matrix_transfer_complete();
 
     return ((sSmMatrixOut != -1) && (sDMAChan != -1));
 }

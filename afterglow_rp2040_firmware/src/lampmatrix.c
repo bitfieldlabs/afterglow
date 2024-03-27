@@ -28,7 +28,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
-#include "afterglow.h"
+#include "lampmatrix.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "def.h"
@@ -112,31 +112,24 @@ typedef enum AFTERGLOW_STATUS_e
 // local variables
 
 
-static volatile uint32_t sTTag = 0;      // current time tag
-static volatile uint32_t sCol = 0;       // currently active column
-
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 
 static volatile AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
 static volatile AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 
 static volatile uint32_t sLastData = 0;
-static uint32_t sLastDebugTTag = 0;
 
 
 //------------------------------------------------------------------------------
 // function prototypes
 
-static void ag_handleCol(uint32_t col);
-static uint32_t ag_dataRead();
+static uint32_t lm_dataRead();
 
 
 //------------------------------------------------------------------------------
-void ag_init()
+void lm_init()
 {
     memset(sLampMatrix, 0, sizeof(sLampMatrix));
-    sTTag = 0;
-    sCol = 0;
 
     uint16_t b = 0;
     for (uint c=0; c<NUM_COL; c++)
@@ -153,50 +146,17 @@ void ag_init()
 }
 
 //------------------------------------------------------------------------------
-// This is the realtime task update. All the afterglow magic happens here.
-void ag_update()
+void lm_inputUpdate()
 {
     // send the prepared data
-    matrixout_sendData();
-
-    // handle one column with each update
-    ag_handleCol(sCol);
 
     // sample the input data
-    uint32_t dataIn = ag_dataRead();
+    uint32_t dataIn = lm_dataRead();
     sLastData = dataIn;
-
-    // time is flowing
-    sTTag++;
-    sCol++;
-    if (sCol == NUM_COL)
-    {
-        sCol = 0;
-    }
 }
 
 //------------------------------------------------------------------------------
-void ag_handleCol(uint32_t col)
-{
-    // prepare the data for the next run
-    uint8_t rowDur[NUM_ROW];
-
-    uint8_t *pRD = rowDur;
-    uint16_t *pLM = sLampMatrix[col];
-    for (uint r=0; r<NUM_ROW; r++, pLM++, pRD++)
-    {
-        // decimate the lamp brightness value to 8 bits
-        uint8_t rb = (*pLM >> 8);
-
-        // map the brightness value
-        *pRD = skBrightnessMap[rb];
-    }
-
-    matrixout_prepareData(col, rowDur);
-}
-
-//------------------------------------------------------------------------------
-uint32_t ag_dataRead()
+uint32_t lm_dataRead()
 {
     // drive CLK and LOAD low
     gpio_put(AGPIN_IN_CLK, false);
@@ -225,6 +185,7 @@ uint32_t ag_dataRead()
 }
 
 //------------------------------------------------------------------------------
+/*
 void ag_sercomm()
 {
     uint32_t m = to_ms_since_boot(get_absolute_time());
@@ -234,3 +195,4 @@ void ag_sercomm()
         sLastDebugTTag = m;
     }
 }
+*/

@@ -39,13 +39,7 @@
 //------------------------------------------------------------------------------
 
 // Initialize the afterglow engine
-void ag_init();
+void lm_init();
 
-// Update the afterglow
-// This function is called every time interval
-void ag_update();
-
-// Afterglow serial communication
-// This function must be called frequently in order to process pending
-// serial communication events.
-void ag_sercomm();
+// Sample and process the input pinball lamp matrix
+void lm_inputUpdate();
