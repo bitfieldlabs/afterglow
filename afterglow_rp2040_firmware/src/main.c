@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "pico/time.h"
+#include "pico/multicore.h"
 #include "pindef.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
@@ -51,7 +52,7 @@ bool sample_input(struct repeating_timer *t)
     if ((sTtag % SAMPLE_TO_UPDATE_RATIO) == 0)
     {
         // send the current matrix state to the thread on CPU1
-        
+        multicore_fifo_push_blocking((uint32_t)lm_matrix());
     }
 
     // time is ticking
@@ -128,6 +129,9 @@ int main(void)
     gpio_init(AGPIN_D_SDA);
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
+
+    // start a thread on CPU1, used for matrix data preparation
+    multicore_launch_core1(matrixout_thread);
 
     // set up the matrix output DMA and PIO
     if (!matrixout_initpio())

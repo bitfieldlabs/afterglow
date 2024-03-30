@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include "def.h"
 
-void matrixout_prepareData(uint col, uint8_t *pRowDur);
-void matrixout_sendData();
+void matrixout_thread();
 bool matrixout_initpio();
 

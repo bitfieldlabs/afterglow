@@ -43,3 +43,6 @@ void lm_init();
 
 // Sample and process the input pinball lamp matrix
 void lm_inputUpdate();
+
+// Get a pointer to the lamp matrix data
+const uint16_t * lm_matrix();

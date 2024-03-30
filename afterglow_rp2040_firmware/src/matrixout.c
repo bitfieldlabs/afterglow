@@ -26,12 +26,14 @@
  ***********************************************************************/
 
 #include "matrixout.h"
+#include "pico/multicore.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.pio.h"
+#include "bmap.h"
 
 
 //------------------------------------------------------------------------------
@@ -63,11 +65,78 @@ static int sSmMatrixOutOffset = -1;
 static int sDMAChan = -1;
 static dma_channel_config sDMAChanConfig;
 
-static uint32_t sMatrixDataBuf[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
+// use double buffering for the prepared output data
+static uint32_t sMatrixDataBuf1[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
+static uint32_t sMatrixDataBuf2[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
+static uint32_t * sMatrixDataBufOut = sMatrixDataBuf1;
+static uint32_t * sMatrixDataBufPrep = sMatrixDataBuf2;
 
 
 //------------------------------------------------------------------------------
-void matrixout_prepareData(uint col, uint8_t *pRowDur)
+// local functions
+
+void matrixout_prepareCol(uint col, uint8_t *pRowDur);
+void matrixout_prepareData(const uint16_t *pkLM);
+void matrixout_swapbuf();
+
+
+//------------------------------------------------------------------------------
+void matrixout_thread()
+{
+    while (true)
+    {
+        // wait until CPU0 triggers the data output preparation
+        const uint16_t *pkLM = (const uint16_t*)multicore_fifo_pop_blocking();
+
+        // process the whole matrix data
+        matrixout_prepareData(pkLM);
+    }
+}
+
+//------------------------------------------------------------------------------
+void matrixout_swapbuf()
+{
+    // swap between the two output data buffers
+    if (sMatrixDataBufPrep == sMatrixDataBuf1)
+    {
+        sMatrixDataBufOut = sMatrixDataBuf1;
+        sMatrixDataBufPrep = sMatrixDataBuf2;
+    }
+    else
+    {
+        sMatrixDataBufOut = sMatrixDataBuf2;
+        sMatrixDataBufPrep = sMatrixDataBuf1;
+    }
+}
+
+//------------------------------------------------------------------------------
+void matrixout_prepareData(const uint16_t *pkLM)
+{
+    uint8_t rowDur[NUM_ROW];
+
+    // process column by column
+    for (uint c=0; c<NUM_COL; c++)
+    {
+        uint8_t *pRD = rowDur;
+        for (uint r=0; r<NUM_ROW; r++, pkLM++, pRD++)
+        {
+            // decimate the lamp brightness value to 8 bits
+            uint8_t rb = (*pkLM >> 8);
+
+            // map the brightness value
+            *pRD = skBrightnessMap[rb];
+        }
+
+        // prepare the output data
+        matrixout_prepareCol(c, rowDur);
+
+        // swap the output/prepare buffers (double buffering)
+        matrixout_swapbuf();
+    }
+}
+
+//------------------------------------------------------------------------------
+void matrixout_prepareCol(uint col, uint8_t *pRowDur)
 {
     // Anti-ghosting: turn off everything for some time
     // No need to do anything here - sMatrixDataBuf has already an empty buffer
@@ -76,7 +145,7 @@ void matrixout_prepareData(uint col, uint8_t *pRowDur)
     // prepare the column and row data for all PWM steps
     uint32_t rbit = 0x00000100;
     uint32_t colBit = (1ul << col);
-    uint32_t *pDS = &sMatrixDataBuf[ANTI_GHOSTING_STEPS];
+    uint32_t *pDS = &sMatrixDataBufPrep[col*MATRIXOUT_PIO_STEPS];
     uint32_t *pD = pDS;
     for (uint s=0; s<PWM_RES; s++)
     {
@@ -111,7 +180,7 @@ void matrix_transfer_complete()
     dma_hw->ints0 = (1u << sDMAChan);
 
     // set the buffer address and retrigger
-    dma_channel_set_read_addr(sDMAChan, sMatrixDataBuf, true);
+    dma_channel_set_read_addr(sDMAChan, sMatrixDataBufOut, true);
 }
 
 //------------------------------------------------------------------------------
@@ -135,8 +204,8 @@ bool matrixout_initpio()
         sDMAChan,                           // channel to be configured
         &sDMAChanConfig,                    // the channel's configuration
         &sPioMatrixOut->txf[sSmMatrixOut],  // write to the PIO TX FIFO
-        sMatrixDataBuf,                     // read from the output data buffer
-        count_of(sMatrixDataBuf),           // number of transfers
+        sMatrixDataBufOut,                  // read from the output data buffer
+        count_of(sMatrixDataBuf1),          // number of transfers
         false                               // don't start yet
     );
 

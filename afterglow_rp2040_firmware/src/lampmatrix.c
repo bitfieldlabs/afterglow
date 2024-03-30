@@ -34,7 +34,6 @@
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.h"
-#include "bmap.h"
 
 
 //------------------------------------------------------------------------------
@@ -114,10 +113,10 @@ typedef enum AFTERGLOW_STATUS_e
 
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 
-static volatile AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
-static volatile AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
+static AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
+static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 
-static volatile uint32_t sLastData = 0;
+static uint32_t sLastData = 0;
 
 
 //------------------------------------------------------------------------------
@@ -143,6 +142,12 @@ void lm_init()
 
     // enable serial output at 115200 baudrate
     printf("afterglow RP2040 v%d  (c) 2024 bitfield labs\n", AFTERGLOW_RP2040_VERSION);
+}
+
+//------------------------------------------------------------------------------
+const uint16_t * lm_matrix()
+{
+    return &sLampMatrix[0][0];
 }
 
 //------------------------------------------------------------------------------
