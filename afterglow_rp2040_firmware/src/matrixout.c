@@ -25,6 +25,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include <string.h>
 #include "matrixout.h"
 #include "pico/multicore.h"
 #include "hardware/gpio.h"
@@ -65,6 +66,9 @@ static int sSmMatrixOutOffset = -1;
 static int sDMAChan = -1;
 static dma_channel_config sDMAChanConfig;
 
+// local lamp matrix copy
+static uint16_t sLampMatrixCopy[NUM_COL][NUM_ROW] = { 0 };
+
 // use double buffering for the prepared output data
 static uint32_t sMatrixDataBuf1[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
 static uint32_t sMatrixDataBuf2[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
@@ -88,8 +92,11 @@ void matrixout_thread()
         // wait until CPU0 triggers the data output preparation
         const uint16_t *pkLM = (const uint16_t*)multicore_fifo_pop_blocking();
 
+        // make a local copy of the map matrix
+        memcpy(&sLampMatrixCopy[0][0], pkLM, sizeof(sLampMatrixCopy));
+
         // process the whole matrix data
-        matrixout_prepareData(pkLM);
+        matrixout_prepareData(&sLampMatrixCopy[0][0]);
     }
 }
 

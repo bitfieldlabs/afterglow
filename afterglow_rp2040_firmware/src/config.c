@@ -25,24 +25,5 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h> 
+#include "config.h"
 
-
-//------------------------------------------------------------------------------
-// Setup
-
-#define SINGLE_UPDATE_CONS          3     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
-#define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-
-
-//------------------------------------------------------------------------------
-
-// Initialize the afterglow engine
-void lm_init();
-
-// Sample and process the input pinball lamp matrix
-void lm_inputUpdate();
-
-// Get a pointer to the lamp matrix data
-const uint16_t * lm_matrix();

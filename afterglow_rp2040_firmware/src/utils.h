@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow_pico
+ *  https://github.com/bitfieldlabs/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -25,24 +25,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h> 
+#include <stdio.h>
 
-
-//------------------------------------------------------------------------------
-// Setup
-
-#define SINGLE_UPDATE_CONS          3     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
-#define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-
-
-//------------------------------------------------------------------------------
-
-// Initialize the afterglow engine
-void lm_init();
-
-// Sample and process the input pinball lamp matrix
-void lm_inputUpdate();
-
-// Get a pointer to the lamp matrix data
-const uint16_t * lm_matrix();
+extern const uint8_t skBitsPerByte[256];

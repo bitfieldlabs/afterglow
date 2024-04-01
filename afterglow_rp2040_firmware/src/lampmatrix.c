@@ -34,6 +34,7 @@
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.h"
+#include "utils.h"
 
 
 //------------------------------------------------------------------------------
@@ -94,18 +95,6 @@ typedef struct AFTERGLOW_CFG_s
 // afterglow configuration
 static AFTERGLOW_CFG_t sCfg;
 
-// status enumeration
-typedef enum AFTERGLOW_STATUS_e
-{
-    AG_STATUS_INIT = 0,    // initialising
-    AG_STATUS_OK,          // up and running
-    AG_STATUS_PASSTHROUGH, // ready in pass-through mode
-    AG_STATUS_TESTMODE,    // ready in test mode
-    AG_STATUS_REPLAY,      // ready in replay mode
-    AG_STATUS_INVINPUT,    // invalid input
-    AG_STATUS_OVERRUN      // interrupt overrun
-} AFTERGLOW_STATUS_t;
-
 
 //------------------------------------------------------------------------------
 // local variables
@@ -117,12 +106,18 @@ static AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
 static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 
 static uint32_t sLastData = 0;
+static uint32_t sLastValidCol = 0xffffffff;
+static uint32_t sLastValidRow = 0xffffffff; 
+static uint32_t sConsistentDataCount = 0;
+static uint32_t sWPCModeCounter = 0;
+static uint32_t sWhitestarModeCounter = 0;
 
 
 //------------------------------------------------------------------------------
 // function prototypes
 
 static uint32_t lm_dataRead();
+static bool lm_dataValid(uint c, uint r);
 
 
 //------------------------------------------------------------------------------
@@ -157,7 +152,34 @@ void lm_inputUpdate()
 
     // sample the input data
     uint32_t dataIn = lm_dataRead();
-    sLastData = dataIn;
+
+    // extract the lamp matrix data
+    uint32_t lmData = (dataIn & 0x0003ffff);
+
+    // check data consistency
+    if (lmData == sLastData)
+    {
+        sConsistentDataCount++;
+    }
+    else
+    {
+        sConsistentDataCount = 1;
+    }
+
+    // process new data
+    if (sConsistentDataCount == SINGLE_UPDATE_CONS)
+    {
+        uint colData = (lmData & 0x000000ff); // 8 column bits
+        uint rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
+
+        // check data validity
+        if (lm_dataValid(colData, rowData))
+        {
+            
+        }
+    }
+
+    sLastData = lmData;
 }
 
 //------------------------------------------------------------------------------
@@ -187,6 +209,47 @@ uint32_t lm_dataRead()
     }
 
     return data;
+}
+
+//------------------------------------------------------------------------------
+bool lm_dataValid(uint c, uint r)
+{
+    bool valid = false;
+
+    // For WPC, DE, Sys11 the columns alternate, i.e. only one column bit can
+    // be set at any time.
+    if (skBitsPerByte[(uint8_t)c] == 1)
+    {
+        // check if this is the expected column value
+        uint expectedColValue = (sLastValidCol == 0x80) ? 0x01 : (sLastValidCol << 1);
+        if (c == expectedColValue)
+        {
+            sWPCModeCounter++;
+        }
+        valid = true;
+    }
+
+    // For S.A.M. and Whitestar, the rows are used for
+    // multiplexing, therefore only one row bit may be set.
+    uint bpr = (skBitsPerByte[(uint8_t)r] + skBitsPerByte[(uint8_t)(r>>8)]);
+    if (bpr == 1)
+    {
+        // check if this is the expected row value
+        uint expectedRowValue = (sLastValidRow == 0x0200) ? 0x01 : (sLastValidRow << 1);
+        if (r == expectedRowValue)
+        {
+            sWhitestarModeCounter++;
+        }
+        valid = true;
+    }
+
+    if (valid)
+    {
+        sLastValidCol = c;
+        sLastValidRow = r;
+    }
+
+    return valid;
 }
 
 //------------------------------------------------------------------------------

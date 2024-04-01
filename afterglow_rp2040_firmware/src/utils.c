@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow_pico
+ *  https://github.com/bitfieldlabs/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -25,24 +25,16 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h> 
+#include "utils.h"
+#include "def.h"
 
-
-//------------------------------------------------------------------------------
-// Setup
-
-#define SINGLE_UPDATE_CONS          3     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
-#define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
-#define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-
-
-//------------------------------------------------------------------------------
-
-// Initialize the afterglow engine
-void lm_init();
-
-// Sample and process the input pinball lamp matrix
-void lm_inputUpdate();
-
-// Get a pointer to the lamp matrix data
-const uint16_t * lm_matrix();
+// Number of bits set in a byte value
+const uint8_t skBitsPerByte[256] = {
+    0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,1,
+    2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,1,
+    2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,2,
+    3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,1,
+    2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,2,
+    3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,2,
+    3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,3,
+    4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8 };
