@@ -39,3 +39,16 @@ typedef enum AFTERGLOW_STATUS_e
     AG_STATUS_OVERRUN      // interrupt overrun
 } AFTERGLOW_STATUS_t;
 
+typedef enum AFTERGLOW_MODE_e
+{
+    AG_MODE_UNKNOWN = 0,   // Mode not set
+    AG_MODE_WPC = 1,       // WPC, Data East, Sys11 mode (8 column multiplexing)
+    AG_MODE_WHITESTAR = 2  // Stern Whitestar / S.A.M. mode (10 rows multiplexing) 
+} AFTERGLOW_MODE_t;
+
+
+AFTERGLOW_STATUS_t ag_status();
+void ag_setStatus(AFTERGLOW_STATUS_t status);
+
+AFTERGLOW_MODE_t ag_mode();
+void ag_setMode(AFTERGLOW_MODE_t mode);

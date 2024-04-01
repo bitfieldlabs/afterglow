@@ -26,4 +26,62 @@
  ***********************************************************************/
 
 #include "config.h"
+#include "def.h"
+
+//------------------------------------------------------------------------------
+// Some definitions
+
+// Afterglow configuration version
+#define AFTERGLOW_CFG_VERSION 3
+
+// glow duration scaling in the configuration
+#define GLOWDUR_CFG_SCALE 10
+
+
+//------------------------------------------------------------------------------
+// serial port protocol definition
+
+// write buffer size [bytes]
+#define AG_CMD_WRITE_BUF 32
+
+// command terminator character
+#define AG_CMD_TERMINATOR ':'
+
+// version poll command string
+#define AG_CMD_VERSION_POLL "AGV"
+
+// configuration poll command string
+#define AG_CMD_CFG_POLL "AGCP"
+
+// configuration save command string
+#define AG_CMD_CFG_SAVE "AGCS"
+
+// configuration reset to default command string
+#define AG_CMD_CFG_DEFAULT "AGCD"
+
+// data ready string
+#define AG_CMD_CFG_DATA_READY "AGDR"
+
+// acknowledge string
+#define AG_CMD_ACK "AGCACK"
+
+// NOT acknowledge string
+#define AG_CMD_NACK "AGCNACK"
+
+
+//------------------------------------------------------------------------------
+
+// afterglow configuration data definition
+typedef struct AFTERGLOW_CFG_s
+{
+    uint16_t version;                         // afterglow version of the configuration
+    uint16_t res;                             // reserved bytes
+    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+    uint32_t crc;                             // data checksum
+} AFTERGLOW_CFG_t;
+
+// afterglow configuration
+static AFTERGLOW_CFG_t sCfg;
+
 

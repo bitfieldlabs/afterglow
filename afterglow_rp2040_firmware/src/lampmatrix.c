@@ -35,65 +35,7 @@
 #include "pindef.h"
 #include "matrixout.h"
 #include "utils.h"
-
-
-//------------------------------------------------------------------------------
-// Some definitions
-
-// Afterglow configuration version
-#define AFTERGLOW_CFG_VERSION 3
-
-// glow duration scaling in the configuration
-#define GLOWDUR_CFG_SCALE 10
-
-
-//------------------------------------------------------------------------------
-// serial port protocol definition
-
-// write buffer size [bytes]
-#define AG_CMD_WRITE_BUF 32
-
-// command terminator character
-#define AG_CMD_TERMINATOR ':'
-
-// version poll command string
-#define AG_CMD_VERSION_POLL "AGV"
-
-// configuration poll command string
-#define AG_CMD_CFG_POLL "AGCP"
-
-// configuration save command string
-#define AG_CMD_CFG_SAVE "AGCS"
-
-// configuration reset to default command string
-#define AG_CMD_CFG_DEFAULT "AGCD"
-
-// data ready string
-#define AG_CMD_CFG_DATA_READY "AGDR"
-
-// acknowledge string
-#define AG_CMD_ACK "AGCACK"
-
-// NOT acknowledge string
-#define AG_CMD_NACK "AGCNACK"
-
-
-//------------------------------------------------------------------------------
-// function prototypes
-
-
-// afterglow configuration data definition
-typedef struct AFTERGLOW_CFG_s
-{
-    uint16_t version;                         // afterglow version of the configuration
-    uint16_t res;                             // reserved bytes
-    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
-    uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
-    uint32_t crc;                             // data checksum
-} AFTERGLOW_CFG_t;
-
-// afterglow configuration
-static AFTERGLOW_CFG_t sCfg;
+#include "afterglow.h"
 
 
 //------------------------------------------------------------------------------
@@ -101,9 +43,6 @@ static AFTERGLOW_CFG_t sCfg;
 
 
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
-
-static AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
-static AFTERGLOW_STATUS_t sLastStatus = AG_STATUS_INIT;
 
 static uint32_t sLastData = 0;
 static uint32_t sLastValidCol = 0xffffffff;
@@ -118,6 +57,7 @@ static uint32_t sWhitestarModeCounter = 0;
 
 static uint32_t lm_dataRead();
 static bool lm_dataValid(uint c, uint r);
+static void lm_modeDetection(uint c, uint r);
 
 
 //------------------------------------------------------------------------------
@@ -172,10 +112,19 @@ void lm_inputUpdate()
         uint colData = (lmData & 0x000000ff); // 8 column bits
         uint rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
 
-        // check data validity
-        if (lm_dataValid(colData, rowData))
+        // Mode detection is active as long as the AG is in initialisation status
+        AFTERGLOW_MODE_t mode = ag_mode();
+        if (mode == AG_MODE_UNKNOWN)
         {
-            
+            lm_modeDetection(colData, rowData);
+        }
+        else
+        {
+            // check data validity
+            if (lm_dataValid(colData, rowData))
+            {
+                
+            }
         }
     }
 
@@ -212,10 +161,8 @@ uint32_t lm_dataRead()
 }
 
 //------------------------------------------------------------------------------
-bool lm_dataValid(uint c, uint r)
+void lm_modeDetection(uint c, uint r)
 {
-    bool valid = false;
-
     // For WPC, DE, Sys11 the columns alternate, i.e. only one column bit can
     // be set at any time.
     if (skBitsPerByte[(uint8_t)c] == 1)
@@ -226,7 +173,6 @@ bool lm_dataValid(uint c, uint r)
         {
             sWPCModeCounter++;
         }
-        valid = true;
     }
 
     // For S.A.M. and Whitestar, the rows are used for
@@ -240,8 +186,26 @@ bool lm_dataValid(uint c, uint r)
         {
             sWhitestarModeCounter++;
         }
-        valid = true;
     }
+
+    // check if we have enough consistent information
+    if (sWPCModeCounter > MODE_DETECTION_THREH)
+    {
+        ag_setMode(AG_MODE_WPC);
+        ag_setStatus(AG_STATUS_OK);
+    }
+    if (sWhitestarModeCounter > MODE_DETECTION_THREH)
+    {
+        ag_setMode(AG_MODE_WHITESTAR);
+        ag_setStatus(AG_STATUS_OK);
+    }
+}
+
+//------------------------------------------------------------------------------
+bool lm_dataValid(uint c, uint r)
+{
+    bool valid = false;
+
 
     if (valid)
     {

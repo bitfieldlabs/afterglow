@@ -27,3 +27,33 @@
 
 #include "afterglow.h"
 
+
+//------------------------------------------------------------------------------
+// local variables
+
+AFTERGLOW_STATUS_t sStatus = AG_STATUS_INIT;
+AFTERGLOW_MODE_t sMode = AG_MODE_UNKNOWN;
+
+
+//------------------------------------------------------------------------------
+AFTERGLOW_STATUS_t ag_status()
+{
+    return sStatus;
+}
+
+//------------------------------------------------------------------------------
+void ag_setStatus(AFTERGLOW_STATUS_t status)
+{
+    sStatus = status;
+}
+
+//------------------------------------------------------------------------------
+AFTERGLOW_MODE_t ag_mode()
+{
+}
+
+//------------------------------------------------------------------------------
+void ag_setMode(AFTERGLOW_MODE_t mode)
+{
+
+}
