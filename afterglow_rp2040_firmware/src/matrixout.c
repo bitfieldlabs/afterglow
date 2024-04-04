@@ -72,8 +72,8 @@ static uint16_t sLampMatrixCopy[NUM_COL][NUM_ROW] = { 0 };
 // use double buffering for the prepared output data
 static uint32_t sMatrixDataBuf1[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
 static uint32_t sMatrixDataBuf2[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
-static uint32_t * sMatrixDataBufOut = sMatrixDataBuf1;
-static uint32_t * sMatrixDataBufPrep = sMatrixDataBuf2;
+static volatile uint32_t *pMatrixDataBufOut = sMatrixDataBuf1;
+static volatile uint32_t *pMatrixDataBufPrep = sMatrixDataBuf2;
 
 
 //------------------------------------------------------------------------------
@@ -104,15 +104,15 @@ void matrixout_thread()
 void matrixout_swapbuf()
 {
     // swap between the two output data buffers
-    if (sMatrixDataBufPrep == sMatrixDataBuf1)
+    if (pMatrixDataBufPrep == sMatrixDataBuf1)
     {
-        sMatrixDataBufOut = sMatrixDataBuf1;
-        sMatrixDataBufPrep = sMatrixDataBuf2;
+        pMatrixDataBufOut = sMatrixDataBuf1;
+        pMatrixDataBufPrep = sMatrixDataBuf2;
     }
     else
     {
-        sMatrixDataBufOut = sMatrixDataBuf2;
-        sMatrixDataBufPrep = sMatrixDataBuf1;
+        pMatrixDataBufOut = sMatrixDataBuf2;
+        pMatrixDataBufPrep = sMatrixDataBuf1;
     }
 }
 
@@ -136,10 +136,10 @@ void matrixout_prepareData(const uint16_t *pkLM)
 
         // prepare the output data
         matrixout_prepareCol(c, rowDur);
-
-        // swap the output/prepare buffers (double buffering)
-        matrixout_swapbuf();
     }
+
+    // swap the output/prepare buffers (double buffering)
+    matrixout_swapbuf();
 }
 
 //------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void matrixout_prepareCol(uint col, uint8_t *pRowDur)
     // prepare the column and row data for all PWM steps
     uint32_t rbit = 0x00000100;
     uint32_t colBit = (1ul << col);
-    uint32_t *pDS = &sMatrixDataBufPrep[col*MATRIXOUT_PIO_STEPS];
+    uint32_t *pDS = &pMatrixDataBufPrep[col*MATRIXOUT_PIO_STEPS+ANTI_GHOSTING_STEPS];
     uint32_t *pD = pDS;
     for (uint s=0; s<PWM_RES; s++)
     {
@@ -187,7 +187,7 @@ void matrix_transfer_complete()
     dma_hw->ints0 = (1u << sDMAChan);
 
     // set the buffer address and retrigger
-    dma_channel_set_read_addr(sDMAChan, sMatrixDataBufOut, true);
+    dma_channel_set_read_addr(sDMAChan, pMatrixDataBufOut, true);
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ bool matrixout_initpio()
         sDMAChan,                           // channel to be configured
         &sDMAChanConfig,                    // the channel's configuration
         &sPioMatrixOut->txf[sSmMatrixOut],  // write to the PIO TX FIFO
-        sMatrixDataBufOut,                  // read from the output data buffer
+        NULL,                               // the read address will be set later
         count_of(sMatrixDataBuf1),          // number of transfers
         false                               // don't start yet
     );

@@ -206,6 +206,15 @@ bool lm_dataValid(uint c, uint r)
 {
     bool valid = false;
 
+    if (ag_mode() == AG_MODE_WPC)
+    {
+
+    }
+    else if (ag_mode() == AG_MODE_WHITESTAR)
+    {
+        
+    }
+
 
     if (valid)
     {
