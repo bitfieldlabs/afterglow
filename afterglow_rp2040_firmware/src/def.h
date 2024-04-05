@@ -31,29 +31,29 @@
 // number of rows in the lamp matrix
 #define NUM_ROW 10
 
-// Lamp matrix update frequency [Hz]
-#define MATRIX_UPDATE_FREQ 100
-
-// Input sampling frequency [Hz]
-#define INPUT_SAMPLING_FREQ 4000
-
 // LED PWM frequency [Hz]
 #define LED_FREQ 1000
 
 // PWM resolution (brightness steps)
 #define PWM_RES 128
 
+// Lamp matrix update frequency [Hz]
+#define MATRIX_UPDATE_FREQ 100
+
+// Input sampling frequency [Hz]
+#define INPUT_SAMPLING_FREQ 4000
+
 // Duration of anti ghosting [us] (turning off all lamps briefly)
-#define ANTIGHOST_DURATION         18
+#define ANTIGHOST_DURATION 18
 
 // Turn debug output via serial on/off
-#define DEBUG_SERIAL                1
+#define DEBUG_SERIAL 1
 
 // Afterglow RP2040 version number
-#define AFTERGLOW_RP2040_VERSION  100
+#define AFTERGLOW_RP2040_VERSION 100
 
 // Latest supported Afterglow board revision. Currently v1.3
-#define BOARD_REV                  30
+#define BOARD_REV 30
 
 
 //------------------------------------------------------------------------------

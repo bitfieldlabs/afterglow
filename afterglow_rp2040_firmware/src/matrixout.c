@@ -34,6 +34,7 @@
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.pio.h"
+#include "afterglow.h"
 #include "bmap.h"
 
 
@@ -95,8 +96,18 @@ void matrixout_thread()
         // make a local copy of the map matrix
         memcpy(&sLampMatrixCopy[0][0], pkLM, sizeof(sLampMatrixCopy));
 
-        // process the whole matrix data
-        matrixout_prepareData(&sLampMatrixCopy[0][0]);
+        // output is active only with valid status
+        AFTERGLOW_STATUS_t s = ag_status();
+        if ((s != AG_STATUS_INIT) && (s != AG_STATUS_INVINPUT))
+        {
+            // process the whole matrix data
+            matrixout_prepareData(&sLampMatrixCopy[0][0]);
+        }
+        else
+        {
+            // clear the buffer in order to actively disable output
+            memset(pMatrixDataBufPrep, 0, sizeof(sMatrixDataBuf1));
+        }
     }
 }
 

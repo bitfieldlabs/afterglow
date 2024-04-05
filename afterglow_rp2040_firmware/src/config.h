@@ -27,3 +27,12 @@
 
 #include <stdio.h>
 
+typedef struct AG_DIPSWITCH_s
+{
+    bool testMode;          // test mode
+    bool passThrough;       // pass through mode (input replicated to output)
+} AG_DIPSWITCH_t;
+
+
+AG_DIPSWITCH_t config_dipSwitch();
+void config_updateDipSwitch(uint8_t rawBits);

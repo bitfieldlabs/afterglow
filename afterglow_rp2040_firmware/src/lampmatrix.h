@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 // Setup
 
-#define MODE_DETECTION_THREH       62     // Number of successful mode identifications need for mode detection
+#define MODE_DETECTION_THRESH      62     // Number of successful mode identifications need for mode detection
 #define SINGLE_UPDATE_CONS          3     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
 #define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
 #define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
@@ -43,7 +43,7 @@
 void lm_init();
 
 // Sample and process the input pinball lamp matrix
-void lm_inputUpdate();
+void lm_inputUpdate(uint32_t ttag);
 
 // Get a pointer to the lamp matrix data
 const uint16_t * lm_matrix();

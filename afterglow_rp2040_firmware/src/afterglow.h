@@ -35,8 +35,7 @@ typedef enum AFTERGLOW_STATUS_e
     AG_STATUS_PASSTHROUGH, // ready in pass-through mode
     AG_STATUS_TESTMODE,    // ready in test mode
     AG_STATUS_REPLAY,      // ready in replay mode
-    AG_STATUS_INVINPUT,    // invalid input
-    AG_STATUS_OVERRUN      // interrupt overrun
+    AG_STATUS_INVINPUT     // invalid input
 } AFTERGLOW_STATUS_t;
 
 typedef enum AFTERGLOW_MODE_e

@@ -34,6 +34,7 @@
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.h"
+#include "config.h"
 #include "utils.h"
 #include "afterglow.h"
 
@@ -43,7 +44,6 @@
 
 
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
-
 static uint32_t sLastData = 0;
 static uint32_t sLastValidCol = 0xffffffff;
 static uint32_t sLastValidRow = 0xffffffff; 
@@ -74,9 +74,6 @@ void lm_init()
             b += 1024;
         }
     }
-
-    // enable serial output at 115200 baudrate
-    printf("afterglow RP2040 v%d  (c) 2024 bitfield labs\n", AFTERGLOW_RP2040_VERSION);
 }
 
 //------------------------------------------------------------------------------
@@ -86,12 +83,15 @@ const uint16_t * lm_matrix()
 }
 
 //------------------------------------------------------------------------------
-void lm_inputUpdate()
+void lm_inputUpdate(uint32_t ttag)
 {
     // send the prepared data
 
     // sample the input data
     uint32_t dataIn = lm_dataRead();
+
+    // process the DIP switch information
+    config_updateDipSwitch((uint8_t)(dataIn>>18));
 
     // extract the lamp matrix data
     uint32_t lmData = (dataIn & 0x0003ffff);
@@ -189,12 +189,12 @@ void lm_modeDetection(uint c, uint r)
     }
 
     // check if we have enough consistent information
-    if (sWPCModeCounter > MODE_DETECTION_THREH)
+    if (sWPCModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WPC);
         ag_setStatus(AG_STATUS_OK);
     }
-    if (sWhitestarModeCounter > MODE_DETECTION_THREH)
+    if (sWhitestarModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WHITESTAR);
         ag_setStatus(AG_STATUS_OK);

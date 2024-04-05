@@ -84,4 +84,17 @@ typedef struct AFTERGLOW_CFG_s
 // afterglow configuration
 static AFTERGLOW_CFG_t sCfg;
 
+static AG_DIPSWITCH_t sDipSwitch;
 
+
+//------------------------------------------------------------------------------
+AG_DIPSWITCH_t config_dipSwitch()
+{
+    return sDipSwitch;
+}
+
+//------------------------------------------------------------------------------
+void config_updateDipSwitch(uint8_t rawBits)
+{
+
+}

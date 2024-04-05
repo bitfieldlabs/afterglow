@@ -40,19 +40,28 @@
 // The timer is the trigger for the input sampling and the matrix update
 static repeating_timer_t sInputSamplingTimer;
 static uint32_t sTtag = 0;
+static uint32_t sMatrixUpdateCounter = 0;
 
 
 //------------------------------------------------------------------------------
 bool sample_input(struct repeating_timer *t)
 {
     // sample and process the the inputs
-    lm_inputUpdate();
+    lm_inputUpdate(sTtag);
 
     // trigger an update of the output data
-    if ((sTtag % SAMPLE_TO_UPDATE_RATIO) == 0)
+    if (sMatrixUpdateCounter == 0)
     {
         // send the current matrix state to the thread on CPU1
         multicore_fifo_push_blocking((uint32_t)lm_matrix());
+
+        // restart the update counter
+        sMatrixUpdateCounter = SAMPLE_TO_UPDATE_RATIO;
+    }
+    else
+    {
+        // no matrix update this time
+        sMatrixUpdateCounter--;
     }
 
     // time is ticking
@@ -79,8 +88,6 @@ void panic_mode()
 int main(void)
 {  
     stdio_init_all();
-
-    printf("\n\nAfterglow RP2040 v0.1\n");
 
     // initialize the status LED
     gpio_init(AGPIN_STAT_LED);
@@ -148,6 +155,9 @@ int main(void)
         printf("Failed to start the heartbeat!\n");
         panic_mode();
     }
+
+    // enable serial output at 115200 baudrate
+    printf("afterglow rp2040 v%d  (c) 2024 bitfield labs\n", AFTERGLOW_RP2040_VERSION);
 
     // Eternal loop
     while (true)
