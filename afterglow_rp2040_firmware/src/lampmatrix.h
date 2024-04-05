@@ -54,3 +54,5 @@ uint32_t lm_lastInputData();
 // Get the invalid input data counter value
 uint32_t lm_invalidDataCounter();
 
+// Get a pointer to the raw lamp matrix data
+const uint32_t *lm_rawLampMatrix();

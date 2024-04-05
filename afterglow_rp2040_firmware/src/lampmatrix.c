@@ -45,6 +45,7 @@
 
 
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sRawLampMatrix[NUM_COL] = { 0 };
 static uint32_t sLastData = 0;
 static uint32_t sLastCol = 0xffffffff;
 static uint32_t sLastRow = 0xffffffff; 
@@ -59,7 +60,7 @@ static uint32_t sInvalidDataCounter = 0;
 // function prototypes
 
 static uint32_t lm_dataRead();
-static bool lm_dataValid(uint c, uint r);
+static bool lm_dataValid(uint32_t c, uint32_t r, uint32_t *pCol, uint32_t *pRow);
 static void lm_modeDetection(uint c, uint r);
 
 
@@ -67,6 +68,7 @@ static void lm_modeDetection(uint c, uint r);
 void lm_init()
 {
     memset(sLampMatrix, 0, sizeof(sLampMatrix));
+    memset(sRawLampMatrix, 0, sizeof(sRawLampMatrix));
 
     uint16_t b = 0;
     for (uint c=0; c<NUM_COL; c++)
@@ -121,8 +123,8 @@ void lm_inputUpdate(uint32_t ttag)
     // process new data
     if (sConsistentDataCount == SINGLE_UPDATE_CONS)
     {
-        uint colData = (lmData & 0x000000ff); // 8 column bits
-        uint rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
+        uint32_t colData = (lmData & 0x000000ff); // 8 column bits
+        uint32_t rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
 
         // Mode detection is active as long as the AG is in initialisation status
         AFTERGLOW_MODE_t mode = ag_mode();
@@ -133,13 +135,38 @@ void lm_inputUpdate(uint32_t ttag)
         else
         {
             // check data validity
-            if (lm_dataValid(colData, rowData))
+            uint32_t col, row;
+            if (lm_dataValid(colData, rowData, &col, &row))
             {
                 // update the lamp matrix
-
+                if (col != 0xffffffff)
+                {
+                    // WPC column update
+                    sRawLampMatrix[col] = rowData;
+                }
+                else
+                {
+                    // Whitestar row update
+                    uint32_t cd = colData;
+                    uint32_t rowBit = (1 << row);
+                    uint32_t rowMask = ~rowBit;
+                    for (uint c=0; c<NUM_COL; c++)
+                    {
+                        if (cd & 0x01)
+                        {
+                            sRawLampMatrix[c] |= rowBit;
+                        }
+                        else
+                        {
+                            sRawLampMatrix[c] &= rowMask;
+                        }
+                        cd >>= 1;
+                    }
+                }
             }
         }
 
+        // remember this data
         sLastCol = colData;
         sLastRow = rowData;
     }
@@ -149,7 +176,7 @@ void lm_inputUpdate(uint32_t ttag)
     {
         sInvalidDataCounter = 0;
     }
-    else
+    else if (mode != AG_MODE_UNKNOWN)
     {
         sInvalidDataCounter++;
     }
@@ -243,7 +270,7 @@ void lm_modeDetection(uint c, uint r)
 }
 
 //------------------------------------------------------------------------------
-bool lm_dataValid(uint c, uint r)
+bool lm_dataValid(uint32_t c, uint32_t r, uint32_t *pCol, uint32_t *pRow)
 {
     bool valid = false;
 
@@ -253,6 +280,18 @@ bool lm_dataValid(uint c, uint r)
         // be set at any time.
         if (skBitsPerByte[(uint8_t)c] == 1)
         {
+            switch (c)
+            {
+                case 0x00000001: *pCol = 0; break;
+                case 0x00000002: *pCol = 1; break;
+                case 0x00000004: *pCol = 2; break;
+                case 0x00000008: *pCol = 3; break;
+                case 0x00000010: *pCol = 4; break;
+                case 0x00000020: *pCol = 5; break;
+                case 0x00000040: *pCol = 6; break;
+                case 0x00000080: *pCol = 7; break;
+            }
+            *pRow = 0xffffffff;
             valid = true;
         }
     }
@@ -263,6 +302,20 @@ bool lm_dataValid(uint c, uint r)
         uint bpr = (skBitsPerByte[(uint8_t)r] + skBitsPerByte[(uint8_t)(r>>8)]);
         if (bpr == 1)
         {
+            switch (r)
+            {
+                case 0x00000001: *pRow = 0; break;
+                case 0x00000002: *pRow = 1; break;
+                case 0x00000004: *pRow = 2; break;
+                case 0x00000008: *pRow = 3; break;
+                case 0x00000010: *pRow = 4; break;
+                case 0x00000020: *pRow = 5; break;
+                case 0x00000040: *pRow = 6; break;
+                case 0x00000080: *pRow = 7; break;
+                case 0x00000100: *pRow = 8; break;
+                case 0x00000200: *pRow = 9; break;
+            }
+            *pCol = 0xffffffff;
             valid = true;
         }
     }
@@ -287,4 +340,10 @@ uint32_t lm_lastInputData()
 uint32_t lm_invalidDataCounter()
 {
     return sInvalidDataCounter;
+}
+
+//------------------------------------------------------------------------------
+const uint32_t *lm_rawLampMatrix()
+{
+    return sRawLampMatrix;
 }

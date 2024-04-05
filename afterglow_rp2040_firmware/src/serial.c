@@ -30,6 +30,7 @@
 #include "lampmatrix.h"
 #include "afterglow.h"
 #include "config.h"
+#include "def.h"
 
 
 //------------------------------------------------------------------------------
@@ -53,6 +54,22 @@ void serial_debug(uint32_t ttag)
 
         // errors
         printf("err : inv %ld\n", lm_invalidDataCounter());
+
+        // raw lamp matrix
+        const uint32_t *pkRawLM = lm_rawLampMatrix();
+        printf("raw :\n");
+        for (uint c=0; c<NUM_COL; c++)
+        {
+            printf("   ");
+            uint32_t cd = *pkRawLM;
+            for (uint r=0; r<NUM_ROW; r++)
+            {
+                printf("%s", (cd & 0x01) ? "X" : ".");
+                cd >>= 1;
+            }
+            pkRawLM++;
+            printf("\n");
+        }
 
         sLastDebugTTag = m;
     }
