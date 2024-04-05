@@ -46,12 +46,14 @@
 
 static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 static uint32_t sLastData = 0;
+static uint32_t sLastCol = 0xffffffff;
+static uint32_t sLastRow = 0xffffffff; 
 static uint32_t sLastValidCol = 0xffffffff;
 static uint32_t sLastValidRow = 0xffffffff; 
 static uint32_t sConsistentDataCount = 0;
 static uint32_t sWPCModeCounter = 0;
 static uint32_t sWhitestarModeCounter = 0;
-
+static uint32_t sInvalidDataCounter = 0;
 
 //------------------------------------------------------------------------------
 // function prototypes
@@ -133,9 +135,23 @@ void lm_inputUpdate(uint32_t ttag)
             // check data validity
             if (lm_dataValid(colData, rowData))
             {
-                
+                // update the lamp matrix
+
             }
         }
+
+        sLastCol = colData;
+        sLastRow = rowData;
+    }
+
+    // count bad data
+    if ((sLastValidCol == sLastCol) && (sLastValidRow == sLastRow))
+    {
+        sInvalidDataCounter = 0;
+    }
+    else
+    {
+        sInvalidDataCounter++;
     }
 
     sLastData = lmData;
@@ -191,10 +207,10 @@ void lm_modeDetection(uint c, uint r)
     if (skBitsPerByte[(uint8_t)c] == 1)
     {
         // check if this is the expected column value
-        uint expectedColValue = (sLastValidCol == 0x80) ? 0x01 : (sLastValidCol << 1);
-        if (c == expectedColValue)
+        if (c != sLastCol)
         {
-            sWPCModeCounter++;
+            uint expectedColValue = (sLastCol == 0x80) ? 0x01 : (sLastCol << 1);
+            sWPCModeCounter = (c == expectedColValue) ? (sWPCModeCounter+1) : 0;
         }
     }
 
@@ -204,10 +220,10 @@ void lm_modeDetection(uint c, uint r)
     if (bpr == 1)
     {
         // check if this is the expected row value
-        uint expectedRowValue = (sLastValidRow == 0x0200) ? 0x01 : (sLastValidRow << 1);
-        if (r == expectedRowValue)
+        if (r != sLastRow)
         {
-            sWhitestarModeCounter++;
+            uint expectedRowValue = (sLastRow == 0x0200) ? 0x01 : (sLastRow << 1);
+            sWhitestarModeCounter = (r == expectedRowValue) ? (sWhitestarModeCounter+1) : 0;
         }
     }
 
@@ -215,12 +231,10 @@ void lm_modeDetection(uint c, uint r)
     if (sWPCModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WPC);
-        ag_setStatus(AG_STATUS_OK);
     }
     if (sWhitestarModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WHITESTAR);
-        ag_setStatus(AG_STATUS_OK);
     }
 }
 
@@ -231,11 +245,22 @@ bool lm_dataValid(uint c, uint r)
 
     if (ag_mode() == AG_MODE_WPC)
     {
-
+        // For WPC, DE, Sys11 the columns alternate, i.e. only one column bit can
+        // be set at any time.
+        if (skBitsPerByte[(uint8_t)c] == 1)
+        {
+            valid = true;
+        }
     }
     else if (ag_mode() == AG_MODE_WHITESTAR)
     {
-        
+        // For S.A.M. and Whitestar, the rows are used for
+        // multiplexing, therefore only one row bit may be set.
+        uint bpr = (skBitsPerByte[(uint8_t)r] + skBitsPerByte[(uint8_t)(r>>8)]);
+        if (bpr == 1)
+        {
+            valid = true;
+        }
     }
 
 
@@ -252,4 +277,10 @@ bool lm_dataValid(uint c, uint r)
 uint32_t lm_lastInputData()
 {
     return sLastData;
+}
+
+//------------------------------------------------------------------------------
+uint32_t lm_invalidDataCounter()
+{
+    return sInvalidDataCounter;
 }

@@ -50,3 +50,7 @@ const uint16_t * lm_matrix();
 
 // Get the last lamp matrix input data
 uint32_t lm_lastInputData();
+
+// Get the invalid input data counter value
+uint32_t lm_invalidDataCounter();
+

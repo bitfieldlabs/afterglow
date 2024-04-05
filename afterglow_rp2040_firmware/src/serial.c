@@ -28,6 +28,7 @@
 #include "serial.h"
 #include "pico/time.h"
 #include "lampmatrix.h"
+#include "afterglow.h"
 #include "config.h"
 
 
@@ -44,11 +45,15 @@ void serial_debug(uint32_t ttag)
     if ((m - sLastDebugTTag) > 2000)
     {
         // column/row data
-        printf("data: %08lx\n", lm_lastInputData());
+        printf("data %08lx mode %d st %d\n", lm_lastInputData(), (int)ag_mode(), ag_status());
 
         // configuration
         AG_DIPSWITCH_t ds = cfg_dipSwitch();
         printf("cfg : %02x - tm %d pt %d\n", cfg_lastDipSwitchValue(), ds.testMode, ds.passThrough);
+
+        // errors
+        printf("err : inv %ld\n", lm_invalidDataCounter());
+
         sLastDebugTTag = m;
     }
 }

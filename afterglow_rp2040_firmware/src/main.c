@@ -86,42 +86,6 @@ void panic_mode()
 }
 
 //------------------------------------------------------------------------------
-static void updateStatusLED()
-{
-    static uint32_t sLedCounter = 0;
-    AFTERGLOW_STATUS_t s = ag_status();
-    switch (s)
-    {
-        case AG_STATUS_INIT:
-            // always off
-            gpio_put(AGPIN_STAT_LED, 0);
-            break;
-        case AG_STATUS_OK:
-            // always on
-            gpio_put(AGPIN_STAT_LED, 1);
-            break;
-        case AG_STATUS_PASSTHROUGH:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
-            break;
-        case AG_STATUS_TESTMODE:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
-            break;
-        case AG_STATUS_REPLAY:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
-            break;
-        case AG_STATUS_INVINPUT:
-        default:
-            // blinking at 4Hz
-            gpio_put(AGPIN_STAT_LED, (sLedCounter & 0x01) ? true : false);
-    }
-
-    sLedCounter++;
-}
-
-//------------------------------------------------------------------------------
 int main(void)
 {
     stdio_usb_init();
@@ -203,8 +167,10 @@ int main(void)
         // afterglow serial communication
         serial_debug(sTtag);
 
-        // every device needs a blinking LED
-        updateStatusLED();
+        // status update
+        ag_statusUpdate();
+
+        // time for a nap
         sleep_ms(250);
     }
 }

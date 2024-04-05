@@ -47,7 +47,7 @@ typedef enum AFTERGLOW_MODE_e
 
 
 AFTERGLOW_STATUS_t ag_status();
-void ag_setStatus(AFTERGLOW_STATUS_t status);
+void ag_statusUpdate();
 
 AFTERGLOW_MODE_t ag_mode();
 void ag_setMode(AFTERGLOW_MODE_t mode);

@@ -25,7 +25,18 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include "pico/stdlib.h"
 #include "afterglow.h"
+#include "lampmatrix.h"
+#include "pindef.h"
+#include "config.h"
+
+
+//------------------------------------------------------------------------------
+// local definitions
+
+// Maximum number of allowed invalid data readings before changing status to invalid
+#define INV_DATA_THRES 32
 
 
 //------------------------------------------------------------------------------
@@ -57,4 +68,75 @@ AFTERGLOW_MODE_t ag_mode()
 void ag_setMode(AFTERGLOW_MODE_t mode)
 {
     sMode = mode;
+}
+
+//------------------------------------------------------------------------------
+static void ag_updateStatusLED()
+{
+    static uint32_t sLedCounter = 0;
+    switch (sStatus)
+    {
+        case AG_STATUS_INIT:
+            // always off
+            gpio_put(AGPIN_STAT_LED, 0);
+            break;
+        case AG_STATUS_OK:
+            // always on
+            gpio_put(AGPIN_STAT_LED, 1);
+            break;
+        case AG_STATUS_PASSTHROUGH:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_TESTMODE:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_REPLAY:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_INVINPUT:
+        default:
+            // blinking at 4Hz
+            gpio_put(AGPIN_STAT_LED, (sLedCounter & 0x01) ? true : false);
+    }
+
+    sLedCounter++;
+}
+
+//------------------------------------------------------------------------------
+void ag_statusUpdate()
+{
+    // determine the current status
+    AG_DIPSWITCH_t ds = cfg_dipSwitch();
+    if (sMode == AG_MODE_UNKNOWN)
+    {
+        sStatus = AG_STATUS_INIT;
+    }
+    else
+    {
+        if (lm_invalidDataCounter() < INV_DATA_THRES)
+        {
+            if (ds.testMode)
+            {
+                sStatus = AG_STATUS_TESTMODE;
+            }
+            else if (ds.passThrough)
+            {
+                sStatus = AG_STATUS_PASSTHROUGH;
+            }
+            else
+            {
+                sStatus = AG_STATUS_OK;
+            }
+        }
+        else
+        {
+            sStatus = AG_STATUS_INVINPUT;
+        }
+    }
+
+    // every device needs a blinking LED
+    ag_updateStatusLED();
 }
