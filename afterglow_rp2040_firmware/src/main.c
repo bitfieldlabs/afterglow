@@ -32,6 +32,7 @@
 #include "lampmatrix.h"
 #include "matrixout.h"
 #include "serial.h"
+#include "afterglow.h"
 
 
 //------------------------------------------------------------------------------
@@ -39,7 +40,7 @@
 
 // The timer is the trigger for the input sampling and the matrix update
 static repeating_timer_t sInputSamplingTimer;
-static uint32_t sTtag = 0;
+static volatile uint32_t sTtag = 0;
 static uint32_t sMatrixUpdateCounter = 0;
 
 
@@ -82,6 +83,42 @@ void panic_mode()
         gpio_put(AGPIN_STAT_LED, 0);
         sleep_ms(200);
     }
+}
+
+//------------------------------------------------------------------------------
+static void updateStatusLED()
+{
+    static uint32_t sLedCounter = 0;
+    AFTERGLOW_STATUS_t s = ag_status();
+    switch (s)
+    {
+        case AG_STATUS_INIT:
+            // always off
+            gpio_put(AGPIN_STAT_LED, 0);
+            break;
+        case AG_STATUS_OK:
+            // always on
+            gpio_put(AGPIN_STAT_LED, 1);
+            break;
+        case AG_STATUS_PASSTHROUGH:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_TESTMODE:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_REPLAY:
+            // blinking at 1Hz
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
+        case AG_STATUS_INVINPUT:
+        default:
+            // blinking at 4Hz
+            gpio_put(AGPIN_STAT_LED, (sLedCounter & 0x01) ? true : false);
+    }
+
+    sLedCounter++;
 }
 
 //------------------------------------------------------------------------------
@@ -167,9 +204,7 @@ int main(void)
         serial_debug(sTtag);
 
         // every device needs a blinking LED
-        gpio_put(AGPIN_STAT_LED, 1);
-        sleep_ms(500);
-        gpio_put(AGPIN_STAT_LED, 0);
-        sleep_ms(500);
+        updateStatusLED();
+        sleep_ms(250);
     }
 }
