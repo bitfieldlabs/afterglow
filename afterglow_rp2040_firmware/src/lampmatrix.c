@@ -37,6 +37,7 @@
 #include "config.h"
 #include "utils.h"
 #include "afterglow.h"
+#include "testmode.h"
 
 
 //------------------------------------------------------------------------------
@@ -90,11 +91,20 @@ void lm_inputUpdate(uint32_t ttag)
     // sample the input data
     uint32_t dataIn = lm_dataRead();
 
-    // process the DIP switch information
+    // process the DIP switch information (bits 19-23 of the input)
+    // Bits 0-3: CFG1 - CFG4
     cfg_updateDipSwitch((uint8_t)((dataIn>>18) & 0x0f));
 
-    // extract the lamp matrix data
-    uint32_t lmData = dataIn;//(dataIn & 0x0003ffff);
+    // extract the lamp matrix data (first 18 bits of the input)
+    // Bits 0-7: column 1-8
+    // Bits 8-17: row 1-10
+    uint32_t lmData = (dataIn & 0x0003ffff);
+
+    // if in test mode, replace the lamp data with simulated input
+    if (cfg_dipSwitch().testMode)
+    {
+        lmData = tm_testModeData(ttag);
+    }
 
     // check data consistency
     if (lmData == sLastData)

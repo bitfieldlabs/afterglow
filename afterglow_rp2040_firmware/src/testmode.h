@@ -25,30 +25,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include "serial.h"
-#include "pico/time.h"
-#include "lampmatrix.h"
-#include "config.h"
+#include <stdio.h>
 
-
-//------------------------------------------------------------------------------
-// local variables
-
-static uint32_t sLastDebugTTag = 0;
-
-
-//------------------------------------------------------------------------------
-void serial_debug(uint32_t ttag)
-{
-    uint32_t m = to_ms_since_boot(get_absolute_time());
-    if ((m - sLastDebugTTag) > 2000)
-    {
-        // column/row data
-        printf("data: %08lx\n", lm_lastInputData());
-
-        // configuration
-        AG_DIPSWITCH_t ds = cfg_dipSwitch();
-        printf("cfg : %02x - tm %d pt %d\n", cfg_lastDipSwitchValue(), ds.testMode, ds.passThrough);
-        sLastDebugTTag = m;
-    }
-}
+// Generate the current test mode input
+uint32_t tm_testModeData(uint32_t ttag);

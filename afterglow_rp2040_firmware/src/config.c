@@ -88,7 +88,7 @@ static AG_DIPSWITCH_t sDipSwitch;
 static uint8_t sLastDipSwitchValue = 0;
 
 //------------------------------------------------------------------------------
-AG_DIPSWITCH_t cf_dipSwitch()
+AG_DIPSWITCH_t cfg_dipSwitch()
 {
     return sDipSwitch;
 }
@@ -96,6 +96,11 @@ AG_DIPSWITCH_t cf_dipSwitch()
 //------------------------------------------------------------------------------
 void cfg_updateDipSwitch(uint8_t rawBits)
 {
+    if (rawBits != sLastDipSwitchValue)
+    {
+        sDipSwitch.testMode = (rawBits & 0x01) ? true : false;
+        sDipSwitch.passThrough = (rawBits & 0x02) ? true : false;
+    }
     sLastDipSwitchValue = rawBits;
 }
 
