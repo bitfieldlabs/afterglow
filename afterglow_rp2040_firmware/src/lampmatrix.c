@@ -231,10 +231,14 @@ void lm_modeDetection(uint c, uint r)
     if (sWPCModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WPC);
+        sWPCModeCounter = 0;
+        sWhitestarModeCounter = 0;
     }
     if (sWhitestarModeCounter > MODE_DETECTION_THRESH)
     {
         ag_setMode(AG_MODE_WHITESTAR);
+        sWPCModeCounter = 0;
+        sWhitestarModeCounter = 0;
     }
 }
 

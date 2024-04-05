@@ -26,6 +26,7 @@
  ***********************************************************************/
 
 #include "config.h"
+#include "afterglow.h"
 #include "def.h"
 
 //------------------------------------------------------------------------------
@@ -98,7 +99,15 @@ void cfg_updateDipSwitch(uint8_t rawBits)
 {
     if (rawBits != sLastDipSwitchValue)
     {
-        sDipSwitch.testMode = (rawBits & 0x01) ? true : false;
+        bool newTestMode = (rawBits & 0x01) ? true : false;
+        if (sDipSwitch.testMode != newTestMode)
+        {
+            sDipSwitch.testMode = newTestMode;
+
+            // reset the AG mode when the test mode configuration changes -
+            // test mode and real input may use different modes
+            ag_setMode(AG_MODE_UNKNOWN);
+        }
         sDipSwitch.passThrough = (rawBits & 0x02) ? true : false;
     }
     sLastDipSwitchValue = rawBits;
