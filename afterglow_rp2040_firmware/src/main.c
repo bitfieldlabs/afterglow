@@ -86,7 +86,8 @@ void panic_mode()
 
 //------------------------------------------------------------------------------
 int main(void)
-{  
+{
+    stdio_usb_init();
     stdio_init_all();
 
     // initialize the status LED

@@ -88,13 +88,13 @@ static AG_DIPSWITCH_t sDipSwitch;
 static uint8_t sLastDipSwitchValue = 0;
 
 //------------------------------------------------------------------------------
-AG_DIPSWITCH_t config_dipSwitch()
+AG_DIPSWITCH_t cf_dipSwitch()
 {
     return sDipSwitch;
 }
 
 //------------------------------------------------------------------------------
-void config_updateDipSwitch(uint8_t rawBits)
+void cfg_updateDipSwitch(uint8_t rawBits)
 {
     sLastDipSwitchValue = rawBits;
 }
