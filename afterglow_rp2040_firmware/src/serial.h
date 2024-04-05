@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow_pico
+ *  https://github.com/bitfieldlabs/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -27,13 +27,5 @@
 
 #include <stdio.h>
 
-typedef struct AG_DIPSWITCH_s
-{
-    bool testMode;          // test mode
-    bool passThrough;       // pass through mode (input replicated to output)
-} AG_DIPSWITCH_t;
 
-
-AG_DIPSWITCH_t cfg_dipSwitch();
-void cfg_updateDipSwitch(uint8_t rawBits);
-uint8_t cfg_lastDipSwitchValue();
+void serial_debug(uint32_t ttag);

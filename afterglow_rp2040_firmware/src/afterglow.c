@@ -50,10 +50,11 @@ void ag_setStatus(AFTERGLOW_STATUS_t status)
 //------------------------------------------------------------------------------
 AFTERGLOW_MODE_t ag_mode()
 {
+    return sMode;
 }
 
 //------------------------------------------------------------------------------
 void ag_setMode(AFTERGLOW_MODE_t mode)
 {
-
+    sMode = mode;
 }

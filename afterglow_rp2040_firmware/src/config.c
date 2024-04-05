@@ -85,7 +85,7 @@ typedef struct AFTERGLOW_CFG_s
 static AFTERGLOW_CFG_t sCfg;
 
 static AG_DIPSWITCH_t sDipSwitch;
-
+static uint8_t sLastDipSwitchValue = 0;
 
 //------------------------------------------------------------------------------
 AG_DIPSWITCH_t config_dipSwitch()
@@ -96,5 +96,11 @@ AG_DIPSWITCH_t config_dipSwitch()
 //------------------------------------------------------------------------------
 void config_updateDipSwitch(uint8_t rawBits)
 {
+    sLastDipSwitchValue = rawBits;
+}
 
+//------------------------------------------------------------------------------
+uint8_t cfg_lastDipSwitchValue()
+{
+    return sLastDipSwitchValue;
 }

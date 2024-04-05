@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow_pico
+ *  https://github.com/bitfieldlabs/afterglow
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -25,15 +25,26 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h>
+#include "serial.h"
+#include "pico/time.h"
+#include "lampmatrix.h"
+#include "config.h"
 
-typedef struct AG_DIPSWITCH_s
+
+//------------------------------------------------------------------------------
+// local variables
+
+static uint32_t sLastDebugTTag = 0;
+
+
+//------------------------------------------------------------------------------
+void serial_debug(uint32_t ttag)
 {
-    bool testMode;          // test mode
-    bool passThrough;       // pass through mode (input replicated to output)
-} AG_DIPSWITCH_t;
-
-
-AG_DIPSWITCH_t cfg_dipSwitch();
-void cfg_updateDipSwitch(uint8_t rawBits);
-uint8_t cfg_lastDipSwitchValue();
+    uint32_t m = to_ms_since_boot(get_absolute_time());
+    if ((m - sLastDebugTTag) > 2000)
+    {
+        printf("data: %08lx\n", lm_lastInputData());
+        printf("cfg : %02x\n", cfg_lastDipSwitchValue());
+        sLastDebugTTag = m;
+    }
+}

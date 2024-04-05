@@ -226,14 +226,7 @@ bool lm_dataValid(uint c, uint r)
 }
 
 //------------------------------------------------------------------------------
-/*
-void ag_sercomm()
+uint32_t lm_lastInputData()
 {
-    uint32_t m = to_ms_since_boot(get_absolute_time());
-    if ((m - sLastDebugTTag) > 2000)
-    {
-        printf("data: %08lx\n", sLastData);
-        sLastDebugTTag = m;
-    }
+    return sLastData;
 }
-*/

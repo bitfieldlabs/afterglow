@@ -47,3 +47,6 @@ void lm_inputUpdate(uint32_t ttag);
 
 // Get a pointer to the lamp matrix data
 const uint16_t * lm_matrix();
+
+// Get the last lamp matrix input data
+uint32_t lm_lastInputData();

@@ -27,11 +27,11 @@
  
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "pico/time.h"
 #include "pico/multicore.h"
 #include "pindef.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
+#include "serial.h"
 
 
 //------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ int main(void)
     while (true)
     {
         // afterglow serial communication
-        //ag_sercomm();
+        serial_debug(sTtag);
 
         // every device needs a blinking LED
         gpio_put(AGPIN_STAT_LED, 1);
