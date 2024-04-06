@@ -118,18 +118,8 @@ void matrixout_thread()
         // update the lamp brightness matrix based on the new raw matrix data
         matrixout_updateLampMatrix(sLampMatrixCopy);
 
-        // the output is active only with valid status
-        AFTERGLOW_STATUS_t s = ag_status();
-        if ((s != AG_STATUS_INIT) && (s != AG_STATUS_INVINPUT))
-        {
-            // process the whole matrix data
-            matrixout_prepareData(&sLampMatrix[0][0]);
-        }
-        else
-        {
-            // clear the buffer in order to actively disable output
-            memset(pMatrixDataBufPrep, 0, sizeof(sMatrixDataBuf1));
-        }
+        // prepare the PIO buffer
+        matrixout_prepareData(&sLampMatrix[0][0]);
     }
 }
 
@@ -152,23 +142,32 @@ void matrixout_swapbuf()
 //------------------------------------------------------------------------------
 void matrixout_prepareData(const uint32_t *pkLM)
 {
-    uint8_t rowDur[NUM_ROW];
-
-    // process column by column
-    for (uint c=0; c<NUM_COL; c++)
+    // No output with invalid data
+    AFTERGLOW_STATUS_t s = ag_status();
+    if ((s != AG_STATUS_INIT) && (s != AG_STATUS_INVINPUT))
     {
-        uint8_t *pRD = rowDur;
-        for (uint r=0; r<NUM_ROW; r++, pkLM++, pRD++)
+        uint8_t rowDur[NUM_ROW];
+
+        // process column by column
+        for (uint c=0; c<NUM_COL; c++)
         {
-            // decimate the lamp brightness value to 8 bits
-            uint8_t rb = (uint8_t)(*pkLM >> 24);
+            uint8_t *pRD = rowDur;
+            for (uint r=0; r<NUM_ROW; r++, pkLM++, pRD++)
+            {
+                // decimate the lamp brightness value to 8 bits
+                uint8_t rb = (uint8_t)(*pkLM >> 24);
 
-            // map the brightness value
-            *pRD = skBrightnessMap[rb];
+                // map the brightness value
+                *pRD = skBrightnessMap[rb];
+            }
+
+            // prepare the output data
+            matrixout_prepareCol(c, rowDur);
         }
-
-        // prepare the output data
-        matrixout_prepareCol(c, rowDur);
+    }
+    else
+    {
+        memset(pMatrixDataBufPrep, 0, sizeof(sMatrixDataBuf1));
     }
 
     // swap the output/prepare buffers (double buffering)
