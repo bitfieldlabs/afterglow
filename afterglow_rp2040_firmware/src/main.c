@@ -24,6 +24,36 @@
  *  License along with afterglow.
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
+
+/*
+
+              +------CPU 0-----+       +------CPU 1-----+        +-------PIO------+
+
+
+              +----------------+
+              | main()         |
+              |  + Setup       |
+              |  | Status      |
+              |  + Serial      |
+              |                |
+              +----------------+                                   LED update: 1kHz
+                                                                PIO out: 128*8*1kHz
+                     Timer 4 kHz                   100 Hz                      1MHz
+              +----------------+       +----------------+        +----------------+
+              | sample_input() |       | matrixout()    |        | matrixout PIO  |
+              |                |       |                |        |                |
+Col/Row +---->+  o raw matrix  +-------+  o brightness  +--------+  o PWM raw data|
+Input         |    1bit        |       |    matrix      |        |    PWM_RES *   |
+              |                |       |    16bits      |        |    NUM_COL     |
+              |                |       |                |        |                |
+              |.sRawLampMatrix |       |   .sLampMatrix |        |.sMatrixDataBuf1|
+              |                |       |                |        |.sMatrixDataBuf2|
+              +----------------+       +----------------+        +----------------+
+
+*/
+
+
+
  
 #include <stdio.h>
 #include "pico/stdlib.h"
@@ -33,6 +63,7 @@
 #include "matrixout.h"
 #include "serial.h"
 #include "afterglow.h"
+#include "config.h"
 
 
 //------------------------------------------------------------------------------
@@ -54,7 +85,7 @@ bool sample_input(struct repeating_timer *t)
     if (sMatrixUpdateCounter == 0)
     {
         // send the current matrix state to the thread on CPU1
-        multicore_fifo_push_blocking((uint32_t)lm_matrix());
+        multicore_fifo_push_blocking((uint32_t)lm_rawLampMatrix());
 
         // restart the update counter
         sMatrixUpdateCounter = SAMPLE_TO_UPDATE_RATIO;
@@ -147,6 +178,9 @@ int main(void)
     {
         panic_mode();
     }
+
+    // configuration initialisation
+    cfg_init();
 
     // lamp matrix initialisation
     lm_init();

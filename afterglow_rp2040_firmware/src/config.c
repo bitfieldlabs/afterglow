@@ -25,18 +25,10 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include <string.h>
 #include "config.h"
 #include "afterglow.h"
 #include "def.h"
-
-//------------------------------------------------------------------------------
-// Some definitions
-
-// Afterglow configuration version
-#define AFTERGLOW_CFG_VERSION 3
-
-// glow duration scaling in the configuration
-#define GLOWDUR_CFG_SCALE 10
 
 
 //------------------------------------------------------------------------------
@@ -72,21 +64,32 @@
 
 //------------------------------------------------------------------------------
 
-// afterglow configuration data definition
-typedef struct AFTERGLOW_CFG_s
-{
-    uint16_t version;                         // afterglow version of the configuration
-    uint16_t res;                             // reserved bytes
-    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
-    uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
-    uint32_t crc;                             // data checksum
-} AFTERGLOW_CFG_t;
-
 // afterglow configuration
 static AFTERGLOW_CFG_t sCfg;
 
 static AG_DIPSWITCH_t sDipSwitch;
 static uint8_t sLastDipSwitchValue = 0;
+
+
+//------------------------------------------------------------------------------
+// local functions
+
+void cfg_setDefault();
+uint32_t calculateCRC32(const uint8_t *data, uint16_t length);
+
+
+//------------------------------------------------------------------------------
+void cfg_init()
+{
+    // set the default configuration
+    cfg_setDefault();
+}
+
+//------------------------------------------------------------------------------
+const AFTERGLOW_CFG_t * cfg_config()
+{
+    return &sCfg;
+}
 
 //------------------------------------------------------------------------------
 AG_DIPSWITCH_t cfg_dipSwitch()
@@ -117,4 +120,50 @@ void cfg_updateDipSwitch(uint8_t rawBits)
 uint8_t cfg_lastDipSwitchValue()
 {
     return sLastDipSwitchValue;
+}
+
+//------------------------------------------------------------------------------
+void cfg_setDefault()
+{
+    // initialize configuration to default values
+    memset(&sCfg, 0, sizeof(sCfg));
+    sCfg.version = AFTERGLOW_CFG_VERSION;
+    uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
+    uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
+    for (uint c=0; c<NUM_COL; c++)
+    {
+        for (uint r=0; r<NUM_ROW; r++)
+        {
+            *pGlowDur++ = (DEFAULT_GLOWDUR / GLOWDUR_CFG_SCALE);
+            *pBrightness++ = DEFAULT_BRIGHTNESS;
+        }
+    }
+
+    // calculate the crc
+    uint16_t cfgSize = sizeof(sCfg);
+    sCfg.crc = calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
+}
+
+//------------------------------------------------------------------------------
+uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
+{
+    uint32_t crc = 0xffffffff;
+    while (length--)
+    {
+        uint8_t c = *data++;
+        for (uint32_t i = 0x80; i > 0; i >>= 1)
+        {
+            bool bit = crc & 0x80000000;
+            if (c & i)
+            {
+                bit = !bit;
+            }
+            crc <<= 1;
+            if (bit)
+            {
+                crc ^= 0x04c11db7;
+            }
+        }
+    }
+    return crc;
 }

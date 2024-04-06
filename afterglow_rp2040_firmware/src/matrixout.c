@@ -36,6 +36,7 @@
 #include "matrixout.pio.h"
 #include "afterglow.h"
 #include "bmap.h"
+#include "config.h"
 
 
 //------------------------------------------------------------------------------
@@ -56,6 +57,7 @@
 #define MATRIXOUT_PIO_STEPS (ANTI_GHOSTING_STEPS + PWM_RES)
 
 
+
 //------------------------------------------------------------------------------
 // Local data
 
@@ -67,8 +69,17 @@ static int sSmMatrixOutOffset = -1;
 static int sDMAChan = -1;
 static dma_channel_config sDMAChanConfig;
 
+// The final lamp brightness matrix
+static uint32_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
+
+// The lamp brightness steps matrix
+static uint32_t sLampMatrixSteps[NUM_COL][NUM_ROW] = { 0 };
+
+// The lamp maximum brightness matrix
+static uint32_t sLampMatrixMaxBr[NUM_COL][NUM_ROW] = { 0 };
+
 // local lamp matrix copy
-static uint16_t sLampMatrixCopy[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sLampMatrixCopy[NUM_COL] = { 0 };
 
 // use double buffering for the prepared output data
 static uint32_t sMatrixDataBuf1[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
@@ -81,27 +92,40 @@ static volatile uint32_t *pMatrixDataBufPrep = sMatrixDataBuf2;
 // local functions
 
 void matrixout_prepareCol(uint col, uint8_t *pRowDur);
-void matrixout_prepareData(const uint16_t *pkLM);
+void matrixout_prepareData(const uint32_t *pkLM);
 void matrixout_swapbuf();
+void matrixout_updateLampMatrix(const uint32_t *pkRawLM);
+void matrixout_prepareBrightnessSteps();
 
 
 //------------------------------------------------------------------------------
 void matrixout_thread()
 {
+    // initialize the data
+    memset(sLampMatrix, 0, sizeof(sLampMatrix));
+
+    // prepare the brightness steps matrix
+    matrixout_prepareBrightnessSteps();
+
     while (true)
     {
         // wait until CPU0 triggers the data output preparation
-        const uint16_t *pkLM = (const uint16_t*)multicore_fifo_pop_blocking();
+        const uint32_t *pkRawLM = (const uint32_t*)multicore_fifo_pop_blocking();
 
-        // make a local copy of the map matrix
-        memcpy(&sLampMatrixCopy[0][0], pkLM, sizeof(sLampMatrixCopy));
+        // make a local copy of the raw map matrix
+        memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
 
-        // output is active only with valid status
+matrixout_prepareBrightnessSteps();
+
+        // update the lamp brightness matrix based on the new raw matrix data
+        matrixout_updateLampMatrix(sLampMatrixCopy);
+
+        // the output is active only with valid status
         AFTERGLOW_STATUS_t s = ag_status();
         if ((s != AG_STATUS_INIT) && (s != AG_STATUS_INVINPUT))
         {
             // process the whole matrix data
-            matrixout_prepareData(&sLampMatrixCopy[0][0]);
+            matrixout_prepareData(&sLampMatrix[0][0]);
         }
         else
         {
@@ -128,7 +152,7 @@ void matrixout_swapbuf()
 }
 
 //------------------------------------------------------------------------------
-void matrixout_prepareData(const uint16_t *pkLM)
+void matrixout_prepareData(const uint32_t *pkLM)
 {
     uint8_t rowDur[NUM_ROW];
 
@@ -139,7 +163,7 @@ void matrixout_prepareData(const uint16_t *pkLM)
         for (uint r=0; r<NUM_ROW; r++, pkLM++, pRD++)
         {
             // decimate the lamp brightness value to 8 bits
-            uint8_t rb = (*pkLM >> 8);
+            uint8_t rb = (uint8_t)(*pkLM >> 24);
 
             // map the brightness value
             *pRD = skBrightnessMap[rb];
@@ -236,4 +260,76 @@ bool matrixout_initpio()
     matrix_transfer_complete();
 
     return ((sSmMatrixOut != -1) && (sDMAChan != -1));
+}
+
+//------------------------------------------------------------------------------
+void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
+{
+    for (uint c=0; c<NUM_COL; c++)
+    {
+        uint32_t rowBit = 0x01;
+        for (uint r=0; r<NUM_ROW; r++)
+        {
+            // Increase or decrease the lamp brightness value depedning on its
+            // current state in the raw matrix.
+            if ((*pkRawLM) & rowBit)
+            {
+                // increase brightness
+                if (sLampMatrix[c][r] < (sLampMatrixMaxBr[c][r] - sLampMatrixSteps[c][r]))
+                {
+                    sLampMatrix[c][r] += sLampMatrixSteps[c][r];
+                }
+                else
+                {
+                    sLampMatrix[c][r] = sLampMatrixMaxBr[c][r];
+                }
+            }
+            else
+            {
+                // decrease brightness
+                if (sLampMatrix[c][r] > sLampMatrixSteps[c][r])
+                {
+                    sLampMatrix[c][r] -= sLampMatrixSteps[c][r];
+                }
+                else
+                {
+                    sLampMatrix[c][r] = 0;
+                }
+            }
+            rowBit <<= 1;
+        }
+        pkRawLM++;
+    }
+}
+
+//------------------------------------------------------------------------------
+void matrixout_prepareBrightnessSteps()
+{
+    // Prepare the brightness increase/decrease values per matrix update for
+    // each lamp in the maxtrix. This value will be added in each update step if
+    // the lamp is on in the raw matrix, and it will be subtracted from the
+    // current brightness if the lamp is off.
+    // The brightness is linear in the matrix, it will be translated to
+    // non-linear PWM steps when preparing the PWM data.
+    // This is the magic sauce for the afterglow effect.
+    const AFTERGLOW_CFG_t *pkCfg = cfg_config();
+    uint32_t updateInt = (1000000 / MATRIX_UPDATE_FREQ);  // update interval [us]
+    for (uint c=0; c<NUM_COL; c++)
+    {
+        for (uint r=0; r<NUM_ROW; r++)
+        {
+            // configured glow duration for this lamp [us]
+            uint32_t gd = (pkCfg->lampGlowDur[c][r] * GLOWDUR_CFG_SCALE) * 1000;
+
+            // maximum brightness (32 bits), 8 steps only
+            uint32_t maxBr = ((uint32_t)0xffffffff >> 3) * (uint32_t)(pkCfg->lampBrightness[c][r] + 1);
+            sLampMatrixMaxBr[c][r] = maxBr;
+
+            // calculate the step size for this lamp
+            float numSteps = ((float)gd / (float)updateInt);
+            sLampMatrixSteps[c][r] = (uint32_t)((float)maxBr / numSteps);
+
+            printf("ST %d %d %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixSteps[c][r]);
+        }
+    }
 }

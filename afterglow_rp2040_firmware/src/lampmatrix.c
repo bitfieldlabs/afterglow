@@ -43,8 +43,6 @@
 //------------------------------------------------------------------------------
 // local variables
 
-
-static uint16_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 static uint32_t sRawLampMatrix[NUM_COL] = { 0 };
 static uint32_t sLastData = 0;
 static uint32_t sLastCol = 0xffffffff;
@@ -67,24 +65,7 @@ static void lm_modeDetection(uint c, uint r);
 //------------------------------------------------------------------------------
 void lm_init()
 {
-    memset(sLampMatrix, 0, sizeof(sLampMatrix));
     memset(sRawLampMatrix, 0, sizeof(sRawLampMatrix));
-
-    uint16_t b = 0;
-    for (uint c=0; c<NUM_COL; c++)
-    {
-        for (uint r=0; r<NUM_ROW; r++)
-        {
-            sLampMatrix[c][r] = b;
-            b += 1024;
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-const uint16_t * lm_matrix()
-{
-    return &sLampMatrix[0][0];
 }
 
 //------------------------------------------------------------------------------
@@ -120,6 +101,9 @@ void lm_inputUpdate(uint32_t ttag)
         sConsistentDataCount = 1;
     }
 
+    // read the current mode
+    AFTERGLOW_MODE_t mode = ag_mode();
+
     // process new data
     if (sConsistentDataCount == SINGLE_UPDATE_CONS)
     {
@@ -127,7 +111,6 @@ void lm_inputUpdate(uint32_t ttag)
         uint32_t rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
 
         // Mode detection is active as long as the AG is in initialisation status
-        AFTERGLOW_MODE_t mode = ag_mode();
         if (mode == AG_MODE_UNKNOWN)
         {
             lm_modeDetection(colData, rowData);
