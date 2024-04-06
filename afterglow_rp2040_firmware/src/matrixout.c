@@ -51,7 +51,7 @@
 // |<------------------ MATRIXOUT_PIO_STEPS ---------------------->|
 
 // Steps of the matrix PIO for anti-ghosting
-#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (MATRIX_UPDATE_INT - ANTIGHOST_DURATION))
+#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (LED_UPDATE_DUR - ANTIGHOST_DURATION))
 
 // Steps per matrix output PIO run
 #define MATRIXOUT_PIO_STEPS (ANTI_GHOSTING_STEPS + PWM_RES)
@@ -114,8 +114,6 @@ void matrixout_thread()
 
         // make a local copy of the raw map matrix
         memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
-
-matrixout_prepareBrightnessSteps();
 
         // update the lamp brightness matrix based on the new raw matrix data
         matrixout_updateLampMatrix(sLampMatrixCopy);
@@ -313,7 +311,6 @@ void matrixout_prepareBrightnessSteps()
     // non-linear PWM steps when preparing the PWM data.
     // This is the magic sauce for the afterglow effect.
     const AFTERGLOW_CFG_t *pkCfg = cfg_config();
-    uint32_t updateInt = (1000000 / MATRIX_UPDATE_FREQ);  // update interval [us]
     for (uint c=0; c<NUM_COL; c++)
     {
         for (uint r=0; r<NUM_ROW; r++)
@@ -326,7 +323,7 @@ void matrixout_prepareBrightnessSteps()
             sLampMatrixMaxBr[c][r] = maxBr;
 
             // calculate the step size for this lamp
-            float numSteps = ((float)gd / (float)updateInt);
+            float numSteps = ((float)gd / (float)MATRIX_UPDATE_INT);
             sLampMatrixSteps[c][r] = (uint32_t)((float)maxBr / numSteps);
 
             printf("ST %d %d %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixSteps[c][r]);

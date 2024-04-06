@@ -60,8 +60,18 @@
 // derived values
 // DO NOT MODIFY
 
-// Matrix update time interval [us]
+// Brightness matrix data update time interval [us]
 #define MATRIX_UPDATE_INT (1000000 / MATRIX_UPDATE_FREQ)
+
+// Output LED update time interval [us]
+// Interval between two updates of the same LED
+#define LED_UPDATE_INT (1000000 / LED_FREQ)
+
+// Single LED update duration [us]
+// Duration of a single column update
+// This is the maximum time a LED can be lit. This is also the time which can be
+// split into anti-ghosting off time and LED duty cycling.
+#define LED_UPDATE_DUR (LED_UPDATE_INT / NUM_COL)
 
 // Input sampling interval time interval [us]
 #define INPUT_SAMPLE_INT (1000000 / INPUT_SAMPLING_FREQ)

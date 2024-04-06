@@ -77,7 +77,7 @@ void matrixout_program_init(PIO pio, uint sm, uint offset)
     //           |<------------------ PWM_RES steps ------------------>|
     // |<----------------------- TTAG_INT ---------------------------->|
 
-    pio_freq *= ((float)MATRIX_UPDATE_INT / (float)(MATRIX_UPDATE_INT - ANTIGHOST_DURATION));
+    pio_freq *= ((float)LED_UPDATE_DUR / (float)(LED_UPDATE_DUR - ANTIGHOST_DURATION));
     
     // calculate the divider value
     float div = (float)clock_get_hz(clk_sys) / pio_freq;
