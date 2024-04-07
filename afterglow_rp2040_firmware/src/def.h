@@ -44,7 +44,7 @@
 #define INPUT_SAMPLING_FREQ 4000
 
 // Duration of anti ghosting [us] (turning off all lamps briefly)
-#define ANTIGHOST_DURATION 18
+#define ANTIGHOST_DURATION 20
 
 // Turn debug output via serial on/off
 #define DEBUG_SERIAL 1

@@ -329,3 +329,9 @@ void matrixout_prepareBrightnessSteps()
         }
     }
 }
+
+//------------------------------------------------------------------------------
+const uint32_t * matrixout_lampMatrix()
+{
+    return &sLampMatrix[0][0];
+}

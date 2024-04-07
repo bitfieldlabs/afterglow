@@ -170,6 +170,9 @@ int main(void)
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
+    // configuration initialisation
+    cfg_init();
+
     // start a thread on CPU1, used for matrix data preparation
     multicore_launch_core1(matrixout_thread);
 
@@ -178,9 +181,6 @@ int main(void)
     {
         panic_mode();
     }
-
-    // configuration initialisation
-    cfg_init();
 
     // lamp matrix initialisation
     lm_init();

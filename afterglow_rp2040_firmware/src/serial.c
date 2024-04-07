@@ -28,6 +28,7 @@
 #include "serial.h"
 #include "pico/time.h"
 #include "lampmatrix.h"
+#include "matrixout.h"
 #include "afterglow.h"
 #include "config.h"
 #include "def.h"
@@ -70,6 +71,10 @@ void serial_debug(uint32_t ttag)
             pkRawLM++;
             printf("\n");
         }
+
+        // brightness matrix
+        const uint32_t *pkLM = matrixout_lampMatrix();
+        printf("br  : %lu %lu\n", pkLM[0], pkLM[1]); 
 
         sLastDebugTTag = m;
     }

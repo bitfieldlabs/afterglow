@@ -30,4 +30,4 @@
 
 void matrixout_thread();
 bool matrixout_initpio();
-
+const uint32_t * matrixout_lampMatrix();
