@@ -22639,7 +22639,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 119.38 0)
 			(effects
 				(font
@@ -22724,7 +22724,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 218.44 0)
 			(effects
 				(font
@@ -23473,7 +23473,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 131.445 0)
 			(effects
 				(font
@@ -23949,7 +23949,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 231.14 0)
 			(effects
 				(font
@@ -24110,7 +24110,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 168.91 0)
 			(effects
 				(font
@@ -25020,7 +25020,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 143.51 0)
 			(effects
 				(font
@@ -29881,7 +29881,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 193.675 0)
 			(effects
 				(font
@@ -32255,7 +32255,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 156.21 0)
 			(effects
 				(font
@@ -33130,7 +33130,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 205.74 0)
 			(effects
 				(font
@@ -34825,7 +34825,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c647a42a-ea9f-4eff-815e-c38eef62eb8c")
-		(property "Reference" "J15"
+		(property "Reference" "P1"
 			(at 113.665 54.2755 0)
 			(effects
 				(font
@@ -34841,7 +34841,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
 			(at 117.475 76.2 0)
 			(effects
 				(font
@@ -34916,7 +34916,7 @@
 		(instances
 			(project "afterglow"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-					(reference "J15")
+					(reference "P1")
 					(unit 1)
 				)
 			)
@@ -38433,7 +38433,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DIP:SMDIP-4_W7.62mm"
+		(property "Footprint" "Package_DIP:SMDIP-4_W9.53mm"
 			(at 50.8 181.61 0)
 			(effects
 				(font
