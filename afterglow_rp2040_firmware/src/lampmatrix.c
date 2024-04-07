@@ -53,6 +53,8 @@ static uint32_t sConsistentDataCount = 0;
 static uint32_t sWPCModeCounter = 0;
 static uint32_t sWhitestarModeCounter = 0;
 static uint32_t sInvalidDataCounter = 0;
+static uint32_t sMaxDur = 0;
+
 
 //------------------------------------------------------------------------------
 // function prototypes
@@ -71,7 +73,8 @@ void lm_init()
 //------------------------------------------------------------------------------
 void lm_inputUpdate(uint32_t ttag)
 {
-    // send the prepared data
+    // time is ticking
+    uint64_t ts = to_us_since_boot(get_absolute_time());
 
     // sample the input data
     uint32_t dataIn = lm_dataRead();
@@ -165,6 +168,14 @@ void lm_inputUpdate(uint32_t ttag)
     }
 
     sLastData = lmData;
+
+    // measure time
+    uint64_t te = to_us_since_boot(get_absolute_time());
+    uint32_t dur = (uint32_t)(te - ts);
+    if (dur > sMaxDur)
+    {
+        sMaxDur = dur;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -329,4 +340,10 @@ uint32_t lm_invalidDataCounter()
 const uint32_t *lm_rawLampMatrix()
 {
     return sRawLampMatrix;
+}
+
+//------------------------------------------------------------------------------
+uint32_t lm_inputMaxDur()
+{
+    return sMaxDur;
 }

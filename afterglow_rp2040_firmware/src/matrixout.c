@@ -28,6 +28,7 @@
 #include <string.h>
 #include "matrixout.h"
 #include "pico/multicore.h"
+#include "pico/time.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
@@ -87,6 +88,9 @@ static uint32_t sMatrixDataBuf2[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
 static volatile uint32_t *pMatrixDataBufOut = sMatrixDataBuf1;
 static volatile uint32_t *pMatrixDataBufPrep = sMatrixDataBuf2;
 
+// maximum duration of matrix update
+static uint32_t sMaxDur = 0;
+
 
 //------------------------------------------------------------------------------
 // local functions
@@ -112,6 +116,9 @@ void matrixout_thread()
         // wait until CPU0 triggers the data output preparation
         const uint32_t *pkRawLM = (const uint32_t*)multicore_fifo_pop_blocking();
 
+        // time is ticking
+        uint64_t ts = to_us_since_boot(get_absolute_time());
+
         // make a local copy of the raw map matrix
         memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
 
@@ -120,6 +127,14 @@ void matrixout_thread()
 
         // prepare the PIO buffer
         matrixout_prepareData(&sLampMatrix[0][0]);
+
+        // measure time
+        uint64_t te = to_us_since_boot(get_absolute_time());
+        uint32_t dur = (uint32_t)(te - ts);
+        if (dur > sMaxDur)
+        {
+            sMaxDur = dur;
+        }
     }
 }
 
@@ -334,4 +349,10 @@ void matrixout_prepareBrightnessSteps()
 const uint32_t * matrixout_lampMatrix()
 {
     return &sLampMatrix[0][0];
+}
+
+//------------------------------------------------------------------------------
+uint32_t matrixout_updateMaxDur()
+{
+    return sMaxDur;
 }

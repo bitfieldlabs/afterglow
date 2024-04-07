@@ -51,3 +51,6 @@ uint32_t lm_invalidDataCounter();
 
 // Get a pointer to the raw lamp matrix data
 const uint32_t *lm_rawLampMatrix();
+
+// Query the input handling maximum duration [us]
+uint32_t lm_inputMaxDur();

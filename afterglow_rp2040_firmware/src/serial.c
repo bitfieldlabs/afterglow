@@ -73,8 +73,11 @@ void serial_debug(uint32_t ttag)
         }
 
         // brightness matrix
-        const uint32_t *pkLM = matrixout_lampMatrix();
-        printf("br  : %lu %lu\n", pkLM[0], pkLM[1]); 
+        //const uint32_t *pkLM = matrixout_lampMatrix();
+        //printf("br  : %lu %lu\n", pkLM[0], pkLM[1]); 
+
+        // update duration
+        printf("dur : i %lu/%u u %lu/%u us\n", lm_inputMaxDur(), INPUT_SAMPLE_INT, matrixout_updateMaxDur(), MATRIX_UPDATE_INT);
 
         sLastDebugTTag = m;
     }
