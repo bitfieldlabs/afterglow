@@ -25,22 +25,42 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-// number of columns in the lamp matrix
+// Number of columns in the lamp matrix
 #define NUM_COL 8
 
-// number of rows in the lamp matrix
+// Number of rows in the lamp matrix
 #define NUM_ROW 10
 
 // LED PWM frequency [Hz]
+// This is the update frequency of each individual lamp.
+// The maximum duty cycle for each update is 1/NUM_COL.
+// This frequency will affect the achievable brightness, as for each column
+// transition all output needs to be disabled briefly (ANTIGHOST_DURATION)
+// in order to avoid ghosting. E.g., at 1kHz the update interval for one column
+// is 125us (1ms / NUM_COL). 20us anti-ghosting duration will consume 16% of
+// the available duty cycle. At a lower frequency of 400Hz the anti-ghosting
+// only makes for 6% of the duty cycle, therefore the maximum achievable
+// brightness is higher.
 #define LED_FREQ 1000
 
 // PWM resolution (brightness steps)
+// This is the number of duty cycle steps within one LED
+// update interval (LED_FREQ).
+// A higher resolution means longer data preparation and higher PIO
+// frequency, but also smoother brightness steps.
 #define PWM_RES 128
 
 // Lamp matrix update frequency [Hz]
+// This is the frequency the output data is updated at.
+// It should be high enough to allow for visually smooth transitions.
+// Between updates the same data is repeatedly output at high rate
+// (LED_FREQ * NUM_COL * PWM_RES).
 #define MATRIX_UPDATE_FREQ 100
 
 // Input sampling frequency [Hz]
+// This is the frequency the input columns and rows are sampled at.
+// It must be high enough to allow for multiple samples (SINGLE_UPDATE_CONS)
+// of a single input data transition (2ms for WPC, 1ms for Whitestar).
 #define INPUT_SAMPLING_FREQ 4000
 
 // Duration of anti ghosting [us] (turning off all lamps briefly)
@@ -52,13 +72,13 @@
 // Afterglow RP2040 version number
 #define AFTERGLOW_RP2040_VERSION 100
 
-// Latest supported Afterglow board revision. Currently v1.3
+// Latest supported Afterglow board revision. Currently v3.0
 #define BOARD_REV 30
 
 
 //------------------------------------------------------------------------------
 // derived values
-// DO NOT MODIFY
+// ** DO NOT MODIFY **
 
 // Brightness matrix data update time interval [us]
 #define MATRIX_UPDATE_INT (1000000 / MATRIX_UPDATE_FREQ)
