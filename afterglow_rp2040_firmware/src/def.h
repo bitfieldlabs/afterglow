@@ -61,7 +61,12 @@
 // This is the frequency the input columns and rows are sampled at.
 // It must be high enough to allow for multiple samples (SINGLE_UPDATE_CONS)
 // of a single input data transition (2ms for WPC, 1ms for Whitestar).
-#define INPUT_SAMPLING_FREQ 4000
+#define INPUT_SAMPLING_FREQ 8000
+
+// Number of consistent data samples required for matrix update. Helps prevent ghosting.
+// The input sampling frequency (INPUT_SAMPLING_FREQ) must be high enough to
+// produce enough samples for each original column duration (2ms for WPC, 1ms for Whitestar)
+#define SINGLE_UPDATE_CONS 4
 
 // Duration of anti ghosting [us] (turning off all lamps briefly)
 #define ANTIGHOST_DURATION 20

@@ -32,7 +32,6 @@
 // Setup
 
 #define MODE_DETECTION_THRESH      62     // Number of successful mode identifications need for mode detection
-#define SINGLE_UPDATE_CONS          3     // Number of consistent data samples required for matrix update. Helps prevent ghosting.
 
 
 //------------------------------------------------------------------------------
