@@ -48,7 +48,7 @@
 // update interval (LED_FREQ).
 // A higher resolution means longer data preparation and higher PIO
 // frequency, but also smoother brightness steps.
-#define PWM_RES 128
+#define PWM_RES 256
 
 // Lamp matrix update frequency [Hz]
 // This is the frequency the output data is updated at.

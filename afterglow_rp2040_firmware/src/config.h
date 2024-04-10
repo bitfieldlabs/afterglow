@@ -29,9 +29,10 @@
 #include "def.h"
 
 
-#define DEFAULT_GLOWDUR           140     // Default glow duration [ms]
+#define DEFAULT_GLOWDUR_ON        120     // Default glow duration turning on [ms]
+#define DEFAULT_GLOWDUR_OFF       160     // Default glow duration turning on [ms]
 #define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-#define AFTERGLOW_CFG_VERSION       3     // Afterglow configuration version
+#define AFTERGLOW_CFG_VERSION       4     // Afterglow configuration version
 #define GLOWDUR_CFG_SCALE          10     // Glow duration scaling in the configuration
 
 typedef struct AG_DIPSWITCH_s
@@ -45,7 +46,8 @@ typedef struct AFTERGLOW_CFG_s
 {
     uint16_t version;                         // afterglow version of the configuration
     uint16_t res;                             // reserved bytes
-    uint8_t lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    uint8_t lampGlowDurOn[NUM_COL][NUM_ROW];  // Lamp matrix glow duration turning on configuration [ms * GLOWDUR_CFG_SCALE]
+    uint8_t lampGlowDurOff[NUM_COL][NUM_ROW]; // Lamp matrix glow duration turning off configuration [ms * GLOWDUR_CFG_SCALE]
     uint8_t lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
     uint32_t crc;                             // data checksum
 } AFTERGLOW_CFG_t;

@@ -128,13 +128,15 @@ void cfg_setDefault()
     // initialize configuration to default values
     memset(&sCfg, 0, sizeof(sCfg));
     sCfg.version = AFTERGLOW_CFG_VERSION;
-    uint8_t *pGlowDur = &sCfg.lampGlowDur[0][0];
+    uint8_t *pGlowDurOn = &sCfg.lampGlowDurOn[0][0];
+    uint8_t *pGlowDurOff = &sCfg.lampGlowDurOff[0][0];
     uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
     for (uint c=0; c<NUM_COL; c++)
     {
         for (uint r=0; r<NUM_ROW; r++)
         {
-            *pGlowDur++ = (DEFAULT_GLOWDUR / GLOWDUR_CFG_SCALE);
+            *pGlowDurOn++ = (DEFAULT_GLOWDUR_ON / GLOWDUR_CFG_SCALE);
+            *pGlowDurOff++ = (DEFAULT_GLOWDUR_OFF / GLOWDUR_CFG_SCALE);
             *pBrightness++ = DEFAULT_BRIGHTNESS;
         }
     }

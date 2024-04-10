@@ -74,7 +74,8 @@ static dma_channel_config sDMAChanConfig;
 static uint32_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 
 // The lamp brightness steps matrix
-static uint32_t sLampMatrixSteps[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sLampMatrixStepsOn[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sLampMatrixStepsOff[NUM_COL][NUM_ROW] = { 0 };
 
 // The lamp maximum brightness matrix
 static uint32_t sLampMatrixMaxBr[NUM_COL][NUM_ROW] = { 0 };
@@ -287,9 +288,9 @@ void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
             if ((*pkRawLM) & rowBit)
             {
                 // increase brightness
-                if (sLampMatrix[c][r] < (sLampMatrixMaxBr[c][r] - sLampMatrixSteps[c][r]))
+                if (sLampMatrix[c][r] < (sLampMatrixMaxBr[c][r] - sLampMatrixStepsOn[c][r]))
                 {
-                    sLampMatrix[c][r] += sLampMatrixSteps[c][r];
+                    sLampMatrix[c][r] += sLampMatrixStepsOn[c][r];
                 }
                 else
                 {
@@ -299,9 +300,9 @@ void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
             else
             {
                 // decrease brightness
-                if (sLampMatrix[c][r] > sLampMatrixSteps[c][r])
+                if (sLampMatrix[c][r] > sLampMatrixStepsOff[c][r])
                 {
-                    sLampMatrix[c][r] -= sLampMatrixSteps[c][r];
+                    sLampMatrix[c][r] -= sLampMatrixStepsOff[c][r];
                 }
                 else
                 {
@@ -330,17 +331,20 @@ void matrixout_prepareBrightnessSteps()
         for (uint r=0; r<NUM_ROW; r++)
         {
             // configured glow duration for this lamp [us]
-            uint32_t gd = (pkCfg->lampGlowDur[c][r] * GLOWDUR_CFG_SCALE) * 1000;
+            uint32_t gdOn = (pkCfg->lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE) * 1000;
+            uint32_t gdOff = (pkCfg->lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE) * 1000;
 
             // maximum brightness (32 bits), 8 steps only
             uint32_t maxBr = ((uint32_t)0xffffffff >> 3) * (uint32_t)(pkCfg->lampBrightness[c][r] + 1);
             sLampMatrixMaxBr[c][r] = maxBr;
 
             // calculate the step size for this lamp
-            float numSteps = ((float)gd / (float)MATRIX_UPDATE_INT);
-            sLampMatrixSteps[c][r] = (uint32_t)((float)maxBr / numSteps);
+            float numStepsOn = ((float)gdOn / (float)MATRIX_UPDATE_INT);
+            float numStepsOff = ((float)gdOff / (float)MATRIX_UPDATE_INT);
+            sLampMatrixStepsOn[c][r] = (uint32_t)((float)maxBr / numStepsOn);
+            sLampMatrixStepsOff[c][r] = (uint32_t)((float)maxBr / numStepsOff);
 
-            printf("ST %d %d %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixSteps[c][r]);
+            printf("ST %d %d %lu %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixStepsOn[c][r], sLampMatrixStepsOff[c][r]);
         }
     }
 }
