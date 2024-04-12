@@ -21,7 +21,7 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 * *PCB v2.1* Dedicated board which will only work with Stern Whitestar and possibly S.A.M. games
 
 #### All in one
-* *PCB v3.0* <br/>Newest board built around the RP2040. Supports WPC, Data East, Sys11, Whitestar, S.A.M.<br/>Supports hats, allowing for different ouput connectors, modding ports, displays etc.<br/>Input protection using optocouplers.
+* *PCB v3.0* <br/>*THIS IS STILL UNDER DEVELOPMENT AND CONSIDERED EXPERIMENTAL!!*<br/>Newest board built around the RP2040. Supports WPC, Data East, Sys11, Whitestar, S.A.M.<br/>Supports hats, allowing for different ouput connectors, modding ports, displays etc.<br/>Input protection using optocouplers.
 
 ### Pictures
 
