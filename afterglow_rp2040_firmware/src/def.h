@@ -87,6 +87,7 @@
 
 // Brightness matrix data update time interval [us]
 #define MATRIX_UPDATE_INT (1000000 / MATRIX_UPDATE_FREQ)
+#define MATRIX_UPDATE_INT_MS (MATRIX_UPDATE_INT / 1000) // [ms] version
 
 // Output LED update time interval [us]
 // Interval between two updates of the same LED
