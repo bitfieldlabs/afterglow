@@ -34868,6 +34868,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB" "C165948"
+			(at 113.665 76.2 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(hide yes)
+			)
+		)
 		(pin "B4"
 			(uuid "b600e2f0-f25e-4618-a24c-b94c823ab5ea")
 		)
