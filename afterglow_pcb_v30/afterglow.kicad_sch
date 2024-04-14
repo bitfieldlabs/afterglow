@@ -22867,7 +22867,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1000uF"
+		(property "Value" "470uF"
 			(at 127 33.655 0)
 			(effects
 				(font
@@ -22903,7 +22903,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" "C401766"
+		(property "JLCPCB" "C280413"
 			(at 134.62 31.115 0)
 			(effects
 				(font
