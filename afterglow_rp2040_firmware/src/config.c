@@ -29,6 +29,7 @@
 #include "config.h"
 #include "afterglow.h"
 #include "def.h"
+#include "input.h"
 
 
 //------------------------------------------------------------------------------
@@ -83,6 +84,13 @@ void cfg_init()
 {
     // set the default configuration
     cfg_setDefault();
+
+    // sample the input data
+    uint32_t dataIn = input_dataRead();
+
+    // process the DIP switch information (bits 19-23 of the input)
+    // Bits 0-3: CFG1 - CFG4
+    cfg_updateDipSwitch((uint8_t)((dataIn>>18) & 0x0f));
 }
 
 //------------------------------------------------------------------------------
@@ -112,6 +120,7 @@ void cfg_updateDipSwitch(uint8_t rawBits)
             ag_setMode(AG_MODE_UNKNOWN);
         }
         sDipSwitch.passThrough = (rawBits & 0x02) ? true : false;
+        sDipSwitch.highLEDFreq = (rawBits & 0x04) ? true : false;
     }
     sLastDipSwitchValue = rawBits;
 }

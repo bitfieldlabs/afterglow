@@ -32,6 +32,7 @@
 #include "afterglow.h"
 #include "config.h"
 #include "def.h"
+#include "params.h"
 
 
 //------------------------------------------------------------------------------
@@ -77,7 +78,9 @@ void serial_debug(uint32_t ttag)
         //printf("br  : %lu %lu\n", pkLM[0], pkLM[1]); 
 
         // update duration
-        printf("dur : i %lu/%u u %lu/%u us\n", lm_inputMaxDur(), INPUT_SAMPLE_INT, matrixout_updateMaxDur(), MATRIX_UPDATE_INT);
+        const AG_PARAMS_t *pkPar = par_params();
+        printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDur(), INPUT_SAMPLE_INT,
+            matrixout_updateMaxDur(), pkPar->matrixUpdateInt);
 
         sLastDebugTTag = m;
     }

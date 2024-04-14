@@ -41,14 +41,19 @@
 // the available duty cycle. At a lower frequency of 400Hz the anti-ghosting
 // only makes for 6% of the duty cycle, therefore the maximum achievable
 // brightness is higher.
-#define LED_FREQ 250
+// Two default frequencies A and B for the switchable modes
+#define LED_FREQ_A 250
+#define LED_FREQ_B 800
+
 
 // PWM resolution (brightness steps)
 // This is the number of duty cycle steps within one LED
 // update interval (LED_FREQ).
 // A higher resolution means longer data preparation and higher PIO
 // frequency, but also smoother brightness steps.
+// Valid resolutions: 4, 8, 16, 32, 64, 128, 256
 #define PWM_RES 256
+#define PWM_RES_MAX 256
 
 // Lamp matrix update frequency [Hz]
 // This is the frequency the output data is updated at.
@@ -84,20 +89,6 @@
 //------------------------------------------------------------------------------
 // derived values
 // ** DO NOT MODIFY **
-
-// Brightness matrix data update time interval [us]
-#define MATRIX_UPDATE_INT (1000000 / MATRIX_UPDATE_FREQ)
-#define MATRIX_UPDATE_INT_MS (MATRIX_UPDATE_INT / 1000) // [ms] version
-
-// Output LED update time interval [us]
-// Interval between two updates of the same LED
-#define LED_UPDATE_INT (1000000 / LED_FREQ)
-
-// Single LED update duration [us]
-// Duration of a single column update
-// This is the maximum time a LED can be lit. This is also the time which can be
-// split into anti-ghosting off time and LED duty cycling.
-#define LED_UPDATE_DUR (LED_UPDATE_INT / NUM_COL)
 
 // Input sampling interval time interval [us]
 #define INPUT_SAMPLE_INT (1000000 / INPUT_SAMPLING_FREQ)

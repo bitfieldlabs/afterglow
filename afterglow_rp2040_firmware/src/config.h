@@ -40,6 +40,7 @@ typedef struct AG_DIPSWITCH_s
 {
     bool testMode;          // test mode
     bool passThrough;       // pass through mode (input replicated to output)
+    bool highLEDFreq;       // high LED frequency mode
 } AG_DIPSWITCH_t;
 
 // afterglow configuration data definition

@@ -38,25 +38,7 @@
 #include "afterglow.h"
 #include "bmap.h"
 #include "config.h"
-
-
-//------------------------------------------------------------------------------
-// Local definitions
-
-//
-//   ANTI       ROW
-//   GHOST      PWM
-// |---------|-----------------------------------------------------|
-//           |<------------------ PWM_RES steps ------------------>|
-// |<------->| ANTI_GHOSTING_STEPS
-// |<------------------ MATRIXOUT_PIO_STEPS ---------------------->|
-
-// Steps of the matrix PIO for anti-ghosting
-#define ANTI_GHOSTING_STEPS ((ANTIGHOST_DURATION * PWM_RES) / (LED_UPDATE_DUR - ANTIGHOST_DURATION))
-
-// Steps per matrix output PIO run
-#define MATRIXOUT_PIO_STEPS (ANTI_GHOSTING_STEPS + PWM_RES)
-
+#include "params.h"
 
 
 //------------------------------------------------------------------------------
@@ -87,8 +69,8 @@ static uint32_t sLampMatrixMaxBr[NUM_COL][NUM_ROW] = { 0 };
 static uint32_t sLampMatrixCopy[NUM_COL] = { 0 };
 
 // use double buffering for the prepared output data
-static uint32_t sMatrixDataBuf1[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
-static uint32_t sMatrixDataBuf2[NUM_COL*MATRIXOUT_PIO_STEPS] = { 0 };
+static uint32_t sMatrixDataBuf1[NUM_COL*PWM_RES_MAX*2] = { 0 };
+static uint32_t sMatrixDataBuf2[NUM_COL*PWM_RES_MAX*2] = { 0 };
 static volatile uint32_t *pMatrixDataBufOut = sMatrixDataBuf1;
 static volatile uint32_t *pMatrixDataBufPrep = sMatrixDataBuf2;
 
@@ -103,7 +85,6 @@ void matrixout_prepareCol(uint col, uint8_t *pRowDur);
 void matrixout_prepareData(const uint32_t *pkLM);
 void matrixout_swapbuf();
 void matrixout_updateLampMatrix(const uint32_t *pkRawLM);
-void matrixout_prepareBrightnessSteps();
 
 
 //------------------------------------------------------------------------------
@@ -179,7 +160,8 @@ void matrixout_prepareData(const uint32_t *pkLM)
                 uint8_t rb = (uint8_t)(*pkLM >> 24);
 
                 // map the brightness value
-                *pRD = skBrightnessMap[rb];
+                const AG_PARAMS_t *pkPar = par_params();
+                *pRD = pkPar->pkBrightnessMap[rb];
             }
 
             // prepare the output data
@@ -198,6 +180,8 @@ void matrixout_prepareData(const uint32_t *pkLM)
 //------------------------------------------------------------------------------
 void matrixout_prepareCol(uint col, uint8_t *pRowDur)
 {
+    const AG_PARAMS_t *pkPar = par_params();
+
     // Anti-ghosting: turn off everything for some time
     // No need to do anything here - sMatrixDataBuf has already an empty buffer
     // of ANTI_GHOSTING_STEPS entries at the beginning
@@ -205,7 +189,7 @@ void matrixout_prepareCol(uint col, uint8_t *pRowDur)
     // prepare the column and row data for all PWM steps
     uint32_t rbit = 0x00000100;
     uint32_t colBit = (1ul << col);
-    uint32_t *pDS = &pMatrixDataBufPrep[col*MATRIXOUT_PIO_STEPS+ANTI_GHOSTING_STEPS];
+    uint32_t *pDS = &pMatrixDataBufPrep[col*pkPar->matrixPIOSteps+pkPar->antiGhostSteps];
     uint32_t *pD = pDS;
     for (uint s=0; s<PWM_RES; s++)
     {
@@ -246,14 +230,25 @@ void matrix_transfer_complete()
 //------------------------------------------------------------------------------
 bool matrixout_initpio()
 {
+    const AG_PARAMS_t *pkPar = par_params();
+
     // find a place for the PIO program in the instruction memory
-    sSmMatrixOutOffset = pio_add_program(sPioMatrixOut, &matrixout_program);
+    if (sSmMatrixOutOffset == -1)
+    {
+        sSmMatrixOutOffset = pio_add_program(sPioMatrixOut, &matrixout_program);
+    }
     // claim an unused state machine for the matrix output and run the program
-    sSmMatrixOut = pio_claim_unused_sm(sPioMatrixOut, true);
+    if (sSmMatrixOut == -1)
+    {
+        sSmMatrixOut = pio_claim_unused_sm(sPioMatrixOut, true);
+    }
     matrixout_program_init(sPioMatrixOut, sSmMatrixOut, sSmMatrixOutOffset);
 
     // claim and configure a free dma channel
-    sDMAChan = dma_claim_unused_channel(false);
+    if (sDMAChan == -1)
+    {
+        sDMAChan = dma_claim_unused_channel(false);
+    }
     sDMAChanConfig = dma_channel_get_default_config(sDMAChan);
     channel_config_set_transfer_data_size(&sDMAChanConfig, DMA_SIZE_32);
     channel_config_set_read_increment(&sDMAChanConfig, true);    // Read pointer increments with every step
@@ -265,7 +260,7 @@ bool matrixout_initpio()
         &sDMAChanConfig,                    // the channel's configuration
         &sPioMatrixOut->txf[sSmMatrixOut],  // write to the PIO TX FIFO
         NULL,                               // the read address will be set later
-        count_of(sMatrixDataBuf1),          // number of transfers
+        pkPar->matrixPIOSteps*NUM_COL,      // number of transfers
         false                               // don't start yet
     );
 
@@ -281,9 +276,23 @@ bool matrixout_initpio()
 }
 
 //------------------------------------------------------------------------------
+void matrixout_stoppio()
+{
+    // stop the PIO
+    pio_sm_set_enabled(sPioMatrixOut, sSmMatrixOut, false);
+
+    // stop the DMA
+    dma_channel_abort(sDMAChan);
+
+    // set all output LOW
+    gpio_put_masked(AGPIN_OUT_ALL_MASK, false);
+}
+
+//------------------------------------------------------------------------------
 void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
 {
     const AFTERGLOW_CFG_t *pkCfg = cfg_config();
+    const AG_PARAMS_t *pkPar = par_params();
     for (uint c=0; c<NUM_COL; c++)
     {
         uint32_t rowBit = 0x01;
@@ -305,7 +314,7 @@ void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
                         sLampMatrix[c][r] = sLampMatrixMaxBr[c][r];
                     }
                 }
-                sLampMatrixOntime[c][r] += MATRIX_UPDATE_INT_MS;
+                sLampMatrixOntime[c][r] += pkPar->matrixUpdateIntMs;
             }
             else
             {
@@ -337,6 +346,7 @@ void matrixout_prepareBrightnessSteps()
     // non-linear PWM steps when preparing the PWM data.
     // This is the magic sauce for the afterglow effect.
     const AFTERGLOW_CFG_t *pkCfg = cfg_config();
+    const AG_PARAMS_t *pkPar = par_params();
     for (uint c=0; c<NUM_COL; c++)
     {
         for (uint r=0; r<NUM_ROW; r++)
@@ -354,8 +364,8 @@ void matrixout_prepareBrightnessSteps()
             sLampMatrixMaxBr[c][r] = maxBr;
 
             // calculate the step size for this lamp
-            float numStepsOn = ((float)gdOn / (float)MATRIX_UPDATE_INT);
-            float numStepsOff = ((float)gdOff / (float)MATRIX_UPDATE_INT);
+            float numStepsOn = ((float)gdOn / (float)pkPar->matrixUpdateInt);
+            float numStepsOff = ((float)gdOff / (float)pkPar->matrixUpdateInt);
             if (numStepsOn < 1.0f) numStepsOn  = 1.0f;
             if (numStepsOff < 1.0f) numStepsOff  = 1.0f;
             sLampMatrixStepsOn[c][r] = (uint32_t)((float)maxBr / numStepsOn);

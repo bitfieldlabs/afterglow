@@ -38,6 +38,7 @@
 #include "utils.h"
 #include "afterglow.h"
 #include "testmode.h"
+#include "input.h"
 
 
 //------------------------------------------------------------------------------
@@ -59,7 +60,6 @@ static uint32_t sMaxDur = 0;
 //------------------------------------------------------------------------------
 // function prototypes
 
-static uint32_t lm_dataRead();
 static bool lm_dataValid(uint32_t c, uint32_t r, uint32_t *pCol, uint32_t *pRow);
 static void lm_modeDetection(uint c, uint r);
 
@@ -77,7 +77,7 @@ void lm_inputUpdate(uint32_t ttag)
     uint64_t ts = to_us_since_boot(get_absolute_time());
 
     // sample the input data
-    uint32_t dataIn = lm_dataRead();
+    uint32_t dataIn = input_dataRead();
 
     // process the DIP switch information (bits 19-23 of the input)
     // Bits 0-3: CFG1 - CFG4
@@ -176,48 +176,6 @@ void lm_inputUpdate(uint32_t ttag)
     {
         sMaxDur = dur;
     }
-}
-
-//------------------------------------------------------------------------------
-uint32_t lm_dataRead()
-{
-    // drive CLK and LOAD low
-    gpio_put(AGPIN_IN_CLK, false);
-    gpio_put(AGPIN_IN_LOAD, false);
-    
-    // wait some time
-    uint32_t data = 0;
-    data+= 17;
-    data-= 17;
-    
-    // drive LOAD high to save pin states
-    gpio_put(AGPIN_IN_LOAD, true);
-    data+= 17;
-    data-= 17;
-
-    // clock in all 24 data bits from the shift register
-    // On 74HC165 D7 is shifted out first, D0 last
-    uint32_t s = 0;
-    for (uint i=0; i<3; i++)    // 3 shift registers
-    {
-        uint32_t dataSR = 0;
-        for (uint i=0; i<8; i++) // 8 bits
-        {
-            dataSR <<= 1;
-            gpio_put(AGPIN_IN_CLK, false);             // CLK low
-            dataSR+= 17;
-            dataSR-= 17;
-            gpio_put(AGPIN_IN_CLK, true);              // CLK high
-            s++;
-            dataSR |= gpio_get(AGPIN_IN_DATA) ? 0x01 : 0;   // read data bit
-        }
-        data |= (dataSR << (s-8));
-    }
-
-    gpio_put(AGPIN_IN_CLK, false);
-    gpio_put(AGPIN_IN_LOAD, false);
-
-    return data;
 }
 
 //------------------------------------------------------------------------------

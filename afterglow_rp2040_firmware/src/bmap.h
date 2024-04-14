@@ -35,21 +35,3 @@ extern const uint8_t skMap_256_32[256];
 extern const uint8_t skMap_256_64[256];
 extern const uint8_t skMap_256_128[256];
 extern const uint8_t skMap_256_256[256];
-
-#if (PWM_RES == 4)
-#define skBrightnessMap skMap_256_4
-#elif (PWM_RES == 8)
-#define skBrightnessMap skMap_256_8
-#elif (PWM_RES == 16)
-#define skBrightnessMap skMap_256_16
-#elif (PWM_RES == 32)
-#define skBrightnessMap skMap_256_32
-#elif (PWM_RES == 64)
-#define skBrightnessMap skMap_256_64
-#elif (PWM_RES == 128)
-#define skBrightnessMap skMap_256_128
-#elif (PWM_RES == 256)
-#define skBrightnessMap skMap_256_256
-#else
-#error "No brightness map defined for this PWM resolution!"
-#endif

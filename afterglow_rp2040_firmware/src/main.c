@@ -58,12 +58,14 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
+#include "hardware/watchdog.h"
 #include "pindef.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
 #include "serial.h"
 #include "afterglow.h"
 #include "config.h"
+#include "params.h"
 
 
 //------------------------------------------------------------------------------
@@ -73,6 +75,13 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 static repeating_timer_t sInputSamplingTimer;
 static volatile uint32_t sTtag = 0;
 static uint32_t sMatrixUpdateCounter = 0;
+static AG_DIPSWITCH_t sLastDIPSwitch = { 0 };
+
+
+//------------------------------------------------------------------------------
+// local functions
+
+void checkForConfigChanges();
 
 
 //------------------------------------------------------------------------------
@@ -172,9 +181,10 @@ int main(void)
 
     // configuration initialisation
     cfg_init();
+    sLastDIPSwitch = cfg_dipSwitch();
 
-    // start a thread on CPU1, used for matrix data preparation
-    multicore_launch_core1(matrixout_thread);
+    // parameters initialisation
+    par_setDefault();
 
     // set up the matrix output DMA and PIO
     if (!matrixout_initpio())
@@ -182,13 +192,19 @@ int main(void)
         panic_mode();
     }
 
+    // prepare the brightness steps
+    matrixout_prepareBrightnessSteps();
+
     // lamp matrix initialisation
     lm_init();
 
-    // Heartbeat setup
+    // start a thread on CPU1, used for matrix data preparation
+    multicore_launch_core1(matrixout_thread);
+
+    // Input sampling setup
     if (!add_repeating_timer_us(-INPUT_SAMPLE_INT, sample_input, NULL, &sInputSamplingTimer))
     {
-        printf("Failed to start the heartbeat!\n");
+        printf("Failed to start the input handler timer!\n");
         panic_mode();
     }
 
@@ -198,6 +214,9 @@ int main(void)
     // Eternal loop
     while (true)
     {
+        // handle configuration changes
+        checkForConfigChanges();
+
         // afterglow serial communication
         serial_debug(sTtag);
 
@@ -207,4 +226,19 @@ int main(void)
         // time for a nap
         sleep_ms(250);
     }
+}
+
+//------------------------------------------------------------------------------
+void checkForConfigChanges()
+{
+    AG_DIPSWITCH_t dipSwitch = cfg_dipSwitch();
+
+    // LED frequency configuration changes
+    if (dipSwitch.highLEDFreq != sLastDIPSwitch.highLEDFreq)
+    {
+            // reboot, the new configuration will be applied at startup
+            watchdog_reboot(0, 0, 0);
+    }
+
+    sLastDIPSwitch = dipSwitch;
 }

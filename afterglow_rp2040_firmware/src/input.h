@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow
+ *  https://github.com/bitfieldlabs/afterglow_pico
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -26,15 +26,6 @@
  ***********************************************************************/
 
 #include <stdio.h>
-#include "def.h"
 
-void matrixout_thread();
-bool matrixout_initpio();
-void matrixout_stoppio();
-const uint32_t * matrixout_lampMatrix();
 
-// Query the maxtrix update maximum duration [us]
-uint32_t matrixout_updateMaxDur();
-
-// prepare the brightness steps
-void matrixout_prepareBrightnessSteps();
+uint32_t input_dataRead();

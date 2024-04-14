@@ -8,7 +8,7 @@
  *
  ***********************************************************************
  *  This file is part of the afterglow pinball LED project:
- *  https://github.com/bitfieldlabs/afterglow
+ *  https://github.com/bitfieldlabs/afterglow_pico
  *
  *  afterglow is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as
@@ -25,16 +25,49 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h>
-#include "def.h"
+#include "input.h"
+#include "pico/stdlib.h"
+#include "pindef.h"
 
-void matrixout_thread();
-bool matrixout_initpio();
-void matrixout_stoppio();
-const uint32_t * matrixout_lampMatrix();
 
-// Query the maxtrix update maximum duration [us]
-uint32_t matrixout_updateMaxDur();
+//------------------------------------------------------------------------------
+uint32_t input_dataRead()
+{
+    // drive CLK and LOAD low
+    gpio_put(AGPIN_IN_CLK, false);
+    gpio_put(AGPIN_IN_LOAD, false);
+    
+    // wait some time
+    uint32_t data = 0;
+    data+= 17;
+    data-= 17;
+    
+    // drive LOAD high to save pin states
+    gpio_put(AGPIN_IN_LOAD, true);
+    data+= 17;
+    data-= 17;
 
-// prepare the brightness steps
-void matrixout_prepareBrightnessSteps();
+    // clock in all 24 data bits from the shift register
+    // On 74HC165 D7 is shifted out first, D0 last
+    uint32_t s = 0;
+    for (uint i=0; i<3; i++)    // 3 shift registers
+    {
+        uint32_t dataSR = 0;
+        for (uint i=0; i<8; i++) // 8 bits
+        {
+            dataSR <<= 1;
+            gpio_put(AGPIN_IN_CLK, false);             // CLK low
+            dataSR+= 17;
+            dataSR-= 17;
+            gpio_put(AGPIN_IN_CLK, true);              // CLK high
+            s++;
+            dataSR |= gpio_get(AGPIN_IN_DATA) ? 0x01 : 0;   // read data bit
+        }
+        data |= (dataSR << (s-8));
+    }
+
+    gpio_put(AGPIN_IN_CLK, false);
+    gpio_put(AGPIN_IN_LOAD, false);
+
+    return data;
+}
