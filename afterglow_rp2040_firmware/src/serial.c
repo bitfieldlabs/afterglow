@@ -25,8 +25,10 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include <string.h>
 #include "serial.h"
 #include "pico/time.h"
+#include "pico/stdio.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
 #include "afterglow.h"
@@ -36,10 +38,36 @@
 
 
 //------------------------------------------------------------------------------
+// local definitions
+
+#define SER_INPUT_BUF_SIZE 64   // serial input buffer size
+
+
+//------------------------------------------------------------------------------
 // local variables
 
 static uint32_t sLastDebugTTag = 0;
+static char sCmd[SER_INPUT_BUF_SIZE] = { 0 };
+static uint32_t sCmdPos = 0;
+static bool sCmdComplete = false;
 
+
+//------------------------------------------------------------------------------
+// function prototypes
+
+void serial_debug(uint32_t ttag);
+void serial_input();
+
+
+//------------------------------------------------------------------------------
+void serial_comm(uint32_t ttag)
+{
+    // handle input
+    serial_input();
+
+    // debug output
+    serial_debug(ttag);
+}
 
 //------------------------------------------------------------------------------
 void serial_debug(uint32_t ttag)
@@ -83,5 +111,87 @@ void serial_debug(uint32_t ttag)
             matrixout_updateMaxDur(), pkPar->matrixUpdateInt);
 
         sLastDebugTTag = m;
+    }
+}
+
+//------------------------------------------------------------------------------
+void serial_input()
+{
+    // read data from the serial port if available
+    int c = 0;
+    while ((c != PICO_ERROR_TIMEOUT) && !sCmdComplete)
+    {
+        c = getchar_timeout_us(0);
+        if (c != PICO_ERROR_TIMEOUT)
+        {
+            char character = (char)c;
+            if (character != AG_CMD_TERMINATOR)
+            {
+                // add the character and wait for the command terminator
+                sCmd[sCmdPos] = character;
+                sCmdPos++;
+                //printf("c - %c\n", character);
+                if (sCmdPos >= SER_INPUT_BUF_SIZE)
+                {
+                    // clear the buffer
+                    sCmdPos = 0;
+                }
+            }
+            else
+            {
+                // command complete
+                sCmdComplete = true;
+            }           
+        }
+    }
+
+    if (sCmdComplete)
+    {
+        // handle the commands
+
+        // version poll
+        if (strncmp(sCmd, AG_CMD_VERSION_POLL, 3) == 0)
+        {
+            // Output the version numbers
+            printf("%s %d %d\n", AG_CMD_VERSION_POLL, AFTERGLOW_RP2040_VERSION, AFTERGLOW_CFG_SER_VERSION);
+        }
+
+        // configuration poll
+        else if (strncmp(sCmd, AG_CMD_CFG_POLL, 4) == 0)
+        {
+            // create the serial configuration structure
+            AFTERGLOW_CFG_V3_t cfg;
+            cfg_serialConfig(&cfg);
+            
+            // send the full configuration
+            uint16_t cfgSize = sizeof(cfg);
+            const uint8_t *pkCfg = (const uint8_t*)&cfg;
+            fwrite(pkCfg, 1, cfgSize, stdout);
+            stdio_flush();
+        }
+
+        // configuration reset
+        else if (strncmp(sCmd, AG_CMD_CFG_DEFAULT, 4) == 0)
+        {
+            // reset the configuration to default
+            cfg_setDefault();
+
+            // acknowledge
+            printf(AG_CMD_ACK);
+        }
+
+        // configuration write
+        else if (strncmp(sCmd, AG_CMD_CFG_SAVE, 4) == 0)
+        {
+            // stop the matrix updates
+            
+            // receive a new configuration
+
+            // resume operation
+
+        }
+
+        sCmdPos = 0;
+        sCmdComplete = false;
     }
 }

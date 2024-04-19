@@ -33,37 +33,6 @@
 
 
 //------------------------------------------------------------------------------
-// serial port protocol definition
-
-// write buffer size [bytes]
-#define AG_CMD_WRITE_BUF 32
-
-// command terminator character
-#define AG_CMD_TERMINATOR ':'
-
-// version poll command string
-#define AG_CMD_VERSION_POLL "AGV"
-
-// configuration poll command string
-#define AG_CMD_CFG_POLL "AGCP"
-
-// configuration save command string
-#define AG_CMD_CFG_SAVE "AGCS"
-
-// configuration reset to default command string
-#define AG_CMD_CFG_DEFAULT "AGCD"
-
-// data ready string
-#define AG_CMD_CFG_DATA_READY "AGDR"
-
-// acknowledge string
-#define AG_CMD_ACK "AGCACK"
-
-// NOT acknowledge string
-#define AG_CMD_NACK "AGCNACK"
-
-
-//------------------------------------------------------------------------------
 
 // afterglow configuration
 static AFTERGLOW_CFG_t sCfg;
@@ -75,7 +44,6 @@ static uint8_t sLastDipSwitchValue = 0;
 //------------------------------------------------------------------------------
 // local functions
 
-void cfg_setDefault();
 uint32_t calculateCRC32(const uint8_t *data, uint16_t length);
 
 
@@ -179,4 +147,14 @@ uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
         }
     }
     return crc;
+}
+
+//------------------------------------------------------------------------------
+void cfg_serialConfig(AFTERGLOW_CFG_V3_t *pCfg)
+{
+    // initialize
+    memset(pCfg, 0, sizeof(AFTERGLOW_CFG_V3_t));
+
+    // convert the internal configuration to the serial config version
+    pCfg->version = AFTERGLOW_CFG_SER_VERSION;
 }

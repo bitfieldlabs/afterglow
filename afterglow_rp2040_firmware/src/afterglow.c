@@ -85,21 +85,21 @@ static void ag_updateStatusLED()
             gpio_put(AGPIN_STAT_LED, 1);
             break;
         case AG_STATUS_PASSTHROUGH:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            // slow blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 4) & 0x01) ? true : false);
             break;
         case AG_STATUS_TESTMODE:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            // slow blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 4) & 0x01) ? true : false);
             break;
         case AG_STATUS_REPLAY:
-            // blinking at 1Hz
-            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            // slow blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 4) & 0x01) ? true : false);
             break;
         case AG_STATUS_INVINPUT:
         default:
-            // blinking at 4Hz
-            gpio_put(AGPIN_STAT_LED, (sLedCounter & 0x01) ? true : false);
+            // fast blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 1) & 0x01) ? true : false);
     }
 
     sLedCounter++;

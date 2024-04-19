@@ -218,13 +218,13 @@ int main(void)
         checkForConfigChanges();
 
         // afterglow serial communication
-        serial_debug(sTtag);
+        serial_comm(sTtag);
 
         // status update
         ag_statusUpdate();
 
         // time for a nap
-        sleep_ms(250);
+        sleep_ms(50);
     }
 }
 

@@ -28,4 +28,5 @@
 #include <stdio.h>
 
 
-void serial_debug(uint32_t ttag);
+// Handle serial communication via the USB port
+void serial_comm(uint32_t ttag);
