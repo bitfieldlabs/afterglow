@@ -36,15 +36,11 @@
 
 // afterglow configuration
 static AFTERGLOW_CFG_t sCfg;
+static AFTERGLOW_CFG_t sNewCfg;
+static bool sNewCfgAvailable = false;
 
 static AG_DIPSWITCH_t sDipSwitch;
 static uint8_t sLastDipSwitchValue = 0;
-
-
-//------------------------------------------------------------------------------
-// local functions
-
-uint32_t calculateCRC32(const uint8_t *data, uint16_t length);
 
 
 //------------------------------------------------------------------------------
@@ -122,11 +118,11 @@ void cfg_setDefault()
 
     // calculate the crc
     uint16_t cfgSize = sizeof(sCfg);
-    sCfg.crc = calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
+    sCfg.crc = cfg_calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
 }
 
 //------------------------------------------------------------------------------
-uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
+uint32_t cfg_calculateCRC32(const uint8_t *data, uint16_t length)
 {
     uint32_t crc = 0xffffffff;
     while (length--)
@@ -150,11 +146,47 @@ uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
 }
 
 //------------------------------------------------------------------------------
-void cfg_serialConfig(AFTERGLOW_CFG_V3_t *pCfg)
+void cfg_serialConfig(AFTERGLOW_CFG_V2_t *pCfg)
 {
     // initialize
-    memset(pCfg, 0, sizeof(AFTERGLOW_CFG_V3_t));
+    uint16_t cfgSize = sizeof(AFTERGLOW_CFG_V2_t);
+    memset(pCfg, 0, cfgSize);
 
     // convert the internal configuration to the serial config version
     pCfg->version = AFTERGLOW_CFG_SER_VERSION;
+    memcpy(pCfg->lampBrightness, sCfg.lampBrightness, sizeof(sCfg.lampBrightness));
+    memcpy(pCfg->lampGlowDur, sCfg.lampGlowDurOn, sizeof(sCfg.lampGlowDurOn));
+    pCfg->crc = cfg_calculateCRC32((uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));
+}
+
+//------------------------------------------------------------------------------
+void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg)
+{
+    // Prepare to new configuration and mark it ready. It will be applied at the
+    // next matrix thread run.
+    memset(&sNewCfg, 0, sizeof(sNewCfg));
+    memcpy(sNewCfg.lampBrightness, pkCfg->lampBrightness, sizeof(sNewCfg.lampBrightness));
+    // apply the same brightness value to on and off glow duration
+    memcpy(sNewCfg.lampGlowDurOn, pkCfg->lampGlowDur, sizeof(sNewCfg.lampGlowDurOn));
+    memcpy(sNewCfg.lampGlowDurOff, pkCfg->lampGlowDur, sizeof(sNewCfg.lampGlowDurOff));
+    sNewCfg.version = AFTERGLOW_CFG_VERSION;
+    sNewCfg.crc = cfg_calculateCRC32((uint8_t*)&sNewCfg, sizeof(sNewCfg)-sizeof(sNewCfg.crc));
+    sNewCfgAvailable = true;
+
+    // store the configuration to flash
+    // TUDUU
+}
+
+//------------------------------------------------------------------------------
+bool cfg_applyNewConfig()
+{
+    bool applied = false;
+    if (sNewCfgAvailable)
+    {
+        // copy the double buffered configuration to the active configuration set
+        memcpy(&sCfg, &sNewCfg, sizeof(sCfg));
+        sNewCfgAvailable = false;
+        applied = true;
+    }
+    return applied;
 }

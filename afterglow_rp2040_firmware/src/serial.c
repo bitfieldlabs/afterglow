@@ -57,6 +57,7 @@ static bool sCmdComplete = false;
 
 void serial_debug(uint32_t ttag);
 void serial_input();
+void serial_receiveCfg();
 
 
 //------------------------------------------------------------------------------
@@ -65,10 +66,13 @@ void serial_comm(uint32_t ttag)
     // handle input
     serial_input();
 
+#if DEBUG_SERIAL
     // debug output
     serial_debug(ttag);
+#endif
 }
 
+#if DEBUG_SERIAL
 //------------------------------------------------------------------------------
 void serial_debug(uint32_t ttag)
 {
@@ -113,6 +117,7 @@ void serial_debug(uint32_t ttag)
         sLastDebugTTag = m;
     }
 }
+#endif
 
 //------------------------------------------------------------------------------
 void serial_input()
@@ -160,7 +165,7 @@ void serial_input()
         else if (strncmp(sCmd, AG_CMD_CFG_POLL, 4) == 0)
         {
             // create the serial configuration structure
-            AFTERGLOW_CFG_V3_t cfg;
+            AFTERGLOW_CFG_V2_t cfg;
             cfg_serialConfig(&cfg);
             
             // send the full configuration
@@ -183,15 +188,71 @@ void serial_input()
         // configuration write
         else if (strncmp(sCmd, AG_CMD_CFG_SAVE, 4) == 0)
         {
-            // stop the matrix updates
-            
             // receive a new configuration
-
-            // resume operation
-
+            serial_receiveCfg();
         }
 
         sCmdPos = 0;
         sCmdComplete = false;
     }
+}
+
+//------------------------------------------------------------------------------
+void serial_receiveCfg()
+{
+    // wait for the full configuration data
+    bool res = false;
+    AFTERGLOW_CFG_V2_t cfg;
+    char *pCfg = (char*)&cfg;
+    uint32_t cfgSize = sizeof(cfg);
+    uint32_t size = 0;
+
+    // read all data
+    while (size < cfgSize)
+    {
+        // send data ready signal and wait for data
+        printf(AG_CMD_CFG_DATA_READY);
+        sleep_ms(200);
+
+        // read data
+        uint32_t readBytes = 0;
+        int c = 0;
+        while ((c != PICO_ERROR_TIMEOUT) && (readBytes < AG_CMD_WRITE_BUF) && (size < cfgSize))
+        {
+            c = getchar_timeout_us(0);
+            if (c != PICO_ERROR_TIMEOUT)
+            {
+                *pCfg++ = (char)c;
+                readBytes++;
+                size++;
+            }
+        }
+    }
+
+    if (size == sizeof(cfg))
+    {
+        // check the crc
+        uint32_t crc = cfg_calculateCRC32((uint8_t*)&cfg, size-sizeof(cfg.crc));
+        if (crc == cfg.crc)
+        {
+            // set the new configuration and apply it
+            cfg_setSerialConfig(&cfg);
+            res = true;
+        }
+#if DEBUG_SERIAL
+        else
+        {
+            printf("CRC FAIL %lu %lu", crc, cfg.crc);
+        }
+#endif
+    }
+#if DEBUG_SERIAL
+    else
+    {
+            printf("SIZE MISMATCH: %lu", size);
+    }
+#endif
+
+    // send ACK/NACK
+    printf(res ? AG_CMD_ACK : AG_CMD_NACK);
 }

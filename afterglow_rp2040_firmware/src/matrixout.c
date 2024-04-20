@@ -105,6 +105,13 @@ void matrixout_thread()
         // time is ticking
         uint64_t ts = to_us_since_boot(get_absolute_time());
 
+        // apply new configuration data if available
+        if (cfg_applyNewConfig())
+        {
+            // adopt the new configuration
+            matrixout_prepareBrightnessSteps();
+        }
+
         // make a local copy of the raw map matrix
         memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
 
