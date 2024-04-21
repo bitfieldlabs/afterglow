@@ -68,7 +68,7 @@ void serial_comm(uint32_t ttag)
 
 #if DEBUG_SERIAL
     // debug output
-    serial_debug(ttag);
+    //serial_debug(ttag);
 #endif
 }
 
@@ -171,8 +171,10 @@ void serial_input()
             // send the full configuration
             uint16_t cfgSize = sizeof(cfg);
             const uint8_t *pkCfg = (const uint8_t*)&cfg;
-            fwrite(pkCfg, 1, cfgSize, stdout);
-            stdio_flush();
+            for (uint i=0; i<cfgSize; i++)
+            {
+                putchar_raw(*pkCfg++);
+            }
         }
 
         // configuration reset
@@ -182,7 +184,7 @@ void serial_input()
             cfg_setDefault();
 
             // acknowledge
-            printf(AG_CMD_ACK);
+            printf("%s\n", AG_CMD_ACK);
         }
 
         // configuration write
@@ -211,7 +213,7 @@ void serial_receiveCfg()
     while (size < cfgSize)
     {
         // send data ready signal and wait for data
-        printf(AG_CMD_CFG_DATA_READY);
+        printf("%s\n",AG_CMD_CFG_DATA_READY);
         sleep_ms(200);
 
         // read data
@@ -254,5 +256,5 @@ void serial_receiveCfg()
 #endif
 
     // send ACK/NACK
-    printf(res ? AG_CMD_ACK : AG_CMD_NACK);
+    printf("%s\n", res ? AG_CMD_ACK : AG_CMD_NACK);
 }

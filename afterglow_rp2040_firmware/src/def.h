@@ -42,9 +42,8 @@
 // only makes for 6% of the duty cycle, therefore the maximum achievable
 // brightness is higher.
 // Two default frequencies A and B for the switchable modes
-#define LED_FREQ_A 250
-#define LED_FREQ_B 800
-
+#define LED_FREQ_A 400
+#define LED_FREQ_B 1000
 
 // PWM resolution (brightness steps)
 // This is the number of duty cycle steps within one LED
