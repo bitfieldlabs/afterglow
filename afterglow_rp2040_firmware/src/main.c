@@ -236,8 +236,31 @@ void checkForConfigChanges()
     // LED frequency configuration changes
     if (dipSwitch.highLEDFreq != sLastDIPSwitch.highLEDFreq)
     {
-            // reboot, the new configuration will be applied at startup
-            watchdog_reboot(0, 0, 0);
+        // reboot, the new configuration will be applied at startup
+        watchdog_reboot(0, 0, 0);
+    }
+
+    // Serial port configuration
+    if (cfg_newConfigAvailable())
+    {
+        // stop afterglow operation
+        cancel_repeating_timer(&sInputSamplingTimer);
+        sleep_ms(100);
+        multicore_reset_core1();
+        sleep_ms(100);
+        matrixout_stoppio();
+        sleep_ms(100);
+
+        // apply the new configuration and store it to flash
+        if (cfg_applyNewConfig())
+        {
+#if DEBUG_SERIAL
+            printf("Cfg saved to flash, rebooting...");
+#endif
+        }
+
+        // reboot, the new configuration will be loaded from flash at startup
+        watchdog_reboot(0, 0, 0);
     }
 
     sLastDIPSwitch = dipSwitch;

@@ -105,13 +105,6 @@ void matrixout_thread()
         // time is ticking
         uint64_t ts = to_us_since_boot(get_absolute_time());
 
-        // apply new configuration data if available
-        if (cfg_applyNewConfig())
-        {
-            // adopt the new configuration
-            matrixout_prepareBrightnessSteps();
-        }
-
         // make a local copy of the raw map matrix
         memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
 
@@ -285,11 +278,11 @@ bool matrixout_initpio()
 //------------------------------------------------------------------------------
 void matrixout_stoppio()
 {
-    // stop the PIO
-    pio_sm_set_enabled(sPioMatrixOut, sSmMatrixOut, false);
-
     // stop the DMA
     dma_channel_abort(sDMAChan);
+
+    // stop the PIO
+    pio_sm_set_enabled(sPioMatrixOut, sSmMatrixOut, false);
 
     // set all output LOW
     gpio_put_masked(AGPIN_OUT_ALL_MASK, false);

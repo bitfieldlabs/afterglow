@@ -84,6 +84,14 @@
 // Latest supported Afterglow board revision. Currently v3.0
 #define BOARD_REV 30
 
+//------------------------------------------------------------------------------
+// Default afterglow setup
+
+#define DEFAULT_GLOWDUR_ON        120     // Default glow duration turning on [ms]
+#define DEFAULT_GLOWDUR_OFF       160     // Default glow duration turning on [ms]
+#define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
+#define DEFAULT_DELAY               0     // Default lamp delay [ms]
+
 
 //------------------------------------------------------------------------------
 // derived values

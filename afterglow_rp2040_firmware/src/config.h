@@ -63,10 +63,6 @@
 //------------------------------------------------------------------------------
 // configuration storage
 
-#define DEFAULT_GLOWDUR_ON        120     // Default glow duration turning on [ms]
-#define DEFAULT_GLOWDUR_OFF       160     // Default glow duration turning on [ms]
-#define DEFAULT_BRIGHTNESS          7     // Default maximum lamp brightness 0-7
-#define DEFAULT_DELAY               0     // Default lamp delay [ms]
 #define AFTERGLOW_CFG_VERSION       3     // Afterglow configuration version
 #define AFTERGLOW_CFG_SER_VERSION   2     // Afterglow configuration version used for configuration via serial port (config tool)
 #define GLOWDUR_CFG_SCALE          10     // Glow duration scaling in the configuration
@@ -102,7 +98,7 @@ typedef struct AFTERGLOW_CFG_V2_s
 
 
 void cfg_init();
-void cfg_setDefault();
+void cfg_setDefault(bool directly);
 const AFTERGLOW_CFG_t * cfg_config();
 AG_DIPSWITCH_t cfg_dipSwitch();
 void cfg_updateDipSwitch(uint8_t rawBits);
@@ -110,4 +106,6 @@ uint8_t cfg_lastDipSwitchValue();
 void cfg_serialConfig(AFTERGLOW_CFG_V2_t *pCfg);
 void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg);
 uint32_t cfg_calculateCRC32(const uint8_t *data, uint16_t length);
+bool cfg_newConfigAvailable();
 bool cfg_applyNewConfig();
+bool cfg_loadConfig();

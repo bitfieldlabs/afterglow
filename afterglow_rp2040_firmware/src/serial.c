@@ -68,7 +68,7 @@ void serial_comm(uint32_t ttag)
 
 #if DEBUG_SERIAL
     // debug output
-    //serial_debug(ttag);
+    serial_debug(ttag);
 #endif
 }
 
@@ -77,7 +77,7 @@ void serial_comm(uint32_t ttag)
 void serial_debug(uint32_t ttag)
 {
     uint32_t m = to_ms_since_boot(get_absolute_time());
-    if ((m - sLastDebugTTag) > 2000)
+    if ((m - sLastDebugTTag) > 5000)
     {
         // column/row data
         printf("data %08lx mode %d st %d\n", lm_lastInputData(), (int)ag_mode(), ag_status());
@@ -181,7 +181,7 @@ void serial_input()
         else if (strncmp(sCmd, AG_CMD_CFG_DEFAULT, 4) == 0)
         {
             // reset the configuration to default
-            cfg_setDefault();
+            cfg_setDefault(false);
 
             // acknowledge
             printf("%s\n", AG_CMD_ACK);

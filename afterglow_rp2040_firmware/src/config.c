@@ -26,10 +26,23 @@
  ***********************************************************************/
 
 #include <string.h>
+#include "pico/stdlib.h"
+#include "hardware/flash.h"
 #include "config.h"
 #include "afterglow.h"
 #include "def.h"
 #include "input.h"
+
+
+//------------------------------------------------------------------------------
+// Config definitions
+
+// Use a flash region 896k from the flash start for storing the configuration
+// This still allows for using a 1Mb flash.
+#define CFG_FLASH_OFFSET (896 * 1024)
+
+// Pointer to the flash content for *reading*
+const uint8_t *pkFlashCfg = (const uint8_t *) (XIP_BASE + CFG_FLASH_OFFSET);
 
 
 //------------------------------------------------------------------------------
@@ -38,16 +51,32 @@
 static AFTERGLOW_CFG_t sCfg;
 static AFTERGLOW_CFG_t sNewCfg;
 static bool sNewCfgAvailable = false;
+static uint8_t sFlashWriteBuf[FLASH_PAGE_SIZE*4] = { 0 };
 
 static AG_DIPSWITCH_t sDipSwitch;
 static uint8_t sLastDipSwitchValue = 0;
 
 
 //------------------------------------------------------------------------------
+// local functions
+
+bool cfg_saveToFlash();
+
+
+//------------------------------------------------------------------------------
 void cfg_init()
 {
-    // set the default configuration
-    cfg_setDefault();
+    // try to load the configuration from flash
+    if (cfg_loadConfig())
+    {
+        printf("Cfg loaded from flash");
+    }
+    else
+    {
+        // set the default configuration
+        cfg_setDefault(true);
+        printf("Default cfg set");
+    }
 
     // sample the input data
     uint32_t dataIn = input_dataRead();
@@ -55,6 +84,8 @@ void cfg_init()
     // process the DIP switch information (bits 19-23 of the input)
     // Bits 0-3: CFG1 - CFG4
     cfg_updateDipSwitch((uint8_t)((dataIn>>18) & 0x0f));
+
+    sNewCfgAvailable = false;
 }
 
 //------------------------------------------------------------------------------
@@ -96,15 +127,17 @@ uint8_t cfg_lastDipSwitchValue()
 }
 
 //------------------------------------------------------------------------------
-void cfg_setDefault()
+void cfg_setDefault(bool directly)
 {
+    AFTERGLOW_CFG_t *pCfg = (directly) ? &sCfg : &sNewCfg;
+
     // initialize configuration to default values
-    memset(&sCfg, 0, sizeof(sCfg));
-    sCfg.version = AFTERGLOW_CFG_VERSION;
-    uint8_t *pGlowDurOn = &sCfg.lampGlowDurOn[0][0];
-    uint8_t *pGlowDurOff = &sCfg.lampGlowDurOff[0][0];
-    uint8_t *pBrightness = &sCfg.lampBrightness[0][0];
-    uint8_t *pDelay = &sCfg.lampDelay[0][0];
+    memset(pCfg, 0, sizeof(sCfg));
+    pCfg->version = AFTERGLOW_CFG_VERSION;
+    uint8_t *pGlowDurOn = &(pCfg->lampGlowDurOn[0][0]);
+    uint8_t *pGlowDurOff = &(pCfg->lampGlowDurOff[0][0]);
+    uint8_t *pBrightness = &(pCfg->lampBrightness[0][0]);
+    uint8_t *pDelay = &(pCfg->lampDelay[0][0]);
     for (uint c=0; c<NUM_COL; c++)
     {
         for (uint r=0; r<NUM_ROW; r++)
@@ -118,7 +151,13 @@ void cfg_setDefault()
 
     // calculate the crc
     uint16_t cfgSize = sizeof(sCfg);
-    sCfg.crc = cfg_calculateCRC32((uint8_t*)&sCfg, cfgSize-sizeof(sCfg.crc));
+    pCfg->crc = cfg_calculateCRC32((uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));
+
+    // mark the buffered configuration as ready for application
+    if (!directly)
+    {
+        sNewCfgAvailable = true;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -178,6 +217,12 @@ void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg)
 }
 
 //------------------------------------------------------------------------------
+bool cfg_newConfigAvailable()
+{
+    return sNewCfgAvailable;
+}
+
+//------------------------------------------------------------------------------
 bool cfg_applyNewConfig()
 {
     bool applied = false;
@@ -187,6 +232,61 @@ bool cfg_applyNewConfig()
         memcpy(&sCfg, &sNewCfg, sizeof(sCfg));
         sNewCfgAvailable = false;
         applied = true;
-    }
+
+        // store the configuration to flash
+        applied = cfg_saveToFlash();
+    }   
+
     return applied;
+}
+
+//------------------------------------------------------------------------------
+bool cfg_loadConfig()
+{
+    bool res = false;
+
+    // load the configuration from flash
+    memcpy(&sCfg, pkFlashCfg, sizeof(sCfg));
+
+    // check the crc
+    uint32_t crc = cfg_calculateCRC32((uint8_t*)&sCfg, sizeof(sCfg)-sizeof(sCfg.crc));
+    if (crc == sCfg.crc)
+    {
+        res = true;
+    }
+    return res;
+}
+
+//------------------------------------------------------------------------------
+bool cfg_saveToFlash()
+{
+    bool saved = false;
+
+    // stop all interrupts
+    uint32_t ints = save_and_disable_interrupts();
+
+    // erase a 4kb flash sector
+    flash_range_erase(CFG_FLASH_OFFSET, FLASH_SECTOR_SIZE);
+
+    // Write the configuration to flash. The number of bytes written must be a
+    // multiple of FLASH_PAGE_SIZE (256b)
+    memcpy(sFlashWriteBuf, &sCfg, sizeof(sCfg));
+    flash_range_program(CFG_FLASH_OFFSET, sFlashWriteBuf, sizeof(sFlashWriteBuf));
+
+    // restore interrupts
+    restore_interrupts(ints);
+
+    // verify the data
+    if (memcmp(&sCfg, pkFlashCfg, sizeof(sCfg)) == 0)
+    {
+        saved = true;
+    }
+    else
+    {
+#if DEBUG_SERIAL
+        printf("Cfg save to flash failed!");
+#endif
+    }
+
+    return saved;
 }
