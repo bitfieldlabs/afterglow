@@ -15315,6 +15315,20 @@
 		)
 		(uuid "1bcf2f5b-e2c1-4f84-a50d-013028900c9b")
 	)
+	(text "Note: R1-R10 must be\nat least 500mW resistors!"
+		(exclude_from_sim no)
+		(at 16.256 205.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+				(color 255 50 59 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "251c54da-fb9e-436f-bc6d-b68bb9493fae")
+	)
 	(text "Some LEDs"
 		(exclude_from_sim no)
 		(at 233.68 207.645 0)
@@ -15414,6 +15428,20 @@
 			(justify left bottom)
 		)
 		(uuid "b21299b9-3c4d-43df-b399-7f9b08eb5470")
+	)
+	(text "Note: R1-R10 must be\nat least 500mW resistors!"
+		(exclude_from_sim no)
+		(at 16.256 130.81 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+				(color 255 50 59 1)
+			)
+			(justify left bottom)
+		)
+		(uuid "b4436832-02f7-447c-8742-5bd4a4779adf")
 	)
 	(text "Flash"
 		(exclude_from_sim no)
