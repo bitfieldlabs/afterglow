@@ -16,4 +16,11 @@ Components were chosen based on availability and price.
 The connectors and some other parts are currently not included in the assembly files.
 
 ## Firmware
-The RP2040 firmare is available in the [afterglow_rp2040_firmware](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_rp2040_firmware) directory. There is also a [prebuilt binary UF2 file](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_rp2040_firmware/firmware_binary_uf2) available for direct upload to the chip. Push the boot select button SW2 when powering up and a mass storage device should appear on your computer. Just copy over the firmware uf2 file.
+The RP2040 firmare is available in the [afterglow_rp2040_firmware](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_rp2040_firmware) directory. 
+
+### Building the firmware
+The firmware is built using [Visual Studio Code](https://code.visualstudio.com/) with [platformio](https://platformio.org/).
+It uses [wizio-pico](https://github.com/maxgerhardt/wizio-pico) as a baremetal framework.
+
+### Updating the firmware
+There is also a [prebuilt binary UF2 file](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_rp2040_firmware/firmware_binary_uf2) available for direct upload to the chip. Push the boot select button SW2 when powering up and a mass storage device should appear on your computer. Just copy over the firmware uf2 file.
