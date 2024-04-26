@@ -13,7 +13,7 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 ### Quick guide to the board revisions
 
 #### All in one
-* *PCB v3.0* Newest board built around the RP2040. Supports WPC, Data East, Sys11, Whitestar, S.A.M.<br/>Supports hats, allowing for different ouput connectors, modding ports, displays etc.<br/>Input protection using optocouplers.
+* *PCB v3.0*<br/>This is the newest board built around the RP2040. Supports WPC, Data East, Sys11, Whitestar, S.A.M.<br/>Supports hats, allowing for different ouput connectors, modding ports, displays etc.<br/>Input protection using optocouplers.
 
 #### WPC, WPC-95, System 11, Data East, Sega
 * *PCB v1.3*<br/>This is the *preferred board revision* for these games.<br/>Dedicated power input (+18V, Ground) must be connected separately to power driver board
