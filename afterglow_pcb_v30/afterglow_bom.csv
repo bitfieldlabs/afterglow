@@ -2,7 +2,7 @@
 "C1,C2,C9,C11,C12,C13,C14,C15,C16,C17,C19,C20","100n","~","Capacitor_SMD:C_0402_1005Metric","12",""
 "C3,C10","1u","~","Capacitor_SMD:C_0402_1005Metric","2",""
 "C4,C5","22p","~","Capacitor_SMD:C_0402_1005Metric","2",""
-"C6","1000uF","~","Capacitor_SMD:C_Elec_10x10.2","1",""
+"C6","470uF","~","Capacitor_SMD:C_Elec_10x10.2","1",""
 "C7,C8","1uF","","Capacitor_SMD:C_0402_1005Metric","2",""
 "C18","0.1","","Capacitor_SMD:C_0402_1005Metric","1",""
 "D1,D2,D3,D4,D5,D6,D7,D8,D17,D18","RB080","~","Diode_SMD:D_SMA","10",""
