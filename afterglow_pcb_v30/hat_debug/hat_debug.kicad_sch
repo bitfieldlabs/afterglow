@@ -10357,7 +10357,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" "C92272"
+		(property "JLCPCB" ""
 			(at 52.705 164.465 0)
 			(effects
 				(font
@@ -10932,7 +10932,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" "C92272"
+		(property "JLCPCB" ""
 			(at 47.625 113.665 0)
 			(effects
 				(font
