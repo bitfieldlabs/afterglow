@@ -272,7 +272,6 @@ bool lm_dataValid(uint32_t c, uint32_t r, uint32_t *pCol, uint32_t *pRow)
         }
     }
 
-
     if (valid)
     {
         sLastValidCol = c;

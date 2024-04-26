@@ -41,13 +41,13 @@
 #if (TEST_MODE_WPC == 1)
 // Simulate WPC 16ms 8 columns lamp matrix cycle
 #  define ORIG_CYCLES (2000 / INPUT_SAMPLE_INT)
-#  define NUM_STROBE NUM_COL
-#  define NUM_NONSTROBE NUM_ROW
+#  define NUM_STROBE 8
+#  define NUM_NONSTROBE 8
 #else
 // Simulate Whitestar 10ms 10 rows lamp matrix cycle
 #  define ORIG_CYCLES (1000 / INPUT_SAMPLE_INT)
-#  define NUM_STROBE NUM_ROW
-#  define NUM_NONSTROBE NUM_COL
+#  define NUM_STROBE 10
+#  define NUM_NONSTROBE 8
 #endif
 
 
@@ -190,8 +190,8 @@ uint32_t tm_testModeData(uint32_t ttag)
         break;
     }
 
-    // constrain the number of rows
-    nonStrobeMask &= (~0 >> (32-NUM_NONSTROBE));
+    // constrain the number of non strobe lines
+    nonStrobeMask |= ~((1 << NUM_NONSTROBE) - 1);
 
     // assign the column and row mask
 #if (TEST_MODE_WPC == 1)
