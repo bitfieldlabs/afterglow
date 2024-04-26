@@ -144,10 +144,10 @@ void matrixout_swapbuf()
 void matrixout_prepareData(const uint32_t *pkLM)
 {
     // No output with invalid data
-    const AFTERGLOW_CFG_t *pkCfg = cfg_config();
     AFTERGLOW_STATUS_t s = ag_status();
     if ((s != AG_STATUS_INIT) && (s != AG_STATUS_INVINPUT))
     {
+        AG_DIPSWITCH_t dipSwitch = cfg_dipSwitch();
         uint8_t rowDur[NUM_ROW];
 
         // process column by column
@@ -160,8 +160,17 @@ void matrixout_prepareData(const uint32_t *pkLM)
                 uint8_t rb = (uint8_t)(*pkLM >> 24);
 
                 // map the brightness value
-                const AG_PARAMS_t *pkPar = par_params();
-                *pRD = pkPar->pkBrightnessMap[rb];
+                if (!dipSwitch.linearMap)
+                {
+                    // use the brightness map
+                    const AG_PARAMS_t *pkPar = par_params();
+                    *pRD = pkPar->pkBrightnessMap[rb];
+                }
+                else
+                {
+                    // linear brightness value
+                    *pRD = rb;
+                }
             }
 
             // prepare the output data
