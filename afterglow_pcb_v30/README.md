@@ -38,6 +38,9 @@ The [pin bender hat](https://github.com/bitfieldlabs/afterglow/tree/master/after
 
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30_ws.jpg "Afterglow PCB v3.0 Pin Bender hat")
 
+### Creating new hats
+There is a [template kicad project](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_pcb_v30/hat_template) which can be used as a starting point for new hats.
+
 ## Files
 
 * ![Schematic](https://github.com/smyp/afterglow/blob/master/afterglow_pcb_v30/afterglow_schematic.pdf "Afterglow PCB v3.0 Schematic")
