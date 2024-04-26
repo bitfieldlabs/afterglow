@@ -40,5 +40,5 @@ The [pin bender hat](https://github.com/bitfieldlabs/afterglow/tree/master/after
 
 ## Files
 
-* ![afterglow](https://github.com/smyp/afterglow/blob/master/afterglow_pcb_v30/afterglow_schematic.pdf "Afterglow PCB v3.0 Schematic")
-* ![afterglow](https://github.com/smyp/afterglow/blob/master/afterglow_pcb_v30/afterglow_bom.csv "Afterglow PCB v3.0 BOM")
+* ![Schematic](https://github.com/smyp/afterglow/blob/master/afterglow_pcb_v30/afterglow_schematic.pdf "Afterglow PCB v3.0 Schematic")
+* ![BOM](https://github.com/smyp/afterglow/blob/master/afterglow_pcb_v30/afterglow_bom.csv "Afterglow PCB v3.0 BOM")
