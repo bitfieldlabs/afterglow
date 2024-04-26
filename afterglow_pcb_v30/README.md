@@ -37,3 +37,8 @@ The [debugger's hat PCB project](https://github.com/bitfieldlabs/afterglow/tree/
 The [pin bender hat](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_pcb_v30/hat_stern_de_sys11) adds connectors for direct hookup of Stern Whitestar/S.A.M games as well as Data East and System 11 machines.
 
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30_ws.jpg "Afterglow PCB v3.0 Pin Bender hat")
+
+## Files
+
+### Schematic
+![afterglow](https://github.com/smyp/afterglow/blob/master/afterglow:schmeatic.pdf "Afterglow PCB v3.0 Schematic")
