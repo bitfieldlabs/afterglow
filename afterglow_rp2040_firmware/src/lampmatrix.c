@@ -301,7 +301,9 @@ const uint32_t *lm_rawLampMatrix()
 }
 
 //------------------------------------------------------------------------------
-uint32_t lm_inputMaxDur()
+uint32_t lm_inputMaxDurAndClear()
 {
-    return sMaxDur;
+    uint32_t maxDur = sMaxDur;
+    sMaxDur = 0;
+    return maxDur;
 }

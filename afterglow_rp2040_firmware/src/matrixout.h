@@ -33,8 +33,8 @@ bool matrixout_initpio();
 void matrixout_stoppio();
 const uint32_t * matrixout_lampMatrix();
 
-// Query the maxtrix update maximum duration [us]
-uint32_t matrixout_updateMaxDur();
+// Query the maxtrix update maximum duration and reset to zero [us]
+uint32_t matrixout_updateMaxDurAndClear();
 
 // prepare the brightness steps
 void matrixout_prepareBrightnessSteps();

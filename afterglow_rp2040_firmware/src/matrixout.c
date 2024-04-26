@@ -383,7 +383,9 @@ const uint32_t * matrixout_lampMatrix()
 }
 
 //------------------------------------------------------------------------------
-uint32_t matrixout_updateMaxDur()
+uint32_t matrixout_updateMaxDurAndClear()
 {
-    return sMaxDur;
+    uint32_t maxDur = sMaxDur;
+    sMaxDur = 0;
+    return maxDur;
 }

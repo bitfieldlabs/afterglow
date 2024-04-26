@@ -190,6 +190,9 @@ uint32_t tm_testModeData(uint32_t ttag)
         break;
     }
 
+    // constrain the number of rows
+    nonStrobeMask &= (~0 >> (32-NUM_NONSTROBE));
+
     // assign the column and row mask
 #if (TEST_MODE_WPC == 1)
     uint32_t colMask = strobeMask;

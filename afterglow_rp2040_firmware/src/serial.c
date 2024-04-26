@@ -111,8 +111,8 @@ void serial_debug(uint32_t ttag)
 
         // update duration
         const AG_PARAMS_t *pkPar = par_params();
-        printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDur(), INPUT_SAMPLE_INT,
-            matrixout_updateMaxDur(), pkPar->matrixUpdateInt);
+        printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDurAndClear(), INPUT_SAMPLE_INT,
+            matrixout_updateMaxDurAndClear(), pkPar->matrixUpdateInt);
 
         sLastDebugTTag = m;
     }
