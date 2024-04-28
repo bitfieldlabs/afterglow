@@ -186,10 +186,13 @@ int main(void)
     // parameters initialisation
     par_setDefault();
 
-    // set up the matrix output DMA and PIO
-    if (!matrixout_initpio())
+    if (!sLastDIPSwitch.passThrough)
     {
-        panic_mode();
+        // set up the matrix output DMA and PIO
+        if (!matrixout_initpio())
+        {
+            panic_mode();
+        }
     }
 
     // prepare the brightness steps
@@ -198,14 +201,18 @@ int main(void)
     // lamp matrix initialisation
     lm_init();
 
-    // start a thread on CPU1, used for matrix data preparation
+    // start a thread on CPU1, used either for matrix data preparation
+    // or for full-speed pass-through
     multicore_launch_core1(matrixout_thread);
 
     // Input sampling setup
-    if (!add_repeating_timer_us(-INPUT_SAMPLE_INT, sample_input, NULL, &sInputSamplingTimer))
+    if (!sLastDIPSwitch.passThrough)
     {
-        printf("Failed to start the input handler timer!\n");
-        panic_mode();
+        if (!add_repeating_timer_us(-INPUT_SAMPLE_INT, sample_input, NULL, &sInputSamplingTimer))
+        {
+            printf("Failed to start the input handler timer!\n");
+            panic_mode();
+        }
     }
 
     // enable serial output at 115200 baudrate
@@ -237,6 +244,13 @@ void checkForConfigChanges()
     if (dipSwitch.highLEDFreq != sLastDIPSwitch.highLEDFreq)
     {
         // reboot, the new configuration will be applied at startup
+        watchdog_reboot(0, 0, 0);
+    }
+
+    // Pass-through configuration changes
+    if (dipSwitch.passThrough != sLastDIPSwitch.passThrough)
+    {
+        // reboot, the new mode will be applied at startup
         watchdog_reboot(0, 0, 0);
     }
 

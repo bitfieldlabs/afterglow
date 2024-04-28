@@ -39,6 +39,8 @@
 #include "bmap.h"
 #include "config.h"
 #include "params.h"
+#include "input.h"
+#include "pindef.h"
 
 
 //------------------------------------------------------------------------------
@@ -97,30 +99,67 @@ void matrixout_thread()
     // prepare the brightness steps matrix
     matrixout_prepareBrightnessSteps();
 
-    while (true)
+    AG_DIPSWITCH_t ds = cfg_dipSwitch();
+
+    if (!ds.passThrough)
     {
-        // wait until CPU0 triggers the data output preparation
-        const uint32_t *pkRawLM = (const uint32_t*)multicore_fifo_pop_blocking();
-
-        // time is ticking
-        uint64_t ts = to_us_since_boot(get_absolute_time());
-
-        // make a local copy of the raw map matrix
-        memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
-
-        // update the lamp brightness matrix based on the new raw matrix data
-        matrixout_updateLampMatrix(sLampMatrixCopy);
-
-        // prepare the PIO buffer
-        matrixout_prepareData(&sLampMatrix[0][0]);
-
-        // measure time
-        uint64_t te = to_us_since_boot(get_absolute_time());
-        uint32_t dur = (uint32_t)(te - ts);
-        if (dur > sMaxDur)
+        // Afterglow mdoe: matrix preparation thread
+        while (true)
         {
-            sMaxDur = dur;
+            // wait until CPU0 triggers the data output preparation
+            const uint32_t *pkRawLM = (const uint32_t*)multicore_fifo_pop_blocking();
+
+            // time is ticking
+            uint64_t ts = to_us_since_boot(get_absolute_time());
+
+            // make a local copy of the raw map matrix
+            memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
+
+            // update the lamp brightness matrix based on the new raw matrix data
+            matrixout_updateLampMatrix(sLampMatrixCopy);
+
+            // prepare the PIO buffer
+            matrixout_prepareData(&sLampMatrix[0][0]);
+
+            // measure time
+            uint64_t te = to_us_since_boot(get_absolute_time());
+            uint32_t dur = (uint32_t)(te - ts);
+            if (dur > sMaxDur)
+            {
+                sMaxDur = dur;
+            }
         }
+    }
+    else
+    {
+        // Pass-through mode: full speed data in- and output
+        while (true)
+        {
+            // time is ticking
+            uint64_t ts = to_us_since_boot(get_absolute_time());
+
+            // read the input
+            uint32_t dataIn = input_dataRead();
+
+            // process the DIP switch information (bits 19-23 of the input)
+            // Bits 0-3: CFG1 - CFG4
+            cfg_updateDipSwitch((uint8_t)((dataIn>>18) & 0x0f));
+
+            // replicate the input at the output pins
+            uint32_t outData = (dataIn & 0x000000ff); // 8 column bits
+            outData |= ((~dataIn) & 0x0003ff00); // 10 row bits, invert the row data, inputs HIGH are OFF
+            gpio_clr_mask((~outData) & 0x0003ffff);
+            gpio_set_mask(outData);
+
+            // measure time
+            uint64_t te = to_us_since_boot(get_absolute_time());
+            uint32_t dur = (uint32_t)(te - ts);
+            if (dur > sMaxDur)
+            {
+                sMaxDur = dur;
+            }
+        }
+
     }
 }
 
