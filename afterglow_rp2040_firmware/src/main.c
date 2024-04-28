@@ -217,10 +217,20 @@ int main(void)
 
     // enable serial output at 115200 baudrate
     printf("afterglow rp2040 v%d  (c) 2024 bitfield labs\n", AFTERGLOW_RP2040_VERSION);
+    if (watchdog_caused_reboot())
+    {
+        printf("Watchdog reboot!\n");
+    }
+
+    // enable a 1s watchdog
+    watchdog_enable(1000, 1);
 
     // Eternal loop
     while (true)
     {
+        // kick the dog
+        watchdog_update();
+
         // handle configuration changes
         checkForConfigChanges();
 
