@@ -19,7 +19,7 @@ The connectors and some other parts are currently not included in the assembly f
 The RP2040 firmare is available in the [afterglow_rp2040_firmware](https://github.com/bitfieldlabs/afterglow/tree/master/afterglow_rp2040_firmware) directory. 
 
 ### Building the firmware
-The firmware is built using [Visual Studio Code](https://code.visualstudio.com/) with [platformio](https://platformio.org/).
+The firmware is built using [Visual Studio Code](https://code.visualstudio.com/) with [platformio](https://platformio.org/). You may need to install the wizio library manually (PIO Home->Advanced Installation, enter https://github.com/maxgerhardt/wizio-pico).
 It uses [wizio-pico](https://github.com/maxgerhardt/wizio-pico) as a baremetal framework.
 
 ### Updating the firmware
