@@ -54,7 +54,7 @@ static bool sNewCfgAvailable = false;
 static uint8_t sFlashWriteBuf[FLASH_PAGE_SIZE*4] = { 0 };
 
 static AG_DIPSWITCH_t sDipSwitch;
-static uint8_t sLastDipSwitchValue = 0;
+static uint8_t sLastDipSwitchValue = 0xff;
 
 
 //------------------------------------------------------------------------------
@@ -103,6 +103,9 @@ AG_DIPSWITCH_t cfg_dipSwitch()
 //------------------------------------------------------------------------------
 void cfg_updateDipSwitch(uint8_t rawBits)
 {
+    // invert the raw bits as a HIGH input means the switch is OFF
+    rawBits = (~rawBits & 0x0f);
+
     if (rawBits != sLastDipSwitchValue)
     {
         bool newTestMode = (rawBits & 0x01) ? true : false;
