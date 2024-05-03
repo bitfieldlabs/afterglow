@@ -111,7 +111,10 @@ void lm_inputUpdate(uint32_t ttag)
     if (sConsistentDataCount == SINGLE_UPDATE_CONS)
     {
         uint32_t colData = (lmData & 0x000000ff); // 8 column bits
-        uint32_t rowData = ((lmData & 0x0003ff00) >> 8); // 10 row bits
+        uint32_t rowData = (lmData >> 8); // row bits
+
+        // the row data is inverted at input (HIGH means OFF), 10 bits
+        rowData = ((~rowData) & 0x000003ff);
 
         // Mode detection is active as long as the AG is in initialisation status
         if (mode == AG_MODE_UNKNOWN)
