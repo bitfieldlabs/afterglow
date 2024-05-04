@@ -65,12 +65,8 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
                                        state for each PWM
                                        frequency step
                                        (ledFreq * pwmRes * NUM_COL).
-
 */
 
-
-
- 
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
