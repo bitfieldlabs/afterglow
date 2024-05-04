@@ -36,9 +36,9 @@
               |  | Status      |
               |  + Serial      |
               |                |
-              +----------------+                                   LED update: 1kHz
-                                                                PIO out: 128*8*1kHz
-                     Timer 4 kHz                   100 Hz                      1MHz
+              +----------------+                                  LED update: 400Hz
+                                                               PIO out: 128*8*400Hz
+                     Timer 8 kHz                   100 Hz                    400kHz
               +----------------+       +----------------+        +----------------+
               | sample_input() |       | matrixout()    |        | matrixout PIO  |
               |                |       |                |        |                |
@@ -49,6 +49,22 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
               |.sRawLampMatrix |       |   .sLampMatrix |        |.sMatrixDataBuf1|
               |                |       |                |        |.sMatrixDataBuf2|
               +----------------+       +----------------+        +----------------+
+
+              The input data is        The brightness ma-        The DMA pushes the
+              sampled from the         trix is updated           prepared output buffer
+              74HC165 shift re-        based on the raw          data to the PIO FIFO.
+              gister and the raw       matrix data. The          The PIO simply outputs
+              matrix is updated.       output data is pre-       the data directly to
+                                       pared for the DMA         the associated GPIOs.
+                                       in two output buffers     The DMA waits for the
+                                       which are swapped         PIO to finish before
+                                       whenever a new data       pushing new data.
+                                       set has been prepared.
+                                       These buffers consist
+                                       of a full output pin
+                                       state for each PWM
+                                       frequency step
+                                       (ledFreq * pwmRes * NUM_COL).
 
 */
 
