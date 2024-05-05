@@ -78,6 +78,7 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include "afterglow.h"
 #include "config.h"
 #include "params.h"
+#include "display.h"
 
 
 //------------------------------------------------------------------------------
@@ -191,6 +192,9 @@ int main(void)
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
+    // i2c display
+    display_init();
+
     // configuration initialisation
     cfg_init();
     sLastDIPSwitch = cfg_dipSwitch();
@@ -236,6 +240,8 @@ int main(void)
 
     // enable a 1s watchdog
     watchdog_enable(1000, 1);
+
+    display_update();
 
     // Eternal loop
     while (true)
