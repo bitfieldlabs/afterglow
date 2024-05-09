@@ -1,4 +1,4 @@
-![afterglow](https://github.com/smyp/afterglow/blob/master/artwork/afterglow.png "Afterglow")
+![afterglow](https://github.com/smyp/afterglow/blob/master/artwork/afterglow_animated.svg "Afterglow")
 
 AFTERGLOW is a pinball machine extension board that aims at softening the hard lamp on/off transitions which are the consequence of replacing the original incandescent bulbs with LEDs. It works with Williams WPC, Williams System 11, Data East and probably also with Sega games.
 
