@@ -193,7 +193,7 @@ int main(void)
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
     // i2c display
-    display_init();
+    //display_init();
 
     // configuration initialisation
     cfg_init();
@@ -240,8 +240,6 @@ int main(void)
 
     // enable a 1s watchdog
     watchdog_enable(1000, 1);
-
-    display_update();
 
     // Eternal loop
     while (true)
