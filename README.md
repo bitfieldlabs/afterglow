@@ -10,6 +10,8 @@ The resampled signal is output via MOSFETs, allowing for direct connection of th
 
 Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detailed information and instructions.
 
+![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30.jpg "Afterglow PCB v3.0")
+
 ### Quick guide to the board revisions
 
 #### All in one
@@ -22,10 +24,3 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 
 #### Stern Whitestar (and possibly S.A.M.)
 * *PCB v2.1* Dedicated board which will only work with Stern Whitestar and possibly S.A.M. games
-
-### Pictures
-
-#### PCB v3.0
-![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30.jpg "Afterglow PCB v3.0")
-
-
