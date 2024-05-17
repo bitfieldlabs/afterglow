@@ -12,6 +12,8 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30.jpg "Afterglow PCB v3.0")
 
+While the effect is hard to catch on camera, here is an idea:
+
 https://github.com/bitfieldlabs/afterglow/assets/999857/e0f8f498-b257-4bd5-9cc5-9f1d212fedfd
 
 ### Quick guide to the board revisions
