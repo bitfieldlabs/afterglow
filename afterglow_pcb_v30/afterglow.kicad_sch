@@ -6,7 +6,7 @@
 	(paper "A3")
 	(title_block
 		(title "Afterglow")
-		(rev "3.0f")
+		(rev "3.0g")
 		(company "bitfield labs")
 	)
 	(lib_symbols
@@ -15553,7 +15553,7 @@
 		(uuid "013f0c2f-926e-4658-9446-983c7b50eaa5")
 	)
 	(label "D_SCL"
-		(at 181.61 262.255 0)
+		(at 181.61 264.795 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -16279,7 +16279,7 @@
 		(uuid "3395a434-f74c-4e92-9489-4f390b849720")
 	)
 	(label "D_SDA"
-		(at 181.61 264.795 0)
+		(at 181.61 262.255 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
