@@ -27874,6 +27874,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB" "C2897373"
+			(at 162.56 78.105 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(hide yes)
+			)
+		)
 		(pin "6"
 			(uuid "0988f2e2-0657-4226-ac4d-fe1e8f24d5d2")
 		)
@@ -33617,7 +33626,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" ""
+		(property "JLCPCB" "C18723054"
 			(at 214.63 111.76 0)
 			(effects
 				(font
@@ -33940,6 +33949,15 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB" "C2897373"
+			(at 171.45 78.105 0)
+			(effects
+				(font
+					(size 1.524 1.524)
 				)
 				(hide yes)
 			)
@@ -34665,7 +34683,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" ""
+		(property "JLCPCB" "C18723054"
 			(at 214.63 91.44 0)
 			(effects
 				(font
