@@ -27,7 +27,9 @@
 
 #include <stdio.h>
 
+#if DEBUG_OLED_I2C
 
 void display_init();
 void display_update();
 
+#endif

@@ -78,6 +78,9 @@
 // Turn debug output via serial on/off
 #define DEBUG_SERIAL 1
 
+// Use an i2c OLED screen for debugging display
+#define DEBUG_OLED_I2C 0
+
 // Afterglow RP2040 version number
 #define AFTERGLOW_RP2040_VERSION 300
 

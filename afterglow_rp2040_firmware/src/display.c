@@ -29,6 +29,8 @@
 #include "pico/stdlib.h"
 #include "ssd1306.h"
 
+#if DEBUG_OLED_I2C
+
 #include "hardware/i2c.h"
 #include "pindef.h"
 
@@ -110,3 +112,5 @@ void display_update()
 {
 
 }
+
+#endif // DEBUG_OLED_I2C

@@ -192,8 +192,10 @@ int main(void)
     gpio_put(AGPIN_D_SDA, false);
     gpio_set_dir(AGPIN_D_SDA, GPIO_OUT);
 
+#if DEBUG_OLED_I2C
     // i2c display
-    //display_init();
+    display_init();
+#endif
 
     // configuration initialisation
     cfg_init();
