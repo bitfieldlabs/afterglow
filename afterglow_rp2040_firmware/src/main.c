@@ -201,8 +201,6 @@ int main(void)
     display_init();
 #endif
 
-    record_init();
-
     // configuration initialisation
     cfg_init();
     sLastDIPSwitch = cfg_dipSwitch();
@@ -273,13 +271,6 @@ int main(void)
 void checkForConfigChanges()
 {
     AG_DIPSWITCH_t dipSwitch = cfg_dipSwitch();
-
-    // LED frequency configuration changes
-    if (dipSwitch.highLEDFreq != sLastDIPSwitch.highLEDFreq)
-    {
-        // reboot, the new configuration will be applied at startup
-        watchdog_reboot(0, 0, 0);
-    }
 
     // Pass-through configuration changes
     if (dipSwitch.passThrough != sLastDIPSwitch.passThrough)

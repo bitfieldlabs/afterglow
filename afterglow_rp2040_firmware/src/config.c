@@ -117,7 +117,7 @@ void cfg_updateDipSwitch(uint8_t rawBits)
             // test mode and real input may use different modes
             ag_setMode(AG_MODE_UNKNOWN);
         }
-        sDipSwitch.highLEDFreq = (rawBits & 0x02) ? true : false;
+        sDipSwitch.replayMode = (rawBits & 0x02) ? true : false;
         sDipSwitch.linearMap = (rawBits & 0x04) ? true : false;
         sDipSwitch.passThrough = (rawBits & 0x08) ? true : false;
     }

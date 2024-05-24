@@ -80,6 +80,14 @@ void lm_inputUpdate(uint32_t ttag)
     // sample the input data
     uint32_t dataIn = input_dataRead();
 
+    // in replay mode the lamp matrix data is replaced by recorded samples
+    if (cfg_dipSwitch().replayMode)
+    {
+        uint32_t replayData = record_replay();
+        dataIn &= ~0x0003ffff; // clear original lamp matrix bits
+        dataIn |= (replayData & 0x0003ffff);    // replace with replayed data
+    }
+
     // store to record buffer
     record_add(dataIn);
 
