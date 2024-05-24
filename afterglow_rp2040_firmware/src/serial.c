@@ -35,6 +35,7 @@
 #include "config.h"
 #include "def.h"
 #include "params.h"
+#include "record.h"
 
 
 //------------------------------------------------------------------------------
@@ -194,6 +195,13 @@ void serial_input()
         {
             // receive a new configuration
             serial_receiveCfg();
+        }
+
+        // recording
+        else if (strncmp(sCmd, AG_CMD_RECORD, 4) == 0)
+        {
+            // start a recording
+            record_start();
         }
 
         sCmdPos = 0;

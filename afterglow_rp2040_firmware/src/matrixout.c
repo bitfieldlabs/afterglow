@@ -41,6 +41,7 @@
 #include "params.h"
 #include "input.h"
 #include "pindef.h"
+#include "record.h"
 
 
 //------------------------------------------------------------------------------
@@ -79,6 +80,9 @@ static volatile uint32_t *pMatrixDataBufPrep = sMatrixDataBuf2;
 // maximum duration of matrix update
 static uint32_t sMaxDur = 0;
 
+// local copy of the recording buffer
+static uint32_t sRecordBufCopy[REC_RAMBUF_SIZE] = { 0 };
+
 
 //------------------------------------------------------------------------------
 // local functions
@@ -103,23 +107,35 @@ void matrixout_thread()
 
     if (!ds.passThrough)
     {
-        // Afterglow mdoe: matrix preparation thread
+        // Afterglow mode: matrix preparation thread
         while (true)
         {
             // wait until CPU0 triggers the data output preparation
-            const uint32_t *pkRawLM = (const uint32_t*)multicore_fifo_pop_blocking();
+            const uint32_t *pkData = (const uint32_t*)multicore_fifo_pop_blocking();
 
             // time is ticking
             uint64_t ts = to_us_since_boot(get_absolute_time());
 
-            // make a local copy of the raw map matrix
-            memcpy(sLampMatrixCopy, pkRawLM, sizeof(sLampMatrixCopy));
+            // in record mode this is actually a request to write data to flash
+            if (record_isrecdata((const uint8_t*)pkData))
+            {
+                // make a copy of the data
+                memcpy(sRecordBufCopy, pkData, sizeof(sRecordBufCopy));
 
-            // update the lamp brightness matrix based on the new raw matrix data
-            matrixout_updateLampMatrix(sLampMatrixCopy);
+                // write to flash
+                record_write_flash((const uint8_t*)sRecordBufCopy, sizeof(sRecordBufCopy));
+            }
+            else
+            {
+                // make a local copy of the raw map matrix
+                memcpy(sLampMatrixCopy, pkData, sizeof(sLampMatrixCopy));
 
-            // prepare the PIO buffer
-            matrixout_prepareData(&sLampMatrix[0][0]);
+                // update the lamp brightness matrix based on the new raw matrix data
+                matrixout_updateLampMatrix(sLampMatrixCopy);
+
+                // prepare the PIO buffer
+                matrixout_prepareData(&sLampMatrix[0][0]);
+            }
 
             // measure time
             uint64_t te = to_us_since_boot(get_absolute_time());

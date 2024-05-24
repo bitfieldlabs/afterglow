@@ -76,7 +76,7 @@
 #define ANTIGHOST_DURATION 20
 
 // Turn debug output via serial on/off
-#define DEBUG_SERIAL 1
+#define DEBUG_SERIAL 0
 
 // Use an i2c OLED screen for debugging display
 #define DEBUG_OLED_I2C 0

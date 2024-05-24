@@ -39,6 +39,7 @@
 #include "afterglow.h"
 #include "testmode.h"
 #include "input.h"
+#include "record.h"
 
 
 //------------------------------------------------------------------------------
@@ -78,6 +79,9 @@ void lm_inputUpdate(uint32_t ttag)
 
     // sample the input data
     uint32_t dataIn = input_dataRead();
+
+    // store to record buffer
+    record_add(dataIn);
 
     // process the DIP switch information (bits 19-23 of the input)
     // Bits 0-3: CFG1 - CFG4

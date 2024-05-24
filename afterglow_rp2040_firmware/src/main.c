@@ -79,6 +79,7 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include "config.h"
 #include "params.h"
 #include "display.h"
+#include "record.h"
 
 
 //------------------------------------------------------------------------------
@@ -107,7 +108,10 @@ bool sample_input(struct repeating_timer *t)
     if (sMatrixUpdateCounter == 0)
     {
         // send the current matrix state to the thread on CPU1
-        multicore_fifo_push_blocking((uint32_t)lm_rawLampMatrix());
+        if (!record_active())
+        {
+            multicore_fifo_push_blocking((uint32_t)lm_rawLampMatrix());
+        }
 
         // restart the update counter
         sMatrixUpdateCounter = SAMPLE_TO_UPDATE_RATIO;
@@ -196,6 +200,8 @@ int main(void)
     // i2c display
     display_init();
 #endif
+
+    record_init();
 
     // configuration initialisation
     cfg_init();
