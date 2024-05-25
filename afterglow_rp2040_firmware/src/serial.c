@@ -85,8 +85,8 @@ void serial_debug(uint32_t ttag)
 
         // configuration
         AG_DIPSWITCH_t ds = cfg_dipSwitch();
-        printf("cfg : %02x - tm %d lf %d map %s pt %d\n", cfg_lastDipSwitchValue(),
-            ds.testMode, ds.highLEDFreq ? 1000 : 400, ds.linearMap ? "lin" : "log",
+        printf("cfg : %02x - tm %d rp %d map %s pt %d\n", cfg_lastDipSwitchValue(),
+            ds.testMode, ds.replayMode ? 1 : 0, ds.linearMap ? "lin" : "log",
             ds.passThrough);
 
         // errors

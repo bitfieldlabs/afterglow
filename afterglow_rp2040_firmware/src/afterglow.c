@@ -30,6 +30,7 @@
 #include "lampmatrix.h"
 #include "pindef.h"
 #include "config.h"
+#include "record.h"
 
 
 //------------------------------------------------------------------------------
@@ -96,9 +97,17 @@ static void ag_updateStatusLED()
             // slow blinking
             gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 4) & 0x01) ? true : false);
             break;
+        case AG_STATUS_RECORDREADY:
+            // fast blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter % 8) < 2) ? true : false);
+            break;
+        case AG_STATUS_RECORD:
+            // faster blinking
+            gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 2) & 0x01) ? true : false);
+            break;
         case AG_STATUS_INVINPUT:
         default:
-            // fast blinking
+            // fastest blinking
             gpio_put(AGPIN_STAT_LED, ((sLedCounter >> 1) & 0x01) ? true : false);
     }
 
@@ -110,31 +119,41 @@ void ag_statusUpdate()
 {
     // determine the current status
     AG_DIPSWITCH_t ds = cfg_dipSwitch();
-    if (sMode == AG_MODE_UNKNOWN)
+    if (record_active())
+    {
+        sStatus = AG_STATUS_RECORD;
+    }
+    else if (ds.testMode && ds.replayMode)
+    {
+        sStatus = AG_STATUS_RECORDREADY;
+    }
+    else if (sMode == AG_MODE_UNKNOWN)
     {
         sStatus = AG_STATUS_INIT;
     }
-    else
+    else if (lm_invalidDataCounter() < INV_DATA_THRES)
     {
-        if (lm_invalidDataCounter() < INV_DATA_THRES)
+
+        if (ds.testMode)
         {
-            if (ds.testMode)
-            {
-                sStatus = AG_STATUS_TESTMODE;
-            }
-            else if (ds.passThrough)
-            {
-                sStatus = AG_STATUS_PASSTHROUGH;
-            }
-            else
-            {
-                sStatus = AG_STATUS_OK;
-            }
+            sStatus = AG_STATUS_TESTMODE;
+        }
+        else if (ds.replayMode)
+        {
+            sStatus = AG_STATUS_REPLAY;
+        }
+        else if (ds.passThrough)
+        {
+            sStatus = AG_STATUS_PASSTHROUGH;
         }
         else
         {
-            sStatus = AG_STATUS_INVINPUT;
+            sStatus = AG_STATUS_OK;
         }
+    }
+    else
+    {
+        sStatus = AG_STATUS_INVINPUT;
     }
 
     // every device needs a blinking LED

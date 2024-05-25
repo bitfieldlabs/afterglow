@@ -435,7 +435,7 @@ void matrixout_prepareBrightnessSteps()
             sLampMatrixStepsOn[c][r] = (uint32_t)((float)maxBr / numStepsOn);
             sLampMatrixStepsOff[c][r] = (uint32_t)((float)maxBr / numStepsOff);
 
-            printf("ST %d %d %lu %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixStepsOn[c][r], sLampMatrixStepsOff[c][r]);
+            //printf("ST %d %d %lu %lu %lu\n", c, r, sLampMatrixMaxBr[c][r], sLampMatrixStepsOn[c][r], sLampMatrixStepsOff[c][r]);
         }
     }
 }

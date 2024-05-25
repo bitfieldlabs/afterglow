@@ -117,7 +117,15 @@ void cfg_updateDipSwitch(uint8_t rawBits)
             // test mode and real input may use different modes
             ag_setMode(AG_MODE_UNKNOWN);
         }
-        sDipSwitch.replayMode = (rawBits & 0x02) ? true : false;
+        bool newReplaytMode = (rawBits & 0x02) ? true : false;
+        if (sDipSwitch.replayMode != newReplaytMode)
+        {
+            sDipSwitch.replayMode = newReplaytMode;
+
+            // reset the AG mode when the replay mode configuration changes -
+            // replay mode and real input may use different modes
+            ag_setMode(AG_MODE_UNKNOWN);
+        }
         sDipSwitch.linearMap = (rawBits & 0x04) ? true : false;
         sDipSwitch.passThrough = (rawBits & 0x08) ? true : false;
     }

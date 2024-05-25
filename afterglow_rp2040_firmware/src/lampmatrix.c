@@ -80,20 +80,21 @@ void lm_inputUpdate(uint32_t ttag)
     // sample the input data
     uint32_t dataIn = input_dataRead();
 
+    // read the current DIP switches status
+    AG_DIPSWITCH_t dipSwitch = cfg_dipSwitch();
+
     // in replay mode the lamp matrix data is replaced by recorded samples
-    if (cfg_dipSwitch().replayMode)
+    if (dipSwitch.replayMode && !record_active())
     {
         uint32_t replayData = record_replay();
         dataIn &= ~0x0003ffff; // clear original lamp matrix bits
         dataIn |= (replayData & 0x0003ffff);    // replace with replayed data
     }
 
-    // store to record buffer
-    record_add(dataIn);
-
     // process the DIP switch information (bits 19-23 of the input)
     // Bits 0-3: CFG1 - CFG4
     cfg_updateDipSwitch((uint8_t)((dataIn>>18) & 0x0f));
+    dipSwitch = cfg_dipSwitch();
 
     // extract the lamp matrix data (first 18 bits of the input)
     // Bits 0-7: column 1-8
@@ -101,10 +102,13 @@ void lm_inputUpdate(uint32_t ttag)
     uint32_t lmData = (dataIn & 0x0003ffff);
 
     // if in test mode, replace the lamp data with simulated input
-    if (cfg_dipSwitch().testMode)
+    if (dipSwitch.testMode && !dipSwitch.replayMode)
     {
         lmData = tm_testModeData(ttag);
     }
+
+    // store to record buffer
+    record_add(lmData);
 
     // check data consistency
     if (lmData == sLastData)

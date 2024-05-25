@@ -205,6 +205,13 @@ int main(void)
     cfg_init();
     sLastDIPSwitch = cfg_dipSwitch();
 
+    // Active test moe *and* replay mode indicate record mode -
+    // initialize recording storage
+    if (sLastDIPSwitch.testMode && sLastDIPSwitch.replayMode)
+    {
+        record_init();
+    }
+
     // parameters initialisation
     par_setDefault();
 
@@ -277,6 +284,15 @@ void checkForConfigChanges()
     {
         // reboot, the new mode will be applied at startup
         watchdog_reboot(0, 0, 0);
+    }
+
+    // check for record mode start
+    // (deactivating test mode while replay mode is on)
+    if (dipSwitch.replayMode && sLastDIPSwitch.replayMode &&
+        !dipSwitch.testMode && sLastDIPSwitch.testMode)
+    {
+        // start recording
+        record_start();
     }
 
     // Serial port configuration
