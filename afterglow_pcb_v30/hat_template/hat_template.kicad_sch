@@ -1274,7 +1274,7 @@
 			(uuid "333a4878-4bc5-4a55-b231-fed2f02ef81e")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "#PWR033")
 					(unit 1)
@@ -1339,7 +1339,7 @@
 			(uuid "91a52093-3f9b-4953-8ff8-1cc90e8ff1ef")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "#PWR035")
 					(unit 1)
@@ -1433,7 +1433,7 @@
 			(uuid "bf75cd4a-b7e3-4a22-b5c2-b242e556d7d2")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "J4")
 					(unit 1)
@@ -1498,7 +1498,7 @@
 			(uuid "e8299d6d-0c1f-43ce-8da8-52374c9959bb")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "#PWR028")
 					(unit 1)
@@ -1508,7 +1508,8 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 52.705 164.465 0)
+		(at 55.245 164.465 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1533,7 +1534,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1542,7 +1543,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1551,7 +1552,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1560,7 +1561,7 @@
 			)
 		)
 		(property "JLCPCB" "C92272"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -1587,7 +1588,7 @@
 			(uuid "8db62bcd-837a-4574-8e22-84ad898f75fd")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "J8")
 					(unit 1)
@@ -1680,7 +1681,7 @@
 			(uuid "f90d83c2-e2d7-4866-a8e5-79d0e6cc30e9")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "J5")
 					(unit 1)
@@ -1690,7 +1691,8 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 47.625 113.665 0)
+		(at 50.165 113.665 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1715,7 +1717,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical"
-			(at 47.625 113.665 0)
+			(at 50.165 113.665 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1724,7 +1726,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 47.625 113.665 0)
+			(at 50.165 113.665 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1733,7 +1735,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 47.625 113.665 0)
+			(at 50.165 113.665 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1742,7 +1744,7 @@
 			)
 		)
 		(property "JLCPCB" "C92272"
-			(at 47.625 113.665 0)
+			(at 50.165 113.665 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -1769,7 +1771,7 @@
 			(uuid "d6a4c3d3-7feb-42f8-9df0-82e580a3a93f")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "J7")
 					(unit 1)
@@ -1834,7 +1836,7 @@
 			(uuid "5dcece6d-b7b6-43e8-8aee-10c896af57e2")
 		)
 		(instances
-			(project "afterglow_pcb_v30_hat_template"
+			(project "hat_template"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
 					(reference "#PWR036")
 					(unit 1)
