@@ -1,18 +1,16 @@
 ![afterglow](https://github.com/smyp/afterglow/blob/master/artwork/afterglow_animated.svg "Afterglow")
 
-AFTERGLOW is a pinball machine extension board that aims at softening the hard lamp on/off transitions which are the consequence of replacing the original incandescent bulbs with LEDs. It works with Williams WPC, Williams System 11, Data East and probably also with Sega games.
+AFTERGLOW is a pinball machine extension board that aims at softening the hard lamp on/off transitions which are the consequence of replacing the original incandescent bulbs with LEDs. Reproducing the original light effects is a big part of preserving a pinball game's nostalgia.
 
-The brain of the board is a Arduino nano for the older board revisions and a RP2040 microprocessor for the new boards. It samples the original lamp matrix from the WPC Power Driver Board using two parallel to serial shift registers.
+It currently works with Williams WPC, Williams System 11, Data East and probably also with Sega games. The basic principle involves resampling of the original lamp matrix signals at a higher frequency. This allows for PWM LED dimming with additional brightness steps.
 
-The basic principle involves resampling of the original lamp matrix signals at a higher frequency. This allows for PWM LED dimming with additional brightness steps.
-
-The resampled signal is output via MOSFETs, allowing for direct connection of the pinball machine's lamp matrix.
+The resampled signal is output via MOSFETs, allowing for direct connection of your pinball machine's lamp matrix.
 
 Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detailed information and instructions.
 
 ![afterglow](https://github.com/smyp/afterglow/blob/master/docu/images/ag_30.jpg "Afterglow PCB v3.0")
 
-While the effect is hard to catch on camera, here is an idea:
+While the effect is hard to catch on camera, this video gives an idea:
 
 https://github.com/bitfieldlabs/afterglow/assets/999857/57093b11-0a40-46fb-a978-5d42df743db6
 
