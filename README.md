@@ -14,7 +14,7 @@ Make sure to check the ![wiki](https://github.com/smyp/afterglow/wiki) for detai
 
 While the effect is hard to catch on camera, here is an idea:
 
-https://github.com/bitfieldlabs/afterglow/assets/999857/e0f8f498-b257-4bd5-9cc5-9f1d212fedfd
+https://github.com/bitfieldlabs/afterglow/assets/999857/57093b11-0a40-46fb-a978-5d42df743db6
 
 ### Quick guide to the board revisions
 
