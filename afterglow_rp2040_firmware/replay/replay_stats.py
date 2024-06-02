@@ -138,11 +138,8 @@ def print_histogram(array):
 
 num_args=len(sys.argv)
 if (num_args<=3):
-    print(Fore.RED + "Usage: record_replay.py <binary recording file> <lamp column> <lamp row>")
+    print(Fore.RED + "Usage: record_replay.py <binary recording file> <lamp column> <lamp row>\nUse a for all columns and rows\n")
     sys.exit()
-
-evalCol = int(sys.argv[2])
-evalRow = int(sys.argv[3])
 
 mode = 0
 lastWord = 0;
@@ -183,13 +180,51 @@ with open(sys.argv[1], "rb") as f:
 
 print("%d updates done\n" % (num_updates))
 
-#print(np.sort(lm_ontimes[0][0]))
+################## PRINTOUT ################
+
+evalCol = -1
+if (sys.argv[2] != "a"):
+    evalCol = int(sys.argv[2])
+evalRow = -1
+if (sys.argv[3] != "a"):
+    evalRow = int(sys.argv[3])
+
+
+# get evaluation data
+if ((evalCol == -1) and (evalRow == -1)):
+    # entire matrix
+    ontimes = np.array([])
+    offtimes = np.array([])
+    for c in range(NUM_COL):
+        for r in range(NUM_ROW):
+            ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][r])))
+            offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][r])))
+elif (evalCol == -1):
+    # full row
+    ontimes = np.array([])
+    offtimes = np.array([])
+    for c in range(NUM_COL):
+        ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][evalRow])))
+        offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][evalRow])))
+elif (evalRow == -1):
+    # full column
+    ontimes = np.array([])
+    offtimes = np.array([])
+    for r in range(NUM_ROW):
+        ontimes = np.concatenate((ontimes, np.array(lm_ontimes[evalCol][r])))
+        offtimes = np.concatenate((offtimes, np.array(lm_offtimes[evalCol][r])))
+else:
+    ontimes = np.array(lm_ontimes[evalCol][evalRow])
+    offtimes = np.array(lm_offtimes[evalCol][evalRow])
+
+
+
+# HISTOGRAM
 
 print("Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
-ontimes = np.array(lm_ontimes[evalCol][evalRow])
-offtimes = np.array(lm_offtimes[evalCol][evalRow])
 print_histogram(ontimes)
 
+# SHORT ONTIME HISTOGRAMS
 
 offt_10 = []
 offt_20 = []
