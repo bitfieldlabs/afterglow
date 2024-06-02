@@ -19,13 +19,15 @@ ttag = 0
 
 # stats
 num_updates = 0
-lm_turnon_times = np.zeros((NUM_COL, NUM_ROW))
+lm_toggle_times = np.zeros((NUM_COL, NUM_ROW))
 lm_ontimes = np.empty((NUM_COL, NUM_ROW), dtype=object)
+lm_offtimes = np.empty((NUM_COL, NUM_ROW), dtype=object)
 
 #initialize
 for c in range(NUM_COL):
     for r in range(NUM_ROW):
         lm_ontimes[c, r] = []
+        lm_offtimes[c, r] = []
 
 
 ################################################################################
@@ -40,11 +42,15 @@ def count_set_bits(word):
 def update_lamp(c, r, state, t):
     # check for lamps turning on
     if (state and not lm[c][r]):
-        lm_turnon_times[c][r] = t
+        if (lm_toggle_times[c][r] > 0):
+            lm_offtimes[c][r].append((t - lm_toggle_times[c][r]) / 1000)
+        lm_toggle_times[c][r] = t
     # check for lamps turning off
     elif (not state and lm[c][r]):
         # store the ontime
-        lm_ontimes[c][r].append((t - lm_turnon_times[c][r]) / 1000)
+        if (lm_toggle_times[c][r] > 0):
+            lm_ontimes[c][r].append((t - lm_toggle_times[c][r]) / 1000)
+        lm_toggle_times[c][r] = t
     lm[c][r] = state
 
 def update_lamp_matrix(colData, rowData, mode, t):
@@ -178,5 +184,34 @@ with open(sys.argv[1], "rb") as f:
 print("%d updates done\n" % (num_updates))
 
 #print(np.sort(lm_ontimes[0][0]))
-print("Lamp ontime histogram for col %d row %d:\n" % (evalCol, evalRow))
-print_histogram(np.array(lm_ontimes[evalCol][evalRow]))
+
+print("Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
+ontimes = np.array(lm_ontimes[evalCol][evalRow])
+offtimes = np.array(lm_offtimes[evalCol][evalRow])
+print_histogram(ontimes)
+
+
+offt_10 = []
+offt_20 = []
+offt_30 = []
+i=0
+for ot in ontimes:
+    if (ot < 12):
+        offt_10.append(offtimes[i])
+    elif (ot < 22):
+        offt_20.append(offtimes[i])
+    elif (ot < 32):
+        offt_30.append(offtimes[i])
+    i += 1
+
+if (len(offt_10)>0):
+    print("\nOFFTIME patterns following 10ms ONTIME:\n")
+    print_histogram(np.array(offt_10))
+
+if (len(offt_20)>0):
+    print("\nOFFTIME patterns following 20ms ONTIME:\n")
+    print_histogram(np.array(offt_20))
+
+if (len(offt_30)>0):
+    print("\nOFFTIME patterns following 30ms ONTIME:\n")
+    print_histogram(np.array(offt_30))
