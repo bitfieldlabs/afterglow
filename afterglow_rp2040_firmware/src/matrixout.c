@@ -58,8 +58,10 @@ static dma_channel_config sDMAChanConfig;
 // The final lamp brightness matrix
 static uint32_t sLampMatrix[NUM_COL][NUM_ROW] = { 0 };
 
-// The final lamp ontime matrix
+// The final lamp on/off time matrix
 static uint32_t sLampMatrixOntime[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sLampMatrixOfftime[NUM_COL][NUM_ROW] = { 0 };
+static uint32_t sLampMatrixOffDelay[NUM_COL][NUM_ROW] = { 0 };
 
 // The lamp brightness steps matrix
 static uint32_t sLampMatrixStepsOn[NUM_COL][NUM_ROW] = { 0 };
@@ -99,6 +101,8 @@ void matrixout_thread()
     // initialize the data
     memset(sLampMatrix, 0, sizeof(sLampMatrix));
     memset(sLampMatrixOntime, 0, sizeof(sLampMatrixOntime));
+    memset(sLampMatrixOfftime, 0, sizeof(sLampMatrixOfftime));
+    memset(sLampMatrixOffDelay, 0, sizeof(sLampMatrixOffDelay));
 
     // prepare the brightness steps matrix
     matrixout_prepareBrightnessSteps();
@@ -379,18 +383,44 @@ void matrixout_updateLampMatrix(const uint32_t *pkRawLM)
                     }
                 }
                 sLampMatrixOntime[c][r] += pkPar->matrixUpdateIntMs;
+                sLampMatrixOfftime[c][r] = 0;
+                sLampMatrixOffDelay[c][r] = 0;
             }
             else
             {
-                // decrease brightness
-                if (sLampMatrix[c][r] > sLampMatrixStepsOff[c][r])
+
+                if (sLampMatrixOffDelay[c][r] > 0)
                 {
-                    sLampMatrix[c][r] -= sLampMatrixStepsOff[c][r];
+                    if (sLampMatrixOffDelay[c][r] > pkPar->matrixUpdateIntMs)
+                    {
+                        sLampMatrixOffDelay[c][r] -= pkPar->matrixUpdateIntMs;
+                    }
+                    else
+                    {
+                        sLampMatrixOffDelay[c][r] = 0;
+                    }
                 }
-                else
+                if ((sLampMatrixOfftime[c][r] == 0) &&
+                    (ag_mode() == AG_MODE_WHITESTAR) && (sLampMatrixOntime[c][r] < 32))
                 {
-                    sLampMatrix[c][r] = 0;
+                    // Turn lamps off with some delay to allow for dimming
+                    // with short on-times
+                    sLampMatrixOffDelay[c][r] = 22;
                 }
+
+                if (sLampMatrixOfftime[c][r] >= sLampMatrixOffDelay[c][r])
+                {
+                    // decrease brightness
+                    if (sLampMatrix[c][r] > sLampMatrixStepsOff[c][r])
+                    {
+                        sLampMatrix[c][r] -= sLampMatrixStepsOff[c][r];
+                    }
+                    else
+                    {
+                        sLampMatrix[c][r] = 0;
+                    }
+                }
+                sLampMatrixOfftime[c][r] += pkPar->matrixUpdateIntMs;
                 sLampMatrixOntime[c][r] = 0;
             }
             rowBit <<= 1;

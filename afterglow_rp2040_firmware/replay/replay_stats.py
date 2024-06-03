@@ -22,12 +22,14 @@ num_updates = 0
 lm_toggle_times = np.zeros((NUM_COL, NUM_ROW))
 lm_ontimes = np.empty((NUM_COL, NUM_ROW), dtype=object)
 lm_offtimes = np.empty((NUM_COL, NUM_ROW), dtype=object)
+lm_ontimes_tags = np.empty((NUM_COL, NUM_ROW), dtype=object)
 
 #initialize
 for c in range(NUM_COL):
     for r in range(NUM_ROW):
         lm_ontimes[c, r] = []
         lm_offtimes[c, r] = []
+        lm_ontimes_tags[c, r] = []
 
 
 ################################################################################
@@ -50,6 +52,7 @@ def update_lamp(c, r, state, t):
         # store the ontime
         if (lm_toggle_times[c][r] > 0):
             lm_ontimes[c][r].append((t - lm_toggle_times[c][r]) / 1000)
+            lm_ontimes_tags[c][r].append(t)
         lm_toggle_times[c][r] = t
     lm[c][r] = state
 
@@ -128,11 +131,13 @@ def print_histogram(array):
     max_count = counts.max()
     
     # Print the histogram
-    print("Ontime [ms] | Count | Histogram")
-    print("--------------------------")
+    print(Fore.BLACK + "Ontime [ms] | Count | Histogram")
+    print("-------------------------------")
     for value, count in zip(values, counts):
         bar = '#' * int((count / max_count) * 50)  # Scale the bar to a max of 50 characters
-        print(f"{value:11.1f} | {count:5} | {bar}")
+        #print(f"{value:11.1f} | {count:5} | {bar}")
+        print(Fore.BLACK + f"{value:11.1f} | {count:5} | ", end='')
+        print(Fore.BLUE + f"{bar}")
 
 ################################################################################
 
@@ -191,37 +196,38 @@ if (sys.argv[3] != "a"):
 
 
 # get evaluation data
+ontimes = np.array([])
+offtimes = np.array([])
+ontimetags = np.array([])
 if ((evalCol == -1) and (evalRow == -1)):
     # entire matrix
-    ontimes = np.array([])
-    offtimes = np.array([])
     for c in range(NUM_COL):
         for r in range(NUM_ROW):
             ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][r])))
+            ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[c][r])))
             offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][r])))
 elif (evalCol == -1):
     # full row
-    ontimes = np.array([])
-    offtimes = np.array([])
     for c in range(NUM_COL):
         ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][evalRow])))
+        ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[c][evalRow])))
         offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][evalRow])))
 elif (evalRow == -1):
     # full column
-    ontimes = np.array([])
-    offtimes = np.array([])
     for r in range(NUM_ROW):
         ontimes = np.concatenate((ontimes, np.array(lm_ontimes[evalCol][r])))
+        ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[evalCol][r])))
         offtimes = np.concatenate((offtimes, np.array(lm_offtimes[evalCol][r])))
 else:
     ontimes = np.array(lm_ontimes[evalCol][evalRow])
     offtimes = np.array(lm_offtimes[evalCol][evalRow])
+    ontimetags = np.array(lm_ontimes_tags[evalCol][evalRow])
 
 
 
 # HISTOGRAM
 
-print("Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
+print(Fore.BLACK + "Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
 print_histogram(ontimes)
 
 # SHORT ONTIME HISTOGRAMS
@@ -231,6 +237,8 @@ offt_20 = []
 offt_30 = []
 i=0
 for ot in ontimes:
+    if (i >= (len(offtimes) -1)):
+        break
     if (ot < 12):
         offt_10.append(offtimes[i])
     elif (ot < 22):
@@ -240,13 +248,29 @@ for ot in ontimes:
     i += 1
 
 if (len(offt_10)>0):
-    print("\nOFFTIME patterns following 10ms ONTIME:\n")
+    print(Fore.BLACK + "\nOFFTIME patterns following 10ms ONTIME:\n")
     print_histogram(np.array(offt_10))
 
 if (len(offt_20)>0):
-    print("\nOFFTIME patterns following 20ms ONTIME:\n")
+    print(Fore.BLACK + "\nOFFTIME patterns following 20ms ONTIME:\n")
     print_histogram(np.array(offt_20))
 
 if (len(offt_30)>0):
-    print("\nOFFTIME patterns following 30ms ONTIME:\n")
+    print(Fore.BLACK + "\nOFFTIME patterns following 30ms ONTIME:\n")
     print_histogram(np.array(offt_30))
+
+
+# Pulsing PATTERN
+print(Fore.BLACK + "\nFirst pulsing pattern sequence:\n")
+pulse = False
+i = 0
+for ot in ontimes:
+    if (ot < 62):
+        pulse = True
+        #print("T %.1f On %.1f -> Off %.1f" % (ontimetags[i]/1000, ot, offtimes[i]))
+        print(Fore.BLACK + "T %.1f " % (ontimetags[i]/1000), end='')
+        print(Fore.GREEN + "On %.1f " % ot, end='')
+        print(Fore.RED + "-> Off %.1f " % offtimes[i])
+        if (offtimes[i] > 500):
+            print("-----")
+    i += 1
