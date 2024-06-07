@@ -77,7 +77,7 @@
 #define DEBUG_SERIAL 1
 
 // Use an i2c OLED screen for debugging display
-#define DEBUG_OLED_I2C 0
+#define DEBUG_OLED_I2C 1
 
 // Afterglow RP2040 version number
 #define AFTERGLOW_RP2040_VERSION 300
