@@ -71,6 +71,7 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hardware/watchdog.h"
+#include "hardware/adc.h"
 #include "pindef.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
@@ -201,6 +202,10 @@ int main(void)
     display_init();
 #endif
 
+    // ADC initialisation
+    adc_init();
+    adc_select_input(0); // GPIO26 -> current measurement
+
     // configuration initialisation
     cfg_init();
     sLastDIPSwitch = cfg_dipSwitch();
@@ -215,6 +220,18 @@ int main(void)
     // parameters initialisation
     par_setDefault();
 
+    // lamp matrix initialisation
+    lm_init();
+
+    // try to identify incandescent lamps and shorts
+    if (sLastDIPSwitch.smartMode)
+    {
+        lm_detect_inc();
+    }
+
+    // i2c display
+    display_init();
+
     if (!sLastDIPSwitch.passThrough)
     {
         // set up the matrix output DMA and PIO
@@ -226,9 +243,6 @@ int main(void)
 
     // prepare the brightness steps
     matrixout_prepareBrightnessSteps();
-
-    // lamp matrix initialisation
-    lm_init();
 
     // start a thread on CPU1, used either for matrix data preparation
     // or for full-speed pass-through

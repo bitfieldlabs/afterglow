@@ -219,7 +219,7 @@ void matrixout_prepareData(const uint32_t *pkLM)
                 uint8_t rb = (uint8_t)(*pkLM >> 24);
 
                 // map the brightness value
-                if (!dipSwitch.linearMap)
+                if (true)
                 {
                     // use the brightness map
                     const AG_PARAMS_t *pkPar = par_params();

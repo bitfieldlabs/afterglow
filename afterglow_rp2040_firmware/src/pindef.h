@@ -95,6 +95,9 @@
                             (1 << AGPIN_RO5) | (1 << AGPIN_RO6) | (1 << AGPIN_RO7) | (1 << AGPIN_RO8) | \
                             (1 << AGPIN_RO9) | (1 << AGPIN_RO10))
 
+#define AGPIN_OUT_COL_MASK ((1 << AGPIN_CO1) | (1 << AGPIN_CO2) | (1 << AGPIN_CO3) | (1 << AGPIN_CO4) | \
+                            (1 << AGPIN_CO5) | (1 << AGPIN_CO6) | (1 << AGPIN_CO7) | (1 << AGPIN_CO8))
+
 
 extern const uint8_t skAGColOutPins[NUM_COL_PINS];
 extern const uint8_t skAGRowOutPins[NUM_ROW_PINS];

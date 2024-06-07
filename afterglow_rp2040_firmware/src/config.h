@@ -72,7 +72,7 @@ typedef struct AG_DIPSWITCH_s
     bool testMode;          // test mode
     bool passThrough;       // pass through mode (input replicated to output)
     bool replayMode;        // replay mode
-    bool linearMap;         // linear brightness map (instead of log)
+    bool smartMode;         // smart mode
 } AG_DIPSWITCH_t;
 
 // afterglow configuration data definition

@@ -85,9 +85,8 @@ void serial_debug(uint32_t ttag)
 
         // configuration
         AG_DIPSWITCH_t ds = cfg_dipSwitch();
-        printf("cfg : %02x - tm %d rp %d map %s pt %d\n", cfg_lastDipSwitchValue(),
-            ds.testMode, ds.replayMode ? 1 : 0, ds.linearMap ? "lin" : "log",
-            ds.passThrough);
+        printf("cfg : %02x - tm %d rp %d sm %d pt %d\n", cfg_lastDipSwitchValue(),
+            ds.testMode, ds.replayMode ? 1 : 0, ds.smartMode, ds.passThrough);
 
         // errors
         printf("err : inv %ld\n", lm_invalidDataCounter());
@@ -116,6 +115,8 @@ void serial_debug(uint32_t ttag)
         const AG_PARAMS_t *pkPar = par_params();
         printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDurAndClear(), INPUT_SAMPLE_INT,
             matrixout_updateMaxDurAndClear(), pkPar->matrixUpdateInt);
+
+        lm_detect_print();
 
         sLastDebugTTag = m;
     }

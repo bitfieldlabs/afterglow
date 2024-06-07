@@ -126,7 +126,7 @@ void cfg_updateDipSwitch(uint8_t rawBits)
             // replay mode and real input may use different modes
             ag_setMode(AG_MODE_UNKNOWN);
         }
-        sDipSwitch.linearMap = (rawBits & 0x04) ? true : false;
+        sDipSwitch.smartMode = (rawBits & 0x04) ? true : false;
         sDipSwitch.passThrough = (rawBits & 0x08) ? true : false;
     }
     sLastDipSwitchValue = rawBits;

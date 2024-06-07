@@ -53,3 +53,8 @@ const uint32_t *lm_rawLampMatrix();
 
 // Query the input handling maximum duration and reset to zero [us]
 uint32_t lm_inputMaxDurAndClear();
+
+// Auto-detect incandescents and shorts
+void lm_detect_inc();
+void lm_detect_print();
+
