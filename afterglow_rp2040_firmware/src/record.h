@@ -42,3 +42,4 @@ bool record_add(uint32_t data);
 bool record_write_flash(const uint8_t *pkData, uint32_t size);
 bool record_isrecdata(const uint8_t *pkData);
 uint32_t record_replay();
+uint32_t record_replay_size();

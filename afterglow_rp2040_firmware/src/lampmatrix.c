@@ -88,7 +88,7 @@ void lm_inputUpdate(uint32_t ttag)
     AG_DIPSWITCH_t dipSwitch = cfg_dipSwitch();
 
     // in replay mode the lamp matrix data is replaced by recorded samples
-    if (dipSwitch.replayMode && !record_active())
+    if (dipSwitch.replayMode && !record_active() && (record_replay_size() > 0))
     {
         uint32_t replayData = record_replay();
         dataIn &= ~0x0003ffff; // clear original lamp matrix bits

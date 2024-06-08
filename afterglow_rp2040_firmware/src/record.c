@@ -25,6 +25,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include <string.h>
 #include "record.h"
 #include "pico/stdlib.h"
 #include "hardware/flash.h"
@@ -34,6 +35,12 @@
 //------------------------------------------------------------------------------
 // Recording storage definitions
 
+// recording magic marker
+#define REC_MAGIC 0x50524741
+
+// recording header size [bytes]
+#define REC_HEADER_SIZE 8
+
 // Use a flash region 1Mb from the flash start for storing the configuration
 #define REC_FLASH_OFFSET (1000 * 1024)
 
@@ -42,6 +49,13 @@
 
 // Pointer to the record storage
 const uint8_t *pkFlashRec = (const uint8_t *) (XIP_BASE + REC_FLASH_OFFSET);
+
+// header information
+typedef struct REC_HEADER_s
+{
+    uint32_t magic;     // magic word
+    uint32_t size;      // recording size [bytes]
+} REC_HEADER_t;
 
 
 //------------------------------------------------------------------------------
@@ -74,10 +88,23 @@ void record_init()
 void record_start()
 {
     sRecordActive = true;
-    sRamBufPos = 0;
+    sRamBufPos = REC_HEADER_SIZE;
     sFlashPos = 0;
 
+    // write the header information into the first buffer
+    REC_HEADER_t header;
+    header.magic = REC_MAGIC;
+    header.size = REC_FLASH_SIZE;
+    memcpy(sDataBuffer, &header, REC_HEADER_SIZE);
+
     printf("REC start\n");
+}
+
+//------------------------------------------------------------------------------
+uint32_t record_replay_size()
+{
+    const REC_HEADER_t *pkRecHead = (const REC_HEADER_t *)pkFlashRec;
+    return (pkRecHead->magic == REC_MAGIC) ? pkRecHead->size : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -91,7 +118,7 @@ void record_stop()
 uint32_t record_replay()
 {
     // return the current data record
-    uint32_t rec = *((const uint32_t*)(pkFlashRec + sReplayPos));
+    uint32_t rec = *((const uint32_t*)(pkFlashRec + REC_HEADER_SIZE + sReplayPos));
 
     if (sReplayPos == 0)
     {
@@ -100,7 +127,7 @@ uint32_t record_replay()
 
     // advance to next record
     sReplayPos += sizeof(uint32_t);
-    if (sReplayPos >= REC_FLASH_SIZE)
+    if (sReplayPos >= record_replay_size())
     {
         // rewind
         sReplayPos = 0;
