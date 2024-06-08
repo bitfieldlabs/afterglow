@@ -229,9 +229,6 @@ int main(void)
         lm_detect_inc();
     }
 
-    // i2c display
-    display_init();
-
     if (!sLastDIPSwitch.passThrough)
     {
         // set up the matrix output DMA and PIO
@@ -282,6 +279,9 @@ int main(void)
 
         // status update
         ag_statusUpdate();
+
+        // display update
+        display_update();
 
         // time for a nap
         sleep_ms(50);
