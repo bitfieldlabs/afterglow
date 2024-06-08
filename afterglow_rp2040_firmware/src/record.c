@@ -108,6 +108,13 @@ uint32_t record_replay_size()
 }
 
 //------------------------------------------------------------------------------
+uint32_t replay_percentage()
+{
+    uint32_t p = ((100 * sReplayPos) / record_replay_size());
+    return p;
+}
+
+//------------------------------------------------------------------------------
 void record_stop()
 {
     sRecordActive = false;

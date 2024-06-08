@@ -35,11 +35,13 @@ typedef enum DISPLAY_MODES_e
 {
     DISPLAY_MODE_BLANK = 0,
     DISPLAY_MODE_LOGO,
-    DISPLAY_MODE_LAMPDETECT
+    DISPLAY_MODE_LAMPDETECT,
+    DISPLAY_MODE_REPLAY
 } DISPLAY_MODES_t;
 
 
 void display_init();
 void display_update();
+void display_setMode(DISPLAY_MODES_t mode);
 
 #endif

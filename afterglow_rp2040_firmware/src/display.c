@@ -35,6 +35,7 @@
 #include "pindef.h"
 #include "afterglow.h"
 #include "config.h"
+#include "record.h"
 
 
 // bitfield labs logo
@@ -320,8 +321,14 @@ const uint8_t BMSPA_font[] = {
 // local variables
 
 ssd1306_t sDisp;
-DISPLAY_MODES_t mainMode = DISPLAY_MODE_LOGO;
+DISPLAY_MODES_t sMainMode = DISPLAY_MODE_LOGO;
 
+
+//------------------------------------------------------------------------------
+void display_setMode(DISPLAY_MODES_t mode)
+{
+    sMainMode = mode;
+}
 
 //------------------------------------------------------------------------------
 void display_init()
@@ -376,8 +383,6 @@ static void display_status()
     {
         ssd1306_draw_string_with_font(&sDisp, 28, 4, 1, BMSPA_font, ag_st_str[st]);
     }
-
-    ssd1306_show(&sDisp);
 }
 
 //------------------------------------------------------------------------------
@@ -387,21 +392,28 @@ void display_update()
     display_status();
 
     // main display
-    switch (mainMode)
+    switch (sMainMode)
     {
         // blank
-        case DISPLAY_MODE_BLANK: ssd1306_clear_square(&sDisp, 16, 0, 128, 48); break;
+        case DISPLAY_MODE_BLANK: ssd1306_clear_square(&sDisp, 0, 16, 128, 48); break;
         
         // logo (already loaded at start)
         case DISPLAY_MODE_LOGO: break;
 
         // lamp detection results
-        case DISPLAY_MODE_LAMPDETECT:
+        case DISPLAY_MODE_REPLAY:
         {
-
+            // clear
+            ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+            ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "Replay");
+            uint32_t w = (98 * replay_percentage() / 100);
+            ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
+            ssd1306_draw_square(&sDisp, 16, 50, w, 4);
         }
         break;
     }
+
+    ssd1306_show(&sDisp);
 }
 
 #endif // DEBUG_OLED_I2C
