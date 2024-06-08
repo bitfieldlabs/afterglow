@@ -27,6 +27,7 @@
 
 #include "display.h"
 #include "pico/stdlib.h"
+#include "pico/time.h"
 #include "ssd1306.h"
 
 #if DEBUG_OLED_I2C
@@ -36,6 +37,13 @@
 #include "afterglow.h"
 #include "config.h"
 #include "record.h"
+
+
+//------------------------------------------------------------------------------
+// local definitions
+
+// Display update interval [us]
+#define DISPLAY_UPDATE_INT (200000)
 
 
 // bitfield labs logo
@@ -322,6 +330,7 @@ const uint8_t BMSPA_font[] = {
 
 ssd1306_t sDisp;
 DISPLAY_MODES_t sMainMode = DISPLAY_MODE_LOGO;
+uint64_t sLastUpdate = 0;
 
 
 //------------------------------------------------------------------------------
@@ -388,32 +397,52 @@ static void display_status()
 //------------------------------------------------------------------------------
 void display_update()
 {
-    // status header
-    display_status();
+    // keep track of time
+    uint64_t ts = to_us_since_boot(get_absolute_time());
 
-    // main display
-    switch (sMainMode)
+    // update the display at low rate only
+    if ((ts - sLastUpdate) > DISPLAY_UPDATE_INT)
     {
-        // blank
-        case DISPLAY_MODE_BLANK: ssd1306_clear_square(&sDisp, 0, 16, 128, 48); break;
-        
-        // logo (already loaded at start)
-        case DISPLAY_MODE_LOGO: break;
-
-        // lamp detection results
-        case DISPLAY_MODE_REPLAY:
+        // choose a display mode
+        if (ts > 3000000)
         {
-            // clear
-            ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
-            ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "Replay");
-            uint32_t w = (98 * replay_percentage() / 100);
-            ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
-            ssd1306_draw_square(&sDisp, 16, 50, w, 4);
-        }
-        break;
-    }
+            if (cfg_dipSwitch().replayMode)
+            {
+                display_setMode(DISPLAY_MODE_REPLAY);
+            }
+            }
 
-    ssd1306_show(&sDisp);
+        // status header
+        display_status();
+
+        // main display
+        switch (sMainMode)
+        {
+            // blank
+            case DISPLAY_MODE_BLANK: ssd1306_clear_square(&sDisp, 0, 16, 128, 48); break;
+            
+            // logo (already loaded at start)
+            case DISPLAY_MODE_LOGO: break;
+
+            // lamp detection results
+            case DISPLAY_MODE_REPLAY:
+            {
+                // clear
+                ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+                ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "Replay");
+                uint32_t w = (98 * replay_percentage() / 100);
+                ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
+                ssd1306_draw_square(&sDisp, 16, 50, w, 4);
+            }
+            break;
+
+            default: break;
+        }
+
+        ssd1306_show(&sDisp);
+
+        sLastUpdate = ts;
+    }
 }
 
 #endif // DEBUG_OLED_I2C

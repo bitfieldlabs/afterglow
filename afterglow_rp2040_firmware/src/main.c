@@ -266,7 +266,6 @@ int main(void)
     watchdog_enable(1000, 1);
 
     // Eternal loop
-    uint32_t loopCounter = 0;
     while (true)
     {
         // kick the dog
@@ -282,23 +281,10 @@ int main(void)
         ag_statusUpdate();
 
         // display update
-        if (loopCounter % 2)
-        {
-            // show the startup logo for some time
-            if (loopCounter > 50)
-            {
-                if (cfg_dipSwitch().replayMode)
-                {
-                    display_setMode(DISPLAY_MODE_REPLAY);
-                }
-            }
-            display_update();
-        }
+        display_update();
 
         // time for a nap
         sleep_ms(50);
-
-        loopCounter++;
     }
 }
 
