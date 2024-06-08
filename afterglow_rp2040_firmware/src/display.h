@@ -36,12 +36,16 @@ typedef enum DISPLAY_MODES_e
     DISPLAY_MODE_BLANK = 0,
     DISPLAY_MODE_LOGO,
     DISPLAY_MODE_LAMPDETECT,
-    DISPLAY_MODE_REPLAY
+    DISPLAY_MODE_REPLAY,
+    DISPLAY_MODE_RECORDREADY,
+    DISPLAY_MODE_RECORD,
+    DISPLAY_MODE_NOTICE
 } DISPLAY_MODES_t;
 
 
 void display_init();
 void display_update();
 void display_setMode(DISPLAY_MODES_t mode);
+void display_setNotice(const char *pkStr1, const char *pkStr2, const char *pkStr3, uint32_t duration);
 
 #endif

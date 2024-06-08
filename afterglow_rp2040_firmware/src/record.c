@@ -30,6 +30,7 @@
 #include "pico/stdlib.h"
 #include "hardware/flash.h"
 #include "pico/multicore.h"
+#include "display.h"
 
 
 //------------------------------------------------------------------------------
@@ -77,11 +78,20 @@ void record_init()
 {
     // erase the record sectors
     sRecordInitStarted =  true;
+    display_setNotice("RECORD", "Erasing flash", "...", 2000000);
+    display_update();
     flash_range_erase(REC_FLASH_OFFSET, REC_FLASH_SIZE);
     sRecordInit = true;
     sRecordInitStarted = false;
+    display_setNotice("", "", "", 0);
 
     printf("REC init\n");
+}
+
+//------------------------------------------------------------------------------
+bool record_ready()
+{
+    return sRecordInit;
 }
 
 //------------------------------------------------------------------------------
@@ -98,6 +108,13 @@ void record_start()
     memcpy(sDataBuffer, &header, REC_HEADER_SIZE);
 
     printf("REC start\n");
+}
+
+//------------------------------------------------------------------------------
+uint32_t record_percentage()
+{
+    uint32_t p = sRecordActive ? ((sFlashPos * 100) / REC_FLASH_SIZE): 0;
+    return p;
 }
 
 //------------------------------------------------------------------------------

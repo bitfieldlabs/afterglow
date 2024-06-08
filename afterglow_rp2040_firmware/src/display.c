@@ -25,6 +25,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
+#include <string.h>
 #include "display.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
@@ -331,12 +332,27 @@ const uint8_t BMSPA_font[] = {
 ssd1306_t sDisp;
 DISPLAY_MODES_t sMainMode = DISPLAY_MODE_LOGO;
 uint64_t sLastUpdate = 0;
+char sNotice1[64] = "\0";
+char sNotice2[64] = "\0";
+char sNotice3[64] = "\0";
+uint64_t sNoticeStartTime = 0;
+uint32_t sNoticeDuration = 0;
 
 
 //------------------------------------------------------------------------------
 void display_setMode(DISPLAY_MODES_t mode)
 {
     sMainMode = mode;
+}
+
+//------------------------------------------------------------------------------
+void display_setNotice(const char *pkStr1, const char *pkStr2, const char *pkStr3, uint32_t duration)
+{
+    strncpy(sNotice1, pkStr1, 64);
+    strncpy(sNotice2, pkStr2, 64);
+    strncpy(sNotice3, pkStr3, 64);
+    sNoticeStartTime = to_us_since_boot(get_absolute_time());
+    sNoticeDuration = duration;
 }
 
 //------------------------------------------------------------------------------
@@ -408,10 +424,28 @@ void display_update()
         {
             if (cfg_dipSwitch().replayMode)
             {
-                display_setMode(DISPLAY_MODE_REPLAY);
+                if (cfg_dipSwitch().testMode && record_ready())
+                {
+                    display_setMode(DISPLAY_MODE_RECORDREADY);
+                }
+                else
+                {
+                    display_setMode(record_active() ? DISPLAY_MODE_RECORD : DISPLAY_MODE_REPLAY);
+                }
             }
-            }
+        }
 
+        // check for active notice messages
+        if ((sNoticeDuration > 0) && ((ts - sNoticeStartTime) < sNoticeDuration))
+        {
+            display_setMode(DISPLAY_MODE_NOTICE);
+        }
+        else
+        {
+            // notice done
+            sNoticeDuration = 0;
+        }
+        
         // status header
         display_status();
 
@@ -424,7 +458,7 @@ void display_update()
             // logo (already loaded at start)
             case DISPLAY_MODE_LOGO: break;
 
-            // lamp detection results
+            // replay mode
             case DISPLAY_MODE_REPLAY:
             {
                 // clear
@@ -436,9 +470,43 @@ void display_update()
             }
             break;
 
+            // record ready
+            case DISPLAY_MODE_RECORDREADY:
+            {
+                // clear
+                ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+                ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "RECORD");
+                ssd1306_draw_string_with_font(&sDisp, 16, 40, 2, BMSPA_font, "READY");
+            }
+            break;
+
+            // record mode
+            case DISPLAY_MODE_RECORD:
+            {
+                // clear
+                ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+                ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "RECORD");
+                uint32_t w = (98 * record_percentage() / 100);
+                ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
+                ssd1306_draw_square(&sDisp, 16, 50, w, 4);
+            }
+            break;
+
+            // notice
+            case DISPLAY_MODE_NOTICE:
+            {
+                // clear
+                ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+                ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, sNotice1);
+                ssd1306_draw_string_with_font(&sDisp, 16, 36, 1, BMSPA_font, sNotice2);
+                ssd1306_draw_string_with_font(&sDisp, 16, 52, 1, BMSPA_font, sNotice3);
+            }
+            break;
+
             default: break;
         }
 
+        // send the update to the display
         ssd1306_show(&sDisp);
 
         sLastUpdate = ts;
