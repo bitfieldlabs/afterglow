@@ -81,6 +81,7 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include "params.h"
 #include "display.h"
 #include "record.h"
+#include "smart.h"
 
 
 //------------------------------------------------------------------------------
@@ -226,7 +227,7 @@ int main(void)
     // try to identify incandescent lamps and shorts
     if (sLastDIPSwitch.smartMode)
     {
-        lm_detect_inc();
+        smart_detect_lamps();
     }
 
     if (!sLastDIPSwitch.passThrough)

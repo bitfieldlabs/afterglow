@@ -25,32 +25,20 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-#include <stdio.h> 
+#include "stdlib.h"
 
 
-//------------------------------------------------------------------------------
-// Setup
+typedef enum LAMP_TYPE_e
+{
+    LAMP_TYPE_UNKNOWN = 0,
+    LAMP_TYPE_NONE,         // no lamp
+    LAMP_TYPE_LED,          // LED
+    LAMP_TYPE_INC,          // incandescent
+    LAMP_TYPE_SHORT         // short detected
+} LAMP_TYPE_t;
 
-#define MODE_DETECTION_THRESH      62     // Number of successful mode identifications need for mode detection
 
-
-//------------------------------------------------------------------------------
-
-// Initialize the afterglow engine
-void lm_init();
-
-// Sample and process the input pinball lamp matrix
-void lm_inputUpdate(uint32_t ttag);
-
-// Get the last lamp matrix input data
-uint32_t lm_lastInputData();
-
-// Get the invalid input data counter value
-uint32_t lm_invalidDataCounter();
-
-// Get a pointer to the raw lamp matrix data
-const uint32_t *lm_rawLampMatrix();
-
-// Query the input handling maximum duration and reset to zero [us]
-uint32_t lm_inputMaxDurAndClear();
-
+// Auto-detect incandescents and shorts
+void smart_detect_lamps();
+void smart_detect_print();
+LAMP_TYPE_t smart_lampType(uint32_t col, uint32_t row);

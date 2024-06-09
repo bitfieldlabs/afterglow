@@ -36,6 +36,7 @@
 #include "def.h"
 #include "params.h"
 #include "record.h"
+#include "smart.h"
 
 
 //------------------------------------------------------------------------------
@@ -116,7 +117,7 @@ void serial_debug(uint32_t ttag)
         printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDurAndClear(), INPUT_SAMPLE_INT,
             matrixout_updateMaxDurAndClear(), pkPar->matrixUpdateInt);
 
-        lm_detect_print();
+        smart_detect_print();
 
         sLastDebugTTag = m;
     }

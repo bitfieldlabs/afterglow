@@ -58,9 +58,6 @@ static uint32_t sWhitestarModeCounter = 0;
 static uint32_t sInvalidDataCounter = 0;
 static uint32_t sMaxDur = 0;
 
-static uint32_t sLampCurrent[NUM_COL][NUM_ROW] = { 0 };
-static uint32_t sLampCurrentMeas[NUM_COL][NUM_ROW] = { 0 };
-
 
 //------------------------------------------------------------------------------
 // function prototypes
@@ -330,60 +327,3 @@ uint32_t lm_inputMaxDurAndClear()
     return maxDur;
 }
 
-//------------------------------------------------------------------------------
-void lm_detect_inc()
-{
-    // quickly cycle through each lamp and measure the current
-
-    // cycle through all rows
-    for (uint32_t r=0; r<NUM_ROW; r++)
-    {
-        // disable all output
-        gpio_put_masked(AGPIN_OUT_ALL_MASK, false);
-
-        // enable the row
-        gpio_put(skAGRowOutPins[r], true);
-
-        // repeat each row a few times to properly light the lamp
-        for (uint32_t i=0; i<10; i++)
-        {
-            // light each lamp for 1ms
-            for (uint32_t c=0; c<NUM_COL; c++)
-            {
-                // disable all columns for a short time (anti-ghosting)
-                gpio_put_masked(AGPIN_OUT_COL_MASK, false);
-                sleep_us(ANTIGHOST_DURATION);
-
-                // enable the column
-                gpio_put(skAGColOutPins[c], true);
-
-                // measure the current for a millisecond
-                uint64_t ts = to_us_since_boot(get_absolute_time());
-                while ((to_us_since_boot(get_absolute_time()) - ts) < 1000)
-                {
-                    sLampCurrent[c][r] += adc_read();
-                    sLampCurrentMeas[c][r]++;
-                }
-
-                // disable all columns again
-                gpio_put_masked(AGPIN_OUT_COL_MASK, false);
-            }
-        }
-    }
-
-    // disable all output again
-    gpio_put_masked(AGPIN_OUT_ALL_MASK, false);
-}
-
-//------------------------------------------------------------------------------
-void lm_detect_print()
-{
-    // output highest and lowest current
-    for (uint32_t c=0; c<NUM_COL; c++)
-    {
-        for (uint32_t r=0; r<NUM_ROW; r++)
-        {
-            printf("CR %lu %lu %lu - %lu\n", c, r, sLampCurrentMeas[c][r], sLampCurrent[c][r]);
-        }
-    }
-}
