@@ -32,6 +32,7 @@ typedef enum LAMP_TYPE_e
 {
     LAMP_TYPE_UNKNOWN = 0,
     LAMP_TYPE_NONE,         // no lamp
+    LAMP_TYPE_TINYLED,      // small LED (debug hat)
     LAMP_TYPE_LED,          // LED
     LAMP_TYPE_INC,          // incandescent
     LAMP_TYPE_SHORT         // short detected

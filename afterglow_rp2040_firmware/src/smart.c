@@ -95,12 +95,13 @@ void smart_detect_lamps()
     {
         for (uint32_t r=0; r<NUM_ROW; r++)
         {
-            if (sLampCurrentMeas[c][r])
+            if (sLampCurrentMeas[c][r] > 0)
             {
                 uint32_t v = (sLampCurrent[c][r] / sLampCurrentMeas[c][r]);
                 if (v > 4090) sLampTypes[c][r] = LAMP_TYPE_SHORT;
                 else if (v > 3400) sLampTypes[c][r] = LAMP_TYPE_INC;
-                else if (v > 200) sLampTypes[c][r] = LAMP_TYPE_LED;
+                else if (v > 400) sLampTypes[c][r] = LAMP_TYPE_LED;
+                else if (v > 200) sLampTypes[c][r] = LAMP_TYPE_TINYLED;
                 else sLampTypes[c][r] = LAMP_TYPE_NONE;
             }
         }

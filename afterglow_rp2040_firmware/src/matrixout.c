@@ -42,6 +42,7 @@
 #include "input.h"
 #include "pindef.h"
 #include "record.h"
+#include "smart.h"
 
 
 //------------------------------------------------------------------------------
@@ -449,13 +450,30 @@ void matrixout_prepareBrightnessSteps()
             uint32_t gdOn = (pkCfg->lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE) * 1000;           
             uint32_t gdOff = (pkCfg->lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE) * 1000;
 
-            // account for the configured lamp delay
-            uint32_t ld = (pkCfg->lampDelay[c][r] * 1000);
-            gdOn = (ld < gdOn) ? (gdOn - ld) : 0;
-
             // maximum brightness (32 bits), 8 steps only
             uint32_t maxBr = ((uint32_t)0xffffffff >> 3) * (uint32_t)(pkCfg->lampBrightness[c][r] + 1);
             sLampMatrixMaxBr[c][r] = maxBr;
+
+            // override lamp duration in smart mode
+            if (cfg_dipSwitch().smartMode)
+            {
+                LAMP_TYPE_t lt = smart_lampType(c, r);
+                // no afterglow needed for incandescents
+                if (lt == LAMP_TYPE_INC)
+                {
+                    gdOn = 0;
+                    gdOff = 0;
+                }
+                // disable output for shorts
+                else if  (lt == LAMP_TYPE_SHORT)
+                {
+                    sLampMatrixMaxBr[c][r] = 0;
+                }
+            }
+
+            // account for the configured lamp delay
+            uint32_t ld = (pkCfg->lampDelay[c][r] * 1000);
+            gdOn = (ld < gdOn) ? (gdOn - ld) : 0;
 
             // calculate the step size for this lamp
             float numStepsOn = ((float)gdOn / (float)pkPar->matrixUpdateInt);
