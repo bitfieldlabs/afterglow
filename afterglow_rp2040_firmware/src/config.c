@@ -37,9 +37,8 @@
 //------------------------------------------------------------------------------
 // Config definitions
 
-// Use a flash region 896k from the flash start for storing the configuration
-// This still allows for using a 1Mb flash.
-#define CFG_FLASH_OFFSET (896 * 1024)
+// Use a flash region 252k from the flash start for storing the configuration
+#define CFG_FLASH_OFFSET (252 * 1024)
 
 // Pointer to the flash content for *reading*
 const uint8_t *pkFlashCfg = (const uint8_t *) (XIP_BASE + CFG_FLASH_OFFSET);

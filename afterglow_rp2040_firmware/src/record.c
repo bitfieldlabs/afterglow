@@ -42,11 +42,11 @@
 // recording header size [bytes]
 #define REC_HEADER_SIZE 8
 
-// Use a flash region 1Mb from the flash start for storing the configuration
-#define REC_FLASH_OFFSET (1000 * 1024)
+// Use a flash region 256kb from the flash start for storing the recording
+#define REC_FLASH_OFFSET (256 * 1024)
 
-// Record size (500 * 4096b = 2Mb, records 64 seconds of data)
-#define REC_FLASH_SIZE (500 * FLASH_SECTOR_SIZE)
+// Record size (900 * 4096b = 3.7Mb, records around two minutes of data)
+#define REC_FLASH_SIZE (900 * FLASH_SECTOR_SIZE)
 
 // Pointer to the record storage
 const uint8_t *pkFlashRec = (const uint8_t *) (XIP_BASE + REC_FLASH_OFFSET);
