@@ -131,12 +131,12 @@ def print_histogram(array):
     max_count = counts.max()
     
     # Print the histogram
-    print(Fore.BLACK + "Ontime [ms] | Count | Histogram")
+    print(Fore.CYAN + "Ontime [ms] | Count | Histogram")
     print("-------------------------------")
     for value, count in zip(values, counts):
         bar = '#' * int((count / max_count) * 50)  # Scale the bar to a max of 50 characters
         #print(f"{value:11.1f} | {count:5} | {bar}")
-        print(Fore.BLACK + f"{value:11.1f} | {count:5} | ", end='')
+        print(Fore.CYAN + f"{value:11.1f} | {count:5} | ", end='')
         print(Fore.BLUE + f"{bar}")
 
 ################################################################################
@@ -146,10 +146,24 @@ if (num_args<=3):
     print(Fore.RED + "Usage: record_replay.py <binary recording file> <lamp column> <lamp row>\nUse a for all columns and rows\n")
     sys.exit()
 
+
 mode = 0
 lastWord = 0;
 consistentWords = 0
 with open(sys.argv[1], "rb") as f:
+
+    # check for a valid header
+    bd = f.read(4)
+    bds = int.from_bytes(bd, "little")
+    if (bds != 0x50524741):
+        print(Fore.RED + "Invalid header!")
+        exit(1)
+
+    # read the size
+    bd = f.read(4)
+    bds = int.from_bytes(bd, "little")
+    print(Fore.WHITE + "Magic found. Recording size: " + str(bds))
+
     while (bd := f.read(4)):
         # read 4 bytes
         word = int.from_bytes(bd, "little")
@@ -168,13 +182,13 @@ with open(sys.argv[1], "rb") as f:
             # mode auto-detection
             if (mode == 0):
                 if (count_set_bits(colData) == 1):
-                    print(Fore.GREEN + "WPC Mode detected\n")
+                    print(Fore.GREEN + "WPC Mode detected")
                     mode = 1
                 elif (count_set_bits(rowData) == 1):
-                    print(Fore.GREEN + "Whitestar Mode detected\n")
+                    print(Fore.GREEN + "Whitestar Mode detected")
                     mode = 2
                 else:
-                    print(Fore.RED + "No valid mode detected!\n")
+                    print(Fore.RED + "No valid mode detected!")
                     exit(0)
 
             if (mode != 0):
@@ -183,7 +197,8 @@ with open(sys.argv[1], "rb") as f:
         
         ttag += sample_int
 
-print("%d updates done\n" % (num_updates))
+print(Fore.WHITE +  "%d updates done\n" % (num_updates))
+print("--------------------\n")
 
 ################## PRINTOUT ################
 
@@ -204,19 +219,19 @@ if ((evalCol == -1) and (evalRow == -1)):
     for c in range(NUM_COL):
         for r in range(NUM_ROW):
             ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][r])))
-            ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[c][r])))
+            ontimetags = np.concatenate((ontimes, np.array(lm_ontimes_tags[c][r])))
             offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][r])))
 elif (evalCol == -1):
     # full row
     for c in range(NUM_COL):
         ontimes = np.concatenate((ontimes, np.array(lm_ontimes[c][evalRow])))
-        ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[c][evalRow])))
+        ontimetags = np.concatenate((ontimes, np.array(lm_ontimes_tags[c][evalRow])))
         offtimes = np.concatenate((offtimes, np.array(lm_offtimes[c][evalRow])))
 elif (evalRow == -1):
     # full column
     for r in range(NUM_ROW):
         ontimes = np.concatenate((ontimes, np.array(lm_ontimes[evalCol][r])))
-        ontimetags = np.ontimetags((ontimes, np.array(lm_ontimes_tags[evalCol][r])))
+        ontimetags = np.concatenate((ontimes, np.array(lm_ontimes_tags[evalCol][r])))
         offtimes = np.concatenate((offtimes, np.array(lm_offtimes[evalCol][r])))
 else:
     ontimes = np.array(lm_ontimes[evalCol][evalRow])
@@ -227,7 +242,7 @@ else:
 
 # HISTOGRAM
 
-print(Fore.BLACK + "Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
+print(Fore.CYAN + "Lamp ONTIME histogram for col %d row %d:\n" % (evalCol, evalRow))
 print_histogram(ontimes)
 
 # SHORT ONTIME HISTOGRAMS
@@ -248,29 +263,32 @@ for ot in ontimes:
     i += 1
 
 if (len(offt_10)>0):
-    print(Fore.BLACK + "\nOFFTIME patterns following 10ms ONTIME:\n")
+    print(Fore.CYAN + "\nOFFTIME patterns following 10ms ONTIME:\n")
     print_histogram(np.array(offt_10))
 
 if (len(offt_20)>0):
-    print(Fore.BLACK + "\nOFFTIME patterns following 20ms ONTIME:\n")
+    print(Fore.CYAN + "\nOFFTIME patterns following 20ms ONTIME:\n")
     print_histogram(np.array(offt_20))
 
 if (len(offt_30)>0):
-    print(Fore.BLACK + "\nOFFTIME patterns following 30ms ONTIME:\n")
+    print(Fore.CYAN + "\nOFFTIME patterns following 30ms ONTIME:\n")
     print_histogram(np.array(offt_30))
 
 
 # Pulsing PATTERN
-print(Fore.BLACK + "\nFirst pulsing pattern sequence:\n")
 pulse = False
 i = 0
+pp = 0
 for ot in ontimes:
     if (ot < 62):
+        if (pp == 0):
+            print(Fore.CYAN + "\npulsing pattern sequence:\n")
         pulse = True
         #print("T %.1f On %.1f -> Off %.1f" % (ontimetags[i]/1000, ot, offtimes[i]))
-        print(Fore.BLACK + "T %.1f " % (ontimetags[i]/1000), end='')
+        print(Fore.CYAN + "T %.1f " % (ontimetags[i]/1000), end='')
         print(Fore.GREEN + "On %.1f " % ot, end='')
         print(Fore.RED + "-> Off %.1f " % offtimes[i])
         if (offtimes[i] > 500):
             print("-----")
+        pp += 1
     i += 1
