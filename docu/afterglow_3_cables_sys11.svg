@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="2.9001894"
-     inkscape:cx="677.36955"
-     inkscape:cy="65.34056"
+     inkscape:zoom="1.4500947"
+     inkscape:cx="415.49011"
+     inkscape:cy="109.30321"
      inkscape:window-width="2560"
      inkscape:window-height="1355"
      inkscape:window-x="0"
@@ -1414,22 +1414,6 @@
          y="193.94687"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
          id="tspan1711-6-6-7-3-8-7-6-8-8-3-6">POWER</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="229.92245"
-       y="37.664963"
-       id="text1065-2-5-5-4-9-6-4-6-4-0-0"
-       inkscape:transform-center-x="-7.4835468"
-       inkscape:transform-center-y="4.6772167"
-       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
-       inkscape:export-xdpi="149.92999"
-       inkscape:export-ydpi="149.92999"><tspan
-         sodipodi:role="line"
-         x="229.92245"
-         y="37.664963"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
-         id="tspan1711-6-6-7-3-8-7-6-8-3-8">+18V</tspan></text>
     <path
        style="fill:none;fill-opacity:1;stroke:#cf4e20;stroke-width:0.7;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 203.15016,36.747927 c 9.9935,5.694171 20.60966,11.595899 43.06998,13.209929"
@@ -1442,8 +1426,8 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="240.21936"
-       y="39.465923"
+       x="237.25194"
+       y="44.024399"
        id="text1065-2-5-5-4-9-6-4-6-4-0-0-2-3"
        inkscape:transform-center-x="-7.4835468"
        inkscape:transform-center-y="4.6772167"
@@ -1451,13 +1435,13 @@
        inkscape:export-xdpi="149.92999"
        inkscape:export-ydpi="149.92999"><tspan
          sodipodi:role="line"
-         x="240.21936"
-         y="39.465923"
+         x="237.25194"
+         y="44.024399"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
          id="tspan3">+18V ONLY NEED WHEN NOT</tspan><tspan
          sodipodi:role="line"
-         x="240.21936"
-         y="42.111759"
+         x="237.25194"
+         y="46.670235"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
          id="tspan4">USING +18V FROM COLUMNS</tspan></text>
   </g>
