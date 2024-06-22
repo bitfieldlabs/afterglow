@@ -3,8 +3,8 @@
 
 <svg
    width="128.13191mm"
-   height="43.33218mm"
-   viewBox="0 0 128.13191 43.332181"
+   height="34.179012mm"
+   viewBox="0 0 128.13191 34.179013"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="2.9001894"
-     inkscape:cx="162.57559"
-     inkscape:cy="138.78404"
+     inkscape:zoom="1.4500947"
+     inkscape:cx="352.04597"
+     inkscape:cy="58.272056"
      inkscape:window-width="2560"
      inkscape:window-height="1355"
      inkscape:window-x="0"
@@ -34,22 +34,22 @@
      inkscape:current-layer="layer1"
      showguides="true">
     <sodipodi:guide
-       position="60.94142,-12.925543"
+       position="60.941423,36.854873"
        orientation="0,-1"
        id="guide1"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="93.53322,-11.853594"
+       position="93.533225,37.926822"
        orientation="1,0"
        id="guide2"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="2.9193501,-5.5359407"
+       position="2.9193506,44.244476"
        orientation="1,0"
        id="guide3"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="49.264021,-36.341369"
+       position="49.264024,13.439046"
        orientation="0,-1"
        id="guide4"
        inkscape:locked="false" />
@@ -60,7 +60,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-36.982016,-20.204076)">
+     transform="translate(-36.982016,-29.357242)">
     <rect
        style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1016-6-0-8-2-1"
@@ -638,22 +638,6 @@
          y="59.158974"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
          id="tspan1711-6-6-7-3-8-7-6-8-9">3.96mm</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="40.541615"
-       y="23.957632"
-       id="text1065-2-5-5-4-9-6-4-6-6"
-       inkscape:transform-center-x="-7.4835468"
-       inkscape:transform-center-y="4.6772167"
-       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
-       inkscape:export-xdpi="149.92999"
-       inkscape:export-ydpi="149.92999"><tspan
-         sodipodi:role="line"
-         x="40.541615"
-         y="23.957632"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
-         id="tspan1711-6-6-7-3-8-7-6-5">AG3 to System 11 cables</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
