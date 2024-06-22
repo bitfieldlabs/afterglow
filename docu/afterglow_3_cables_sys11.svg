@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="128.13191mm"
-   height="34.179012mm"
-   viewBox="0 0 128.13191 34.179013"
+   width="232.52995mm"
+   height="36.079941mm"
+   viewBox="0 0 232.52995 36.079942"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.4500947"
-     inkscape:cx="239.63952"
-     inkscape:cy="145.85254"
+     inkscape:zoom="2.9001894"
+     inkscape:cx="677.36955"
+     inkscape:cy="65.34056"
      inkscape:window-width="2560"
      inkscape:window-height="1355"
      inkscape:window-x="0"
@@ -34,24 +34,34 @@
      inkscape:current-layer="layer1"
      showguides="true">
     <sodipodi:guide
-       position="60.941423,36.854873"
+       position="60.941424,38.773261"
        orientation="0,-1"
        id="guide1"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="93.533225,37.926822"
+       position="93.533225,39.84521"
        orientation="1,0"
        id="guide2"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="2.9193506,44.244476"
+       position="2.9193473,46.162865"
        orientation="1,0"
        id="guide3"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="49.264024,13.439046"
+       position="49.264027,15.357434"
        orientation="0,-1"
        id="guide4"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="125.08319,32.420384"
+       orientation="0,-1"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="165.14335,6.2985011"
+       orientation="0,-1"
+       id="guide6"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <defs
@@ -60,7 +70,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-36.982016,-29.357242)">
+     transform="translate(-36.982016,-29.356758)">
     <rect
        style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1016-6-0-8-2-1"
@@ -752,6 +762,153 @@
          y="55.20821"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
          id="tspan1711-6-6-7-3-8-7-0-2-1">9</tspan></text>
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-09-7"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="35.699524"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-8-1-5"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="37.881256"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-5-7-6"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="40.063019"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-0-7-9"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="42.244766"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-6-11-8"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="44.426529"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-4-5-7"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="46.608292"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-62-9-2"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="48.790024"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-58-7-8"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="50.971786"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-628-7-2"
+       width="6.7869124"
+       height="2.1817431"
+       x="197.98511"
+       y="53.153553"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="196.12747"
+       y="59.024292"
+       id="text1065-2-5-5-4-9-6-4-6-4-5-9"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="196.12747"
+         y="59.024292"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-0-9">3.96mm</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="194.94862"
+       y="38.17107"
+       id="text1065-2-5-5-4-9-6-4-4-60-6"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="194.94862"
+         y="38.17107"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-0-27-0">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="194.76428"
+       y="54.987812"
+       id="text1065-2-5-5-4-9-6-4-4-6-6-2"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="194.76428"
+         y="54.987812"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-0-2-1-7">9</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -950,5 +1107,358 @@
        inkscape:export-filename="/home/smyp/tmp/ag_install.png"
        inkscape:export-xdpi="149.92999"
        inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="235.03418"
+       y="65.401421"
+       id="text1065-2-5-5-4-9-6-4-7-2-1"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="235.03418"
+         y="65.401421"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:Sans;-inkscape-font-specification:'Sans, ';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-09-0-9">~35cm</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="246.93283"
+       y="32.932514"
+       id="text1065-2-5-5-4-9-6-4-9-5"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="246.93283"
+         y="32.932514"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-9-4">J3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="197.08186"
+       y="32.917091"
+       id="text1065-2-5-5-4-9-6-4-9-5-0"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="197.08186"
+         y="32.917091"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-9-4-2">1J4</tspan></text>
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-09-7-2"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="35.825256"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-8-1-5-1"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="38.006989"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-5-7-6-5"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="40.188751"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-0-7-9-9"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="42.370499"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-6-11-8-9"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="44.552261"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-4-5-7-1"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="46.734024"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-62-9-2-4"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="48.915756"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-58-7-8-9"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="51.097519"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-628-7-2-1"
+       width="6.7869124"
+       height="2.1817431"
+       x="213.03767"
+       y="53.279289"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="211.18004"
+       y="59.150024"
+       id="text1065-2-5-5-4-9-6-4-6-4-5-9-0"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="211.18004"
+         y="59.150024"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-0-9-7">3.96mm</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="210.00119"
+       y="38.296803"
+       id="text1065-2-5-5-4-9-6-4-4-60-6-5"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="210.00119"
+         y="38.296803"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-0-27-0-8">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="209.81685"
+       y="55.113548"
+       id="text1065-2-5-5-4-9-6-4-4-6-6-2-7"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="209.81685"
+         y="55.113548"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-0-2-1-7-0">9</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="212.13443"
+       y="33.042824"
+       id="text1065-2-5-5-4-9-6-4-9-5-0-4"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="212.13443"
+         y="33.042824"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-9-4-2-8">1J5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="243.09311"
+       y="58.859417"
+       id="text1065-2-5-5-4-9-6-4-6-4-8-6"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="243.09311"
+         y="58.859417"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-4-4">3.96mm</tspan></text>
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-58-7-7-3"
+       width="6.7869124"
+       height="2.1817431"
+       x="244.98518"
+       y="48.881527"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <rect
+       style="fill:#bfbfbf;fill-opacity:1;stroke:#000000;stroke-width:0.0387889;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1016-6-0-8-2-1-628-7-8-8"
+       width="6.7869124"
+       height="2.1817431"
+       x="244.98518"
+       y="51.063293"
+       ry="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="246.43631"
+       y="50.702114"
+       id="text1065-2-5-5-4-9-6-4-6-4-0"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="246.43631"
+         y="50.702114"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-3">+18V</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="246.53452"
+       y="52.780174"
+       id="text1065-2-5-5-4-9-6-4-6-4-0-5"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="246.53452"
+         y="52.780174"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-3-4">GND</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#030201;stroke-width:0.7;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 218.14846,37.054443 c 13.58443,0.174359 12.04697,14.730276 27.77931,15.027354"
+       id="path1871-3-9-9-4-4-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-51.120022"
+       y="193.94687"
+       id="text1065-2-5-5-4-9-6-4-6-4-59-0-9"
+       inkscape:transform-center-x="-4.6772184"
+       inkscape:transform-center-y="-7.4835466"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"
+       transform="rotate(-90)"><tspan
+         sodipodi:role="line"
+         x="-51.120022"
+         y="193.94687"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-8-3-6">POWER</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="229.92245"
+       y="37.664963"
+       id="text1065-2-5-5-4-9-6-4-6-4-0-0"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="229.92245"
+         y="37.664963"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan1711-6-6-7-3-8-7-6-8-3-8">+18V</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#cf4e20;stroke-width:0.7;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 203.15016,36.747927 c 9.9935,5.694171 20.60966,11.595899 43.06998,13.209929"
+       id="path1871-3-9-91-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#22241c;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="240.21936"
+       y="39.465923"
+       id="text1065-2-5-5-4-9-6-4-6-4-0-0-2-3"
+       inkscape:transform-center-x="-7.4835468"
+       inkscape:transform-center-y="4.6772167"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         x="240.21936"
+         y="39.465923"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan3">+18V ONLY NEED WHEN NOT</tspan><tspan
+         sodipodi:role="line"
+         x="240.21936"
+         y="42.111759"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#22241c;stroke-width:0.18902px"
+         id="tspan4">USING +18V FROM COLUMNS</tspan></text>
   </g>
 </svg>
