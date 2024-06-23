@@ -627,7 +627,7 @@ void display_update()
                             case LAMP_TYPE_TINYLED:
                             case LAMP_TYPE_LED:
                             {
-                                ssd1306_draw_pixel(&sDisp, x, y);
+                                ssd1306_draw_pixel(&sDisp, x+1, y+1);
                             }
                             break;
                             case LAMP_TYPE_INC:
