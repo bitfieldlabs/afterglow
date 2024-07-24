@@ -3483,17 +3483,6 @@
 		)
 		(uuid "173b20a8-252c-40b4-a2a6-e2ad7c2c3463")
 	)
-	(label "RI1"
-		(at 200.025 66.04 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.524 1.524)
-			)
-			(justify right bottom)
-		)
-		(uuid "194e9dc5-2285-4df1-9fee-b5ec89b82015")
-	)
 	(label "MOS_RO2"
 		(at 66.675 53.34 0)
 		(fields_autoplaced yes)
@@ -3680,17 +3669,6 @@
 			(justify left bottom)
 		)
 		(uuid "55ba02d5-0332-4a9c-bf3a-215dbb17d1fb")
-	)
-	(label "RI1"
-		(at 200.025 46.355 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.524 1.524)
-			)
-			(justify right bottom)
-		)
-		(uuid "57527e2f-9013-49fc-81fe-3f946b16cc6d")
 	)
 	(label "OUT_A"
 		(at 121.92 133.35 180)
@@ -4077,17 +4055,6 @@
 		)
 		(uuid "eb27a7f9-467d-48da-87c1-0bfad04f9b03")
 	)
-	(label "RI1"
-		(at 200.025 85.725 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.524 1.524)
-			)
-			(justify right bottom)
-		)
-		(uuid "ec480e00-4aef-4e71-86b9-e28e46add577")
-	)
 	(label "LED_C"
 		(at 147.32 138.43 0)
 		(fields_autoplaced yes)
@@ -4143,17 +4110,6 @@
 		)
 		(uuid "f642915c-436c-49e5-974a-bba36fce192a")
 	)
-	(label "RI1"
-		(at 200.025 105.41 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.524 1.524)
-			)
-			(justify right bottom)
-		)
-		(uuid "f94bfdf9-0ac9-4327-81f8-31dab98eed7d")
-	)
 	(label "OUT_D"
 		(at 145.415 81.915 0)
 		(fields_autoplaced yes)
@@ -4175,6 +4131,71 @@
 			(justify left bottom)
 		)
 		(uuid "fdef886e-8e94-4f99-923f-59742aa5e012")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 200.025 66.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "01b48b90-6597-45e5-9b26-de03b16688ed")
+		(property "Reference" "#PWR012"
+			(at 200.025 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.835 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 200.025 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 200.025 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 200.025 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ab09411f-112a-4b77-be78-c02f312634e9")
+		)
+		(instances
+			(project "hat_modder"
+				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+					(reference "#PWR012")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -4261,7 +4282,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "17f17d8e-d8fa-4317-92c1-3860478a843e")
-		(property "Reference" "ST_LED4"
+		(property "Reference" "D4"
 			(at 242.3922 142.5194 90)
 			(effects
 				(font
@@ -4324,7 +4345,7 @@
 		(instances
 			(project "hat_modder"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-					(reference "ST_LED4")
+					(reference "D4")
 					(unit 1)
 				)
 			)
@@ -4590,6 +4611,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 200.025 105.41 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3512cf57-e446-40c3-a547-41a0bd1cda85")
+		(property "Reference" "#PWR014"
+			(at 200.025 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.835 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 200.025 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 200.025 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 200.025 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1413fe33-78c3-4029-af62-e605aa237a95")
+		)
+		(instances
+			(project "hat_modder"
+				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+					(reference "#PWR014")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:LED")
 		(at 206.375 143.51 90)
 		(unit 1)
@@ -4598,7 +4684,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "35b4d55d-c982-4ca2-bb56-c0d118985de8")
-		(property "Reference" "ST_LED3"
+		(property "Reference" "D3"
 			(at 209.3722 142.5194 90)
 			(effects
 				(font
@@ -4661,7 +4747,7 @@
 		(instances
 			(project "hat_modder"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-					(reference "ST_LED3")
+					(reference "D3")
 					(unit 1)
 				)
 			)
@@ -6443,6 +6529,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 200.025 46.355 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b6c1592a-8511-4578-8f86-a879a1b68e06")
+		(property "Reference" "#PWR011"
+			(at 200.025 52.705 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.835 47.625 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 200.025 46.355 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 200.025 46.355 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 200.025 46.355 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ba1aa73b-a688-47cc-8e9c-0adaa1b5c4f0")
+		)
+		(instances
+			(project "hat_modder"
+				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
 		(at 50.165 113.665 0)
 		(mirror y)
@@ -6599,6 +6750,71 @@
 	)
 	(symbol
 		(lib_id "power:GND")
+		(at 200.025 85.725 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cdfe3ccd-a3f3-4e46-b423-529ac6edd558")
+		(property "Reference" "#PWR013"
+			(at 200.025 92.075 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.835 86.995 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 200.025 85.725 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 200.025 85.725 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 200.025 85.725 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b32d42fd-8dbc-4204-9965-dd0c77a6b28d")
+		)
+		(instances
+			(project "hat_modder"
+				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
+					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
 		(at 60.325 167.005 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6671,7 +6887,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e807632c-1154-422f-86fe-14e3ab42e3ff")
-		(property "Reference" "ST_LED1"
+		(property "Reference" "D1"
 			(at 209.3722 120.2944 90)
 			(effects
 				(font
@@ -6734,7 +6950,7 @@
 		(instances
 			(project "hat_modder"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-					(reference "ST_LED1")
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -6825,7 +7041,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f3f6b627-3760-4e24-936f-a80de3766cc2")
-		(property "Reference" "ST_LED2"
+		(property "Reference" "D2"
 			(at 242.3922 120.2944 90)
 			(effects
 				(font
@@ -6888,7 +7104,7 @@
 		(instances
 			(project "hat_modder"
 				(path "/86dc7a78-7d51-4111-9eea-8a8f7977eb16"
-					(reference "ST_LED2")
+					(reference "D2")
 					(unit 1)
 				)
 			)
