@@ -1,0 +1,8 @@
+"Comment","Designator","Footprint","LCSC Part Number"
+"LED","D1,D2,D3,D4","LED_0805_2012Metric","C2296"
+"Conn_02x03_Odd_Even","J2,J3","PinHeader_2x03_P2.54mm_Vertical","C92272"
+"1k","R1,R6,R7,R8,R9","R_0805_2012Metric","C17513"
+"220","R2,R3,R4,R5","R_0805_2012Metric","C17557"
+"74HC244","U1","TSSOP-20_4.4x6.5mm_P0.65mm","C6835"
+"74HC595","U2","SO-16_3.9x9.9mm_P1.27mm","C5947"
+"PC817","U3,U4,U5,U6","SMDIP-4_W9.53mm","C3025164"
