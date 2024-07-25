@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // add the parameters
     ui->parameterSelection->addItem("Glow duration");
     ui->parameterSelection->addItem("Brightness");
+    ui->parameterSelection->addItem("Afterglow duration (v3 only)");
 
     // enumerate the serial ports
     enumSerialPorts();
@@ -500,6 +501,7 @@ void MainWindow::updateTable(int parameter)
             {
                 case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE); break;
                 case 1:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
+                case 2:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
                 default: v=0; break;
             }
 
@@ -508,18 +510,18 @@ void MainWindow::updateTable(int parameter)
             if (pWI)
             {
                 pWI->setText(QString::number(v, 10));
-            }
 
-            // disable unused items
-            if ((mCfg.version <= 1) && (r>7))
-            {
-                pWI->setFlags(pWI->flags() & ~Qt::ItemIsEnabled);
-                pWI->setBackground(Qt::Dense6Pattern);
-            }
-            else
-            {
-                pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
-                pWI->setBackground(Qt::NoBrush);
+                // disable unused items
+                if ((mCfg.version <= 1) && (r>7))
+                {
+                    pWI->setFlags(pWI->flags() & ~Qt::ItemIsEnabled);
+                    pWI->setBackground(Qt::Dense6Pattern);
+                }
+                else
+                {
+                    pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
+                    pWI->setBackground(Qt::NoBrush);
+                }
             }
         }
     }
@@ -547,6 +549,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         switch (param)
         {
         case 0: // glow duration
+        case 2: // afterglow duration
         {
             if ((v>65530) || (v%10))
             {
