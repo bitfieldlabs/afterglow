@@ -196,7 +196,7 @@ uint32_t cfg_calculateCRC32(const uint8_t *data, uint16_t length)
 }
 
 //------------------------------------------------------------------------------
-void cfg_serialConfig(AFTERGLOW_CFG_V2_t *pCfg)
+void cfg_serialConfigV2(AFTERGLOW_CFG_V2_t *pCfg)
 {
     // initialize
     uint16_t cfgSize = sizeof(AFTERGLOW_CFG_V2_t);
@@ -210,7 +210,13 @@ void cfg_serialConfig(AFTERGLOW_CFG_V2_t *pCfg)
 }
 
 //------------------------------------------------------------------------------
-void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg)
+void cfg_serialConfig(AFTERGLOW_CFG_t *pCfg)
+{
+    memcpy(pCfg, &sCfg, sizeof(sCfg));
+}
+
+//------------------------------------------------------------------------------
+void cfg_setSerialConfigV2(const AFTERGLOW_CFG_V2_t *pkCfg)
 {
     // Prepare to new configuration and mark it ready. It will be applied at the
     // next matrix thread run.
@@ -222,9 +228,14 @@ void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg)
     sNewCfg.version = AFTERGLOW_CFG_VERSION;
     sNewCfg.crc = cfg_calculateCRC32((uint8_t*)&sNewCfg, sizeof(sNewCfg)-sizeof(sNewCfg.crc));
     sNewCfgAvailable = true;
+}
 
-    // store the configuration to flash
-    // TUDUU
+//------------------------------------------------------------------------------
+void cfg_setSerialConfig(const AFTERGLOW_CFG_t *pkCfg)
+{
+    // Prepare to new configuration and mark it ready. It will be applied at the
+    // next matrix thread run.
+    memcpy(&sNewCfg, pkCfg, sizeof(sNewCfg));
 }
 
 //------------------------------------------------------------------------------

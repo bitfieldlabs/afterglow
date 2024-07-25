@@ -80,7 +80,7 @@
 #define DEBUG_OLED_I2C 1
 
 // Afterglow RP2040 version number
-#define AFTERGLOW_RP2040_VERSION 300
+#define AFTERGLOW_RP2040_VERSION 301
 
 // Latest supported Afterglow board revision. Currently v3.0
 #define BOARD_REV 30

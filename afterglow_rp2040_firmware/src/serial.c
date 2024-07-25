@@ -169,8 +169,25 @@ void serial_input()
         // configuration poll
         else if (strncmp(sCmd, AG_CMD_CFG_POLL, 4) == 0)
         {
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
+            // ========= Configuration version 2 =========
+
             // create the serial configuration structure
             AFTERGLOW_CFG_V2_t cfg;
+            cfg_serialConfigV2(&cfg);
+            
+            // send the full configuration
+            uint16_t cfgSize = sizeof(cfg);
+            const uint8_t *pkCfg = (const uint8_t*)&cfg;
+            for (uint i=0; i<cfgSize; i++)
+            {
+                putchar_raw(*pkCfg++);
+            }
+#else
+            // ========= Configuration version 3 =========
+
+            // create the serial configuration structure
+            AFTERGLOW_CFG_t cfg;
             cfg_serialConfig(&cfg);
             
             // send the full configuration
@@ -180,6 +197,7 @@ void serial_input()
             {
                 putchar_raw(*pkCfg++);
             }
+#endif
         }
 
         // configuration reset
@@ -216,7 +234,12 @@ void serial_receiveCfg()
 {
     // wait for the full configuration data
     bool res = false;
+
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
     AFTERGLOW_CFG_V2_t cfg;
+#else
+    AFTERGLOW_CFG_t cfg;
+#endif
     char *pCfg = (char*)&cfg;
     uint32_t cfgSize = sizeof(cfg);
     uint32_t size = 0;
@@ -250,7 +273,11 @@ void serial_receiveCfg()
         if (crc == cfg.crc)
         {
             // set the new configuration and apply it
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
+            cfg_setSerialConfigV2(&cfg);
+#else
             cfg_setSerialConfig(&cfg);
+#endif
             res = true;
         }
 #if DEBUG_SERIAL
