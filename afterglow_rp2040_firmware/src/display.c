@@ -570,9 +570,18 @@ void display_update()
                 // clear
                 ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
                 ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "Replay");
-                uint32_t w = (98 * replay_percentage() / 100);
-                ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
-                ssd1306_draw_square(&sDisp, 16, 50, w, 4);
+                if (record_replay_size() > 0)
+                {
+                    // replay active
+                    uint32_t w = (98 * replay_percentage() / 100);
+                    ssd1306_draw_empty_square(&sDisp, 15, 49, 100, 6);
+                    ssd1306_draw_square(&sDisp, 16, 50, w, 4);
+                }
+                else
+                {
+                    // no replay data
+                    ssd1306_draw_string_with_font(&sDisp, 16, 52, 1, BMSPA_font, "XX No data! XX");
+                }
             }
             break;
 

@@ -82,6 +82,9 @@ Input         |    1bit        |       |    matrix      |        |    PWM_RES * 
 #include "display.h"
 #include "record.h"
 #include "smart.h"
+#if MODDING_OUTPUT
+#include "mod.h"
+#endif
 
 
 //------------------------------------------------------------------------------
@@ -283,6 +286,12 @@ int main(void)
 
         // display update
         display_update();
+
+#if MODDING_OUTPUT
+        //  evaluate the modding logic and update the pins
+        mod_evaluate();
+        mod_output();
+#endif
 
         // time for a nap
         sleep_ms(50);
