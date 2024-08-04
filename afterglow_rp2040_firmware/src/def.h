@@ -80,7 +80,7 @@
 #define DEBUG_OLED_I2C 1
 
 // Enable modding logic evaluation and output
-#define MODDING_OUTPUT 1
+#define MODDING_OUTPUT 0
 
 // Afterglow RP2040 version number
 #define AFTERGLOW_RP2040_VERSION 300

@@ -54,9 +54,16 @@ void mod_evaluate()
 {
     const uint32_t *pkRawLM = lm_rawLampMatrix();
 
+    // Logic A
     sModOutputStates[0] = (pkRawLM[0] & (1 << 0)) ? true : false;
+
+    // Logic B
     sModOutputStates[1] = (pkRawLM[1] & (1 << 1)) ? true : false;
+
+    // Logic C
     sModOutputStates[2] = (pkRawLM[2] & (1 << 2)) ? true : false;
+
+    // Logic D
     sModOutputStates[3] = (pkRawLM[3] & (1 << 3)) ? true : false;
 }
 
