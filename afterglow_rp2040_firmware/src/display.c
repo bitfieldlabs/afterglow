@@ -471,6 +471,11 @@ void display_init()
     ssd1306_clear(&sDisp);
     ssd1306_bmp_show_image(&sDisp, bfl_logo_data, bfl_logo_size);
     ssd1306_show(&sDisp);
+
+    // FW version
+    char versionStr[16];
+    sprintf(versionStr, "%.2f", (float)AFTERGLOW_RP2040_VERSION/100);
+    ssd1306_draw_string_with_font(&sDisp, 98, 54, 1, BMSPA_font, versionStr);
 }
 
 //------------------------------------------------------------------------------
