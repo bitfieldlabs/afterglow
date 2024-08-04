@@ -539,6 +539,10 @@ void display_update()
                     display_setMode(record_active() ? DISPLAY_MODE_RECORD : DISPLAY_MODE_REPLAY);
                 }
             }
+            else if (ag_mode() == AG_MODE_UNKNOWN)
+            {
+                display_setMode(DISPLAY_MODE_INVINPUT);
+            }
         }
 
         // check for active notice messages
@@ -655,6 +659,17 @@ void display_update()
                     }
                     x += 4;
                 }
+            }
+            break;
+
+            // no valid input
+            case DISPLAY_MODE_INVINPUT:
+            {
+                // clear
+                ssd1306_clear_square(&sDisp, 0, 16, 128, 48);
+                ssd1306_draw_string_with_font(&sDisp, 16, 20, 2, BMSPA_font, "???");
+                ssd1306_draw_string_with_font(&sDisp, 16, 36, 1, BMSPA_font, "No valid");
+                ssd1306_draw_string_with_font(&sDisp, 16, 52, 1, BMSPA_font, "mode detected!");
             }
             break;
 
