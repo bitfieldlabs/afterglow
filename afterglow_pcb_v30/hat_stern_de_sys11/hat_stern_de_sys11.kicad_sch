@@ -5,8 +5,8 @@
 	(uuid "86dc7a78-7d51-4111-9eea-8a8f7977eb16")
 	(paper "A4")
 	(title_block
-		(title "Afterglow 3.0 Hat")
-		(rev "1.0")
+		(title "Afterglow 3.0 Pinbender Hat")
+		(rev "1.1")
 		(company "bitfield labs")
 	)
 	(lib_symbols
@@ -3614,7 +3614,8 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 52.705 164.465 0)
+		(at 55.245 164.465 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3639,7 +3640,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3648,7 +3649,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3657,7 +3658,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3666,7 +3667,7 @@
 			)
 		)
 		(property "JLCPCB" "C92272"
-			(at 52.705 164.465 0)
+			(at 55.245 164.465 0)
 			(effects
 				(font
 					(size 1.524 1.524)
