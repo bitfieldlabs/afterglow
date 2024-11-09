@@ -3416,6 +3416,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB" "C5156617"
+			(at 43.18 64.135 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(hide yes)
+			)
+		)
 		(pin "6"
 			(uuid "0988f2e2-0657-4226-ac4d-fe1e8f24d5d2")
 		)
@@ -3573,6 +3582,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB" "C10587"
+			(at 137.16 57.785 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5a9305a5-95fc-47da-8cc5-aec1a6ce0414")
 		)
@@ -3614,17 +3632,15 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
-		(at 55.245 164.465 0)
-		(mirror y)
+		(at 55.245 164.465 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "ac86996b-b447-4972-9c91-e6786814ea67")
 		(property "Reference" "J8"
-			(at 53.975 156.5107 0)
+			(at 53.975 172.4193 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3632,7 +3648,7 @@
 			)
 		)
 		(property "Value" "Conn_02x03_Odd_Even"
-			(at 53.975 158.9349 0)
+			(at 53.975 169.9951 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3666,7 +3682,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" "C92272"
+		(property "JLCPCB" "C18905882"
 			(at 55.245 164.465 0)
 			(effects
 				(font
@@ -3752,6 +3768,15 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB" "C5156617"
+			(at 61.595 60.96 0)
+			(effects
+				(font
+					(size 1.524 1.524)
 				)
 				(hide yes)
 			)
@@ -3847,6 +3872,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLCPCB" "C10589"
+			(at 125.095 107.95 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8df5f3b9-62e3-4832-837d-869c50faf7f4")
 		)
@@ -3895,15 +3929,15 @@
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x03_Odd_Even")
 		(at 47.625 113.665 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "b814ac2c-97e5-4a49-8cea-7e1b973a85df")
 		(property "Reference" "J7"
-			(at 48.895 105.7107 0)
+			(at 48.895 121.6193 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3911,7 +3945,7 @@
 			)
 		)
 		(property "Value" "Conn_02x03_Odd_Even"
-			(at 48.895 108.1349 0)
+			(at 48.895 119.1951 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3945,7 +3979,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB" "C92272"
+		(property "JLCPCB" "C18905882"
 			(at 47.625 113.665 0)
 			(effects
 				(font
@@ -4030,6 +4064,15 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB" "C10586"
+			(at 192.405 58.42 0)
+			(effects
+				(font
+					(size 1.524 1.524)
 				)
 				(hide yes)
 			)
@@ -4183,6 +4226,15 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB" "C10586"
+			(at 177.8 106.045 0)
+			(effects
+				(font
+					(size 1.524 1.524)
 				)
 				(hide yes)
 			)
