@@ -1,0 +1,6 @@
+"Comment","Designator","Footprint","LCSC Part Number"
+"ROW OUT","J1","Molex_KK-396_5273-12A_1x12_P3.96mm_Vertical","C10589"
+"COLUMN OUT","J2","Molex_KK-396_5273-10A_1x10_P3.96mm_Vertical","C10587"
+"Conn_01x09_Pin","J3,J6","Molex_KK-396_5273-09A_1x09_P3.96mm_Vertical","C10586"
+"Conn_01x10_Pin","J4,J5","PinHeader_1x10_P2.54mm_Vertical","C5156617"
+"Conn_02x03_Odd_Even","J7,J8","PinHeader_2x03_P2.54mm_Vertical","C18905882"
