@@ -203,7 +203,7 @@ void cfg_serialConfigV2(AFTERGLOW_CFG_V2_t *pCfg)
     memset(pCfg, 0, cfgSize);
 
     // convert the internal configuration to the serial config version
-    pCfg->version = AFTERGLOW_CFG_SER_VERSION;
+    pCfg->version = 2;
     memcpy(pCfg->lampBrightness, sCfg.lampBrightness, sizeof(sCfg.lampBrightness));
     memcpy(pCfg->lampGlowDur, sCfg.lampGlowDurOn, sizeof(sCfg.lampGlowDurOn));
     pCfg->crc = cfg_calculateCRC32((uint8_t*)pCfg, cfgSize-sizeof(pCfg->crc));

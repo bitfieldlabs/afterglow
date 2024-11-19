@@ -193,10 +193,14 @@ void serial_input()
             // send the full configuration
             uint16_t cfgSize = sizeof(cfg);
             const uint8_t *pkCfg = (const uint8_t*)&cfg;
-            for (uint i=0; i<cfgSize; i++)
+            for (uint32_t i=0; i<cfgSize; i++)
             {
-                putchar_raw(*pkCfg++);
+                putchar_raw((int)(*pkCfg));
+                pkCfg++;
             }
+
+            // delay a bit to mark data end
+            sleep_ms(3000);
 #endif
         }
 
