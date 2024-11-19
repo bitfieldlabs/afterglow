@@ -200,7 +200,7 @@ int main(void)
 
 #if DEBUG_OLED_I2C
     // i2c display
-    display_init();
+    bool dispInit = display_init();
 #endif
 
     // ADC initialisation
@@ -262,11 +262,15 @@ int main(void)
     {
         printf("Watchdog reboot!\n");
     }
+#if DEBUG_OLED_I2C
+    printf("%s", dispInit ? "OLED display detected\n" : "No display detected\n");
+#endif
 
     // enable a 1s watchdog
     watchdog_enable(1000, 1);
 
     // Eternal loop
+    uint32_t c = 0;
     while (true)
     {
         // kick the dog

@@ -432,6 +432,7 @@ const uint8_t BMSPA_font[] = {
 // local variables
 
 ssd1306_t sDisp;
+bool sDispInit = false;
 DISPLAY_MODES_t sMainMode = DISPLAY_MODE_LOGO;
 uint64_t sLastUpdate = 0;
 char sNotice1[64] = "\0";
@@ -458,7 +459,7 @@ void display_setNotice(const char *pkStr1, const char *pkStr2, const char *pkStr
 }
 
 //------------------------------------------------------------------------------
-void display_init()
+bool display_init()
 {
     i2c_init(i2c0, 1000000);
     gpio_set_function(AGPIN_D_SDA, GPIO_FUNC_I2C);
@@ -466,11 +467,20 @@ void display_init()
     gpio_pull_up(AGPIN_D_SDA);
     gpio_pull_up(AGPIN_D_SCL);
 
-    sDisp.external_vcc=false;
-    ssd1306_init(&sDisp, 128, 64, 0x3C, i2c0);
-    ssd1306_clear(&sDisp);
-    ssd1306_bmp_show_image(&sDisp, bfl_logo_data, bfl_logo_size);
-    ssd1306_show(&sDisp);
+    // check if display is present
+    uint8_t addr = 0x3C;
+    if (i2c_write_timeout_us(i2c0, addr, &addr, 1, true, 100) == 1)
+    {
+        sDisp.external_vcc=false;
+        sDispInit = ssd1306_init(&sDisp, 128, 64, addr, i2c0);
+        if (sDispInit)
+        {
+            ssd1306_clear(&sDisp);
+            ssd1306_bmp_show_image(&sDisp, bfl_logo_data, bfl_logo_size);
+            ssd1306_show(&sDisp);
+        }
+    }
+    return sDispInit;
 }
 
 //------------------------------------------------------------------------------
@@ -515,6 +525,12 @@ static void display_status()
 //------------------------------------------------------------------------------
 void display_update()
 {
+    // nothing to do if no display
+    if (!sDispInit)
+    {
+        return;
+    }
+
     // keep track of time
     uint64_t ts = to_us_since_boot(get_absolute_time());
 
