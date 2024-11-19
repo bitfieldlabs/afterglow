@@ -38,6 +38,7 @@ public:
     bool loadCfg(AFTERGLOW_CFG_t *pCfg);
     bool defaultCfg();
     bool saveCfg(AFTERGLOW_CFG_t *pCfg);
+    uint32_t serialPortError();
 
 private:
     uint32_t calculateCRC32(const uint8_t *data, uint16_t length);

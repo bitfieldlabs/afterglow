@@ -29,6 +29,7 @@
 #include "serial.h"
 #include "pico/time.h"
 #include "pico/stdio.h"
+#include "hardware/watchdog.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
 #include "afterglow.h"
@@ -254,7 +255,7 @@ void serial_receiveCfg()
     {
         // send data ready signal and wait for data
         printf("%s\n",AG_CMD_CFG_DATA_READY);
-        sleep_ms(200);
+        sleep_ms(100);
 
         // read data
         uint32_t readBytes = 0;
@@ -269,6 +270,9 @@ void serial_receiveCfg()
                 size++;
             }
         }
+
+        // still alive
+        watchdog_update();
     }
 
     if (size == sizeof(cfg))

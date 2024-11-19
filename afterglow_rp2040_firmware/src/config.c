@@ -236,6 +236,7 @@ void cfg_setSerialConfig(const AFTERGLOW_CFG_t *pkCfg)
     // Prepare to new configuration and mark it ready. It will be applied at the
     // next matrix thread run.
     memcpy(&sNewCfg, pkCfg, sizeof(sNewCfg));
+    sNewCfgAvailable = true;
 }
 
 //------------------------------------------------------------------------------

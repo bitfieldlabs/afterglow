@@ -26,7 +26,7 @@
 #include <QtEndian>
 
 // timeout for serial communication [ms]
-#define AG_SERIAL_TIMEOUT 2000
+#define AG_SERIAL_TIMEOUT 4000
 
 // write buffer size [bytes]
 #define AG_CMD_WRITE_BUF 32
@@ -130,7 +130,10 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     QByteArray responseData;
 
     // clear the port
-    mSerialPort.clear();
+    if (!mSerialPort.clear())
+    {
+        return false;
+    }
 
     // send the request
     QString cmd(AG_CMD_CFG_POLL);
@@ -227,12 +230,20 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     return res;
 }
 
+uint32_t SerialCommunicator::serialPortError()
+{
+    return mSerialPort.error();
+}
+
 bool SerialCommunicator::defaultCfg()
 {
     bool res = false;
 
     // clear the port
-    mSerialPort.clear();
+    if (!mSerialPort.clear())
+    {
+        return false;
+    }
 
     // send the request
     QString cmd(AG_CMD_CFG_DEFAULT);
@@ -313,14 +324,16 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
     // clear the port
     mSerialPort.clear();
 
+    int size = 0;
+
     // send the request
     QString cmd(AG_CMD_CFG_SAVE);
     cmd += AG_CMD_TERMINATOR;
     mSerialPort.write(cmd.toUtf8());
 
     // send the configuration in small chunks
-    int size = 0;
-    while (size < cfgSize)
+    bool failed = false;
+    while ((size < cfgSize) && !failed)
     {
         // wait for the data to be written
         if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
@@ -345,6 +358,10 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
                     size += wb;
                 }
             }
+        }
+        else
+        {
+            failed = true;
         }
     }
 

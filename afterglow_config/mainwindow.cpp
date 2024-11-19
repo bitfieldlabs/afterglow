@@ -100,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->updateFWButton, SIGNAL(clicked()), SLOT(updateFW()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
-    connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));
+    //connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));         // glowing breaks the matrix values (changes selected cell value when glowing)
 
     initData();
 
@@ -256,7 +256,8 @@ void MainWindow::defaultAG()
         }
         else
         {
-            ticker("Configuration reset failed!", QColor("red"), QFont::Normal);
+            QString errStr = QString::number(mSerialCommunicator.serialPortError(), 10);
+            ticker("Configuration reset failed: "+errStr, QColor("red"), QFont::Normal);
         }
         setCursor(Qt::ArrowCursor);
 
