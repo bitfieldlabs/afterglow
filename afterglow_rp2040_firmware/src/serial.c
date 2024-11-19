@@ -117,7 +117,11 @@ void serial_debug(uint32_t ttag)
         printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDurAndClear(), INPUT_SAMPLE_INT,
             matrixout_updateMaxDurAndClear(), pkPar->matrixUpdateInt);
 
-        smart_detect_print();
+        // print smart detection mode results once
+        if ((sLastDebugTTag > 5000) && (sLastDebugTTag < 10000))
+        {
+            smart_detect_print();
+        }
 
         sLastDebugTTag = m;
     }
@@ -198,9 +202,6 @@ void serial_input()
                 putchar_raw((int)(*pkCfg));
                 pkCfg++;
             }
-
-            // delay a bit to mark data end
-            sleep_ms(3000);
 #endif
         }
 
