@@ -35,6 +35,7 @@
 #include <QMessageBox>
 #include <QStyle>
 #include <QRandomGenerator>
+#include <QtWidgets>
 
 
 // interval for port enumeration [ms]
@@ -419,9 +420,20 @@ void MainWindow::setConnected(bool connected)
     ui->loadButton->setEnabled(connected);
     ui->saveButton->setEnabled(connected);
     ui->defaultButton->setEnabled(connected);
-    ui->updateFWButton->setEnabled(connected);
     ui->connectButton->setText(connected ? "Disconnect" : "Connect");
     ui->connectButton->setIcon(connected ? QIcon(":/icon/icons/network-disconnect.svg"): QIcon(":/icon/icons/network-connect.svg"));
+
+    // FW update only available for Arduino based boards
+    ui->updateFWButton->setEnabled(connected && (mAGVersion < 300));
+
+    // Only AG3+ has separate On/Off glow durations
+    QStandardItemModel *model =
+        qobject_cast<QStandardItemModel *>(ui->parameterSelection->model());
+    Q_ASSERT(model != nullptr);
+    bool disabled = (mAGCfgVersion < 3);
+    QStandardItem *item = model->item(2);
+    item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled
+                            : item->flags() | Qt::ItemIsEnabled);
 }
 
 void MainWindow::enumSerialPorts()
