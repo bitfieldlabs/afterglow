@@ -286,7 +286,8 @@ bool cfg_saveToFlash()
     bool saved = false;
 
     // stop all interrupts
-    uint32_t ints = save_and_disable_interrupts();
+    // not needed when running from RAM
+    //uint32_t ints = save_and_disable_interrupts();
 
     // erase a 4kb flash sector
     flash_range_erase(CFG_FLASH_OFFSET, FLASH_SECTOR_SIZE);
@@ -297,7 +298,8 @@ bool cfg_saveToFlash()
     flash_range_program(CFG_FLASH_OFFSET, sFlashWriteBuf, sizeof(sFlashWriteBuf));
 
     // restore interrupts
-    restore_interrupts(ints);
+    // not needed when running from RAM
+    //restore_interrupts(ints);
 
     // verify the data
     if (memcmp(&sCfg, pkFlashCfg, sizeof(sCfg)) == 0)
