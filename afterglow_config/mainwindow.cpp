@@ -81,8 +81,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // add the parameters
     ui->parameterSelection->addItem("Glow duration");
-    ui->parameterSelection->addItem("Brightness");
     ui->parameterSelection->addItem("Afterglow duration (v3 only)");
+    ui->parameterSelection->addItem("Brightness");
+    ui->parameterSelection->addItem("Delay (v3 only)");
 
     // enumerate the serial ports
     enumSerialPorts();
@@ -431,7 +432,10 @@ void MainWindow::setConnected(bool connected)
         qobject_cast<QStandardItemModel *>(ui->parameterSelection->model());
     Q_ASSERT(model != nullptr);
     bool disabled = (mAGCfgVersion < 3);
-    QStandardItem *item = model->item(2);
+    QStandardItem *item = model->item(1);
+    item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled
+                            : item->flags() | Qt::ItemIsEnabled);
+    item = model->item(3);
     item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled
                             : item->flags() | Qt::ItemIsEnabled);
 }
@@ -512,8 +516,9 @@ void MainWindow::updateTable(int parameter)
             switch (parameter)
             {
                 case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE); break;
-                case 1:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
-                case 2:  v=static_cast<uint32_t>(mCfg.lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 1:  v=static_cast<uint32_t>(mCfg.lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 2:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
+                case 3:  v=static_cast<uint32_t>(mCfg.lampDelay[c][r]); break;
                 default: v=0; break;
             }
 
@@ -561,7 +566,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         switch (param)
         {
         case 0: // glow duration
-        case 2: // afterglow duration
+        case 1: // afterglow duration
         {
             if ((v>65530) || (v%10))
             {
@@ -572,13 +577,23 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
             }
         }
         break;
-        case 1: // brightness
+        case 2: // brightness
         {
-            if (v>7)
+            if ((v<0) || (v>7))
             {
                 if (v<0) v=0;
                 if (v>7) v=7;
                 ticker("Brightness must be between 0 and 7!", QColor("red"), QFont::Normal);
+            }
+        }
+        break;
+        case 3: // delay
+        {
+            if ((v<0) || (v>255))
+            {
+                if (v<0) v=0;
+                if (v>255) v=255;
+                ticker("Delay must be between 0 and 255ms!", QColor("red"), QFont::Normal);
             }
         }
         break;
@@ -609,8 +624,8 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                         switch (param)
                         {
                         case 0: mCfg.lampGlowDurOn[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
-                        case 1: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
-                        case 2: mCfg.lampGlowDurOff[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 1: mCfg.lampGlowDurOff[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 2: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
                         default: break;
                         }
                     }
