@@ -172,7 +172,7 @@ void MainWindow::connectAG()
         else
         {
             // the connection will reset the arduino - allow some time for startup
-            ticker("Rebooting the arduino...", QColor("orange"), QFont::Normal);
+            ticker("Rebooting the device...", QColor("orange"), QFont::Normal);
             QThread::sleep(2);
 
             // poll the afterglow version to verify the connection
@@ -499,9 +499,9 @@ void MainWindow::updateTable(int parameter)
             uint32_t v;
             switch (parameter)
             {
-                case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE); break;
                 case 1:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
-                case 2:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
+                case 2:  v=static_cast<uint32_t>(mCfg.lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE); break;
                 default: v=0; break;
             }
 
@@ -596,8 +596,9 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                         // apply the changes to the configuration
                         switch (param)
                         {
-                        case 0: mCfg.lampGlowDur[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 0: mCfg.lampGlowDurOn[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
                         case 1: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
+                        case 2: mCfg.lampGlowDurOff[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
                         default: break;
                         }
                     }
