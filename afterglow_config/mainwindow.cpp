@@ -108,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->versionLabel->setText("Afterglow Configuration Tool v" + QString(AGCONFIG_VERSION));
     ticker("Afterglow Config " + QString(AGCONFIG_VERSION) + " - Hello pinheads!", QColor("green"), QFont::Bold);
     ticker("Ready.", QColor("green"), QFont::Bold);
+    ui->descriptionText->setText("");
 
     // start the port enumeration timer
     mTimer.start(ENUMERATION_INTERVAL);
@@ -204,7 +205,7 @@ void MainWindow::connectAG()
 
                 // should we try to upload the FW
                 QMessageBox::StandardButton reply;
-                QString updStr = "No Afterglow detected on this port.\nDo you want to upload the firmware to this device?";
+                QString updStr = "No Afterglow detected on this port.\nDo you want to upload the firmware to this device (AG1 and 2 only)?";
                 reply = QMessageBox::question(this, "Confirm", updStr, QMessageBox::Yes|QMessageBox::No);
                 if (reply == QMessageBox::Yes)
                 {
@@ -507,6 +508,18 @@ void MainWindow::updateTable(int parameter)
     // change of the last value in tableChanged()
     ui->lampMatrix->clearSelection();
 
+    // update the parameter description
+    QString descStr;
+    switch (parameter)
+    {
+    case 0: descStr="<b>Glow duration</b> (0-2550ms)<br/><br/>For board versions 1 and 2 this value is setting the glow duration for both pre- and afterglow in [ms].<br/>For version 3 this is setting the pre-glow duration only."; break;
+    case 1: descStr="<b>Afterglow duration</b> (0-2550ms)<br/><br/>This is the duration of the afterglow."; break;
+    case 2: descStr="<b>Brightness</b> (0-7)<br/><br/>This is the brightness value (out of 7) the lamp will reach when it's fully on."; break;
+    case 3: descStr="<b>Delay</b> (0-255ms)<br/><br/>This delay defines the time the lamp will stay dark before starting to glow. May help in dealing with flickering lamps."; break;
+    default: descStr="Hm.. No valid parameter selected."; break;
+    }
+    ui->descriptionText->setText(descStr);
+
     // populate the table with the values from the configuration
     for (int c=0; c<NUM_COL; c++)
     {
@@ -569,12 +582,12 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         case 0: // glow duration
         case 1: // afterglow duration
         {
-            if ((v>65530) || (v%10))
+            if ((v>2550) || (v%10))
             {
                 if (v<0) v=0;
-                if (v>65535) v= 65535;
+                if (v>2550) v= 2550;
                 if (v%10) v=(v/10)*10;
-                ticker("Glow duration must be between 0 and 65535 and a multiple of 10!", QColor("red"), QFont::Normal);
+                ticker("Glow duration must be between 0 and 2550 and a multiple of 10!", QColor("red"), QFont::Normal);
             }
         }
         break;
