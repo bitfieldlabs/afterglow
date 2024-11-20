@@ -30,8 +30,8 @@ typedef struct AFTERGLOW_CFG_V2_s
 {
     quint16 version;                      // afterglow version of the configuration
     quint16 res;                          // reserved bytes
-    quint8 lampGlowDur[NUM_COL][NUM_ROW];    // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
-    quint8 lampBrightness[NUM_COL][NUM_ROW]; // Lamp matrix maximum brightness configuration (0-7)
+    quint8 lampGlowDur[8][10];            // Lamp matrix glow duration configuration [ms * GLOWDUR_CFG_SCALE]
+    quint8 lampBrightness[8][10];         // Lamp matrix maximum brightness configuration (0-7)
     quint32 crc;                          // data checksum
 } AFTERGLOW_CFG_V2_t;
 

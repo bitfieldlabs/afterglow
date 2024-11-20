@@ -303,7 +303,7 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
         cfgV2.version = pCfg->version;
         for (int c=0; c<NUM_COL; c++)
         {
-            memcpy(cfgV2.lampBrightness[c], pCfg->lampBrightness[c], sizeof(cfgV1.lampBrightness[c]));
+            memcpy(cfgV2.lampBrightness[c], pCfg->lampBrightness[c], sizeof(cfgV2.lampBrightness[c]));
             memcpy(cfgV2.lampGlowDur[c], pCfg->lampGlowDurOn[c], sizeof(cfgV2.lampGlowDur[c]));
         }
         pkData = (const char*)&cfgV2;

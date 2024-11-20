@@ -223,13 +223,24 @@ void MainWindow::loadAG()
     if (mConnected)
     {
         setCursor(Qt::WaitCursor);
-        if (mSerialCommunicator.loadCfg(&mCfg))
+
+        // 3 attempts
+        uint32_t attempts = 3;
+        bool loaded = false;
+        while (!loaded && attempts--)
         {
-            ticker("Configuration successfully loaded", QColor("green"), QFont::Normal);
-        }
-        else
-        {
-            ticker("Configuration poll failed!", QColor("red"), QFont::Normal);
+            loaded = mSerialCommunicator.loadCfg(&mCfg);
+            if (loaded)
+            {
+                ticker("Configuration successfully loaded", QColor("green"), QFont::Normal);
+            }
+            else
+            {
+                QString failStr = "Configuration poll failed. ";
+                failStr += QString::number(attempts, 10);
+                failStr += " attempts left.";
+                ticker(failStr, QColor("red"), QFont::Normal);
+            }
         }
         setCursor(Qt::ArrowCursor);
 
