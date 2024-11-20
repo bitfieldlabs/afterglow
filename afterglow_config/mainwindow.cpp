@@ -640,6 +640,7 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                         case 0: mCfg.lampGlowDurOn[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
                         case 1: mCfg.lampGlowDurOff[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
                         case 2: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
+                        case 3: mCfg.lampDelay[c][r] = static_cast<uint8_t>(v); break;
                         default: break;
                         }
                     }
