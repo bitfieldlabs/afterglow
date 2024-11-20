@@ -45,7 +45,7 @@ typedef enum DISPLAY_MODES_e
 } DISPLAY_MODES_t;
 
 
-void display_init();
+bool display_init();
 void display_update();
 void display_setMode(DISPLAY_MODES_t mode);
 void display_setNotice(const char *pkStr1, const char *pkStr2, const char *pkStr3, uint32_t duration);

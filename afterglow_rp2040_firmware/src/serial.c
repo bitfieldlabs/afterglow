@@ -29,6 +29,7 @@
 #include "serial.h"
 #include "pico/time.h"
 #include "pico/stdio.h"
+#include "hardware/watchdog.h"
 #include "lampmatrix.h"
 #include "matrixout.h"
 #include "afterglow.h"
@@ -117,7 +118,11 @@ void serial_debug(uint32_t ttag)
         printf("dur : i %lu/%u u %lu/%lu us\n", lm_inputMaxDurAndClear(), INPUT_SAMPLE_INT,
             matrixout_updateMaxDurAndClear(), pkPar->matrixUpdateInt);
 
-        smart_detect_print();
+        // print smart detection mode results once
+        if ((sLastDebugTTag > 5000) && (sLastDebugTTag < 10000))
+        {
+            smart_detect_print();
+        }
 
         sLastDebugTTag = m;
     }
@@ -169,9 +174,12 @@ void serial_input()
         // configuration poll
         else if (strncmp(sCmd, AG_CMD_CFG_POLL, 4) == 0)
         {
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
+            // ========= Configuration version 2 =========
+
             // create the serial configuration structure
             AFTERGLOW_CFG_V2_t cfg;
-            cfg_serialConfig(&cfg);
+            cfg_serialConfigV2(&cfg);
             
             // send the full configuration
             uint16_t cfgSize = sizeof(cfg);
@@ -180,6 +188,22 @@ void serial_input()
             {
                 putchar_raw(*pkCfg++);
             }
+#else
+            // ========= Configuration version 3 =========
+
+            // create the serial configuration structure
+            AFTERGLOW_CFG_t cfg;
+            cfg_serialConfig(&cfg);
+            
+            // send the full configuration
+            uint16_t cfgSize = sizeof(cfg);
+            const uint8_t *pkCfg = (const uint8_t*)&cfg;
+            for (uint32_t i=0; i<cfgSize; i++)
+            {
+                putchar_raw((int)(*pkCfg));
+                pkCfg++;
+            }
+#endif
         }
 
         // configuration reset
@@ -216,7 +240,12 @@ void serial_receiveCfg()
 {
     // wait for the full configuration data
     bool res = false;
+
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
     AFTERGLOW_CFG_V2_t cfg;
+#else
+    AFTERGLOW_CFG_t cfg;
+#endif
     char *pCfg = (char*)&cfg;
     uint32_t cfgSize = sizeof(cfg);
     uint32_t size = 0;
@@ -226,7 +255,7 @@ void serial_receiveCfg()
     {
         // send data ready signal and wait for data
         printf("%s\n",AG_CMD_CFG_DATA_READY);
-        sleep_ms(200);
+        sleep_ms(100);
 
         // read data
         uint32_t readBytes = 0;
@@ -241,6 +270,9 @@ void serial_receiveCfg()
                 size++;
             }
         }
+
+        // still alive
+        watchdog_update();
     }
 
     if (size == sizeof(cfg))
@@ -250,7 +282,11 @@ void serial_receiveCfg()
         if (crc == cfg.crc)
         {
             // set the new configuration and apply it
+#if (AFTERGLOW_CFG_SER_VERSION == 2)
+            cfg_setSerialConfigV2(&cfg);
+#else
             cfg_setSerialConfig(&cfg);
+#endif
             res = true;
         }
 #if DEBUG_SERIAL

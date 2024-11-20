@@ -64,7 +64,7 @@
 // configuration storage
 
 #define AFTERGLOW_CFG_VERSION       3     // Afterglow configuration version
-#define AFTERGLOW_CFG_SER_VERSION   2     // Afterglow configuration version used for configuration via serial port (config tool)
+#define AFTERGLOW_CFG_SER_VERSION   3     // Afterglow configuration version used for configuration via serial port (config tool)
 #define GLOWDUR_CFG_SCALE          10     // Glow duration scaling in the configuration
 
 typedef struct AG_DIPSWITCH_s
@@ -104,8 +104,10 @@ const AFTERGLOW_CFG_t * cfg_config();
 AG_DIPSWITCH_t cfg_dipSwitch();
 void cfg_updateDipSwitch(uint8_t rawBits);
 uint8_t cfg_lastDipSwitchValue();
-void cfg_serialConfig(AFTERGLOW_CFG_V2_t *pCfg);
-void cfg_setSerialConfig(const AFTERGLOW_CFG_V2_t *pkCfg);
+void cfg_serialConfigV2(AFTERGLOW_CFG_V2_t *pCfg);
+void cfg_serialConfig(AFTERGLOW_CFG_t *pCfg);
+void cfg_setSerialConfigV2(const AFTERGLOW_CFG_V2_t *pkCfg);
+void cfg_setSerialConfig(const AFTERGLOW_CFG_t *pkCfg);
 uint32_t cfg_calculateCRC32(const uint8_t *data, uint16_t length);
 bool cfg_newConfigAvailable();
 bool cfg_applyNewConfig();

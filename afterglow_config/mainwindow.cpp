@@ -35,6 +35,7 @@
 #include <QMessageBox>
 #include <QStyle>
 #include <QRandomGenerator>
+#include <QtWidgets>
 
 
 // interval for port enumeration [ms]
@@ -80,7 +81,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // add the parameters
     ui->parameterSelection->addItem("Glow duration");
+    ui->parameterSelection->addItem("Afterglow duration (v3 only)");
     ui->parameterSelection->addItem("Brightness");
+    ui->parameterSelection->addItem("Delay (v3 only)");
 
     // enumerate the serial ports
     enumSerialPorts();
@@ -97,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->updateFWButton, SIGNAL(clicked()), SLOT(updateFW()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
-    connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));
+    //connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));         // glowing breaks the matrix values (changes selected cell value when glowing)
 
     initData();
 
@@ -105,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->versionLabel->setText("Afterglow Configuration Tool v" + QString(AGCONFIG_VERSION));
     ticker("Afterglow Config " + QString(AGCONFIG_VERSION) + " - Hello pinheads!", QColor("green"), QFont::Bold);
     ticker("Ready.", QColor("green"), QFont::Bold);
+    ui->descriptionText->setText("");
 
     // start the port enumeration timer
     mTimer.start(ENUMERATION_INTERVAL);
@@ -171,7 +175,7 @@ void MainWindow::connectAG()
         else
         {
             // the connection will reset the arduino - allow some time for startup
-            ticker("Rebooting the arduino...", QColor("orange"), QFont::Normal);
+            ticker("Connecting to the device...", QColor("orange"), QFont::Normal);
             QThread::sleep(2);
 
             // poll the afterglow version to verify the connection
@@ -201,7 +205,7 @@ void MainWindow::connectAG()
 
                 // should we try to upload the FW
                 QMessageBox::StandardButton reply;
-                QString updStr = "No Afterglow detected on this port.\nDo you want to upload the firmware to this device?";
+                QString updStr = "No Afterglow detected on this port.\nDo you want to upload the firmware to this device (AG1 and 2 only)?";
                 reply = QMessageBox::question(this, "Confirm", updStr, QMessageBox::Yes|QMessageBox::No);
                 if (reply == QMessageBox::Yes)
                 {
@@ -253,7 +257,8 @@ void MainWindow::defaultAG()
         }
         else
         {
-            ticker("Configuration reset failed!", QColor("red"), QFont::Normal);
+            QString errStr = QString::number(mSerialCommunicator.serialPortError(), 10);
+            ticker("Configuration reset failed: "+errStr, QColor("red"), QFont::Normal);
         }
         setCursor(Qt::ArrowCursor);
 
@@ -418,9 +423,23 @@ void MainWindow::setConnected(bool connected)
     ui->loadButton->setEnabled(connected);
     ui->saveButton->setEnabled(connected);
     ui->defaultButton->setEnabled(connected);
-    ui->updateFWButton->setEnabled(connected);
     ui->connectButton->setText(connected ? "Disconnect" : "Connect");
     ui->connectButton->setIcon(connected ? QIcon(":/icon/icons/network-disconnect.svg"): QIcon(":/icon/icons/network-connect.svg"));
+
+    // FW update only available for Arduino based boards
+    ui->updateFWButton->setEnabled(connected && (mAGVersion < 300));
+
+    // Only AG3+ has separate On/Off glow durations
+    QStandardItemModel *model =
+        qobject_cast<QStandardItemModel *>(ui->parameterSelection->model());
+    Q_ASSERT(model != nullptr);
+    bool disabled = (mAGCfgVersion < 3);
+    QStandardItem *item = model->item(1);
+    item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled
+                            : item->flags() | Qt::ItemIsEnabled);
+    item = model->item(3);
+    item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled
+                            : item->flags() | Qt::ItemIsEnabled);
 }
 
 void MainWindow::enumSerialPorts()
@@ -489,6 +508,18 @@ void MainWindow::updateTable(int parameter)
     // change of the last value in tableChanged()
     ui->lampMatrix->clearSelection();
 
+    // update the parameter description
+    QString descStr;
+    switch (parameter)
+    {
+    case 0: descStr="<b>Glow duration</b> (0-2550ms)<br/><br/>For board versions 1 and 2 this value is setting the glow duration for both pre- and afterglow in [ms].<br/>For version 3 this is setting the pre-glow duration only."; break;
+    case 1: descStr="<b>Afterglow duration</b> (0-2550ms)<br/><br/>This is the duration of the afterglow."; break;
+    case 2: descStr="<b>Brightness</b> (0-7)<br/><br/>This is the brightness value (out of 7) the lamp will reach when it's fully on."; break;
+    case 3: descStr="<b>Delay</b> (0-255ms)<br/><br/>This delay defines the time the lamp will stay dark before starting to glow. May help in dealing with flickering lamps."; break;
+    default: descStr="Hm.. No valid parameter selected."; break;
+    }
+    ui->descriptionText->setText(descStr);
+
     // populate the table with the values from the configuration
     for (int c=0; c<NUM_COL; c++)
     {
@@ -498,8 +529,10 @@ void MainWindow::updateTable(int parameter)
             uint32_t v;
             switch (parameter)
             {
-                case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDur[c][r] * GLOWDUR_CFG_SCALE); break;
-                case 1:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
+                case 0:  v=static_cast<uint32_t>(mCfg.lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 1:  v=static_cast<uint32_t>(mCfg.lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE); break;
+                case 2:  v=static_cast<uint32_t>(mCfg.lampBrightness[c][r]); break;
+                case 3:  v=static_cast<uint32_t>(mCfg.lampDelay[c][r]); break;
                 default: v=0; break;
             }
 
@@ -508,18 +541,18 @@ void MainWindow::updateTable(int parameter)
             if (pWI)
             {
                 pWI->setText(QString::number(v, 10));
-            }
 
-            // disable unused items
-            if ((mCfg.version <= 1) && (r>7))
-            {
-                pWI->setFlags(pWI->flags() & ~Qt::ItemIsEnabled);
-                pWI->setBackground(Qt::Dense6Pattern);
-            }
-            else
-            {
-                pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
-                pWI->setBackground(Qt::NoBrush);
+                // disable unused items
+                if ((mCfg.version <= 1) && (r>7))
+                {
+                    pWI->setFlags(pWI->flags() & ~Qt::ItemIsEnabled);
+                    pWI->setBackground(Qt::Dense6Pattern);
+                }
+                else
+                {
+                    pWI->setFlags(pWI->flags() | Qt::ItemIsEnabled);
+                    pWI->setBackground(Qt::NoBrush);
+                }
             }
         }
     }
@@ -547,23 +580,34 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
         switch (param)
         {
         case 0: // glow duration
+        case 1: // afterglow duration
         {
-            if ((v>65530) || (v%10))
+            if ((v>2550) || (v%10))
             {
                 if (v<0) v=0;
-                if (v>65535) v= 65535;
+                if (v>2550) v= 2550;
                 if (v%10) v=(v/10)*10;
-                ticker("Glow duration must be between 0 and 65535 and a multiple of 10!", QColor("red"), QFont::Normal);
+                ticker("Glow duration must be between 0 and 2550 and a multiple of 10!", QColor("red"), QFont::Normal);
             }
         }
         break;
-        case 1: // brightness
+        case 2: // brightness
         {
-            if (v>7)
+            if ((v<0) || (v>7))
             {
                 if (v<0) v=0;
                 if (v>7) v=7;
                 ticker("Brightness must be between 0 and 7!", QColor("red"), QFont::Normal);
+            }
+        }
+        break;
+        case 3: // delay
+        {
+            if ((v<0) || (v>255))
+            {
+                if (v<0) v=0;
+                if (v>255) v=255;
+                ticker("Delay must be between 0 and 255ms!", QColor("red"), QFont::Normal);
             }
         }
         break;
@@ -593,8 +637,10 @@ void MainWindow::tableChanged(QTableWidgetItem *item)
                         // apply the changes to the configuration
                         switch (param)
                         {
-                        case 0: mCfg.lampGlowDur[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
-                        case 1: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
+                        case 0: mCfg.lampGlowDurOn[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 1: mCfg.lampGlowDurOff[c][r] = static_cast<uint8_t>(v / GLOWDUR_CFG_SCALE); break;
+                        case 2: mCfg.lampBrightness[c][r] = static_cast<uint8_t>(v); break;
+                        case 3: mCfg.lampDelay[c][r] = static_cast<uint8_t>(v); break;
                         default: break;
                         }
                     }

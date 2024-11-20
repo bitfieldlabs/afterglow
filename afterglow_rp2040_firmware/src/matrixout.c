@@ -32,6 +32,7 @@
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
+#include "hardware/watchdog.h"
 #include "def.h"
 #include "pindef.h"
 #include "matrixout.pio.h"
@@ -446,6 +447,9 @@ void matrixout_prepareBrightnessSteps()
     {
         for (uint r=0; r<NUM_ROW; r++)
         {
+            // keep the dog alive
+            watchdog_update();
+
             // configured glow duration for this lamp [us]
             uint32_t gdOn = (pkCfg->lampGlowDurOn[c][r] * GLOWDUR_CFG_SCALE) * 1000;           
             uint32_t gdOff = (pkCfg->lampGlowDurOff[c][r] * GLOWDUR_CFG_SCALE) * 1000;

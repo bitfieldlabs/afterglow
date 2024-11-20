@@ -203,7 +203,7 @@ int main(void)
 
 #if DEBUG_OLED_I2C
     // i2c display
-    display_init();
+    bool dispInit = display_init();
 #endif
 
     // ADC initialisation
@@ -265,11 +265,15 @@ int main(void)
     {
         printf("Watchdog reboot!\n");
     }
+#if DEBUG_OLED_I2C
+    printf("%s", dispInit ? "OLED display detected\n" : "No display detected\n");
+#endif
 
     // enable a 1s watchdog
     watchdog_enable(1000, 1);
 
     // Eternal loop
+    uint32_t c = 0;
     while (true)
     {
         // kick the dog
@@ -322,24 +326,15 @@ void checkForConfigChanges()
     // Serial port configuration
     if (cfg_newConfigAvailable())
     {
-        // stop afterglow operation
-        cancel_repeating_timer(&sInputSamplingTimer);
-        sleep_ms(100);
-        multicore_reset_core1();
-        sleep_ms(100);
-        matrixout_stoppio();
-        sleep_ms(100);
-
         // apply the new configuration and store it to flash
         if (cfg_applyNewConfig())
         {
 #if DEBUG_SERIAL
-            printf("Cfg saved to flash, rebooting...");
+            printf("Cfg saved to flash");
 #endif
         }
 
-        // reboot, the new configuration will be loaded from flash at startup
-        watchdog_reboot(0, 0, 0);
+        matrixout_prepareBrightnessSteps();
     }
 
     sLastDIPSwitch = dipSwitch;

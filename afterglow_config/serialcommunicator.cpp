@@ -130,7 +130,10 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     QByteArray responseData;
 
     // clear the port
-    mSerialPort.clear();
+    if (!mSerialPort.clear())
+    {
+        return false;
+    }
 
     // send the request
     QString cmd(AG_CMD_CFG_POLL);
@@ -150,7 +153,11 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
             }
 
             // check for v1 configuration
-            if (responseData.length() == sizeof(AFTERGLOW_CFG_V1_t))
+            uint32_t rlen = responseData.length();
+            uint32_t v1len = sizeof(AFTERGLOW_CFG_V1_t);
+            uint32_t v2len = sizeof(AFTERGLOW_CFG_V2_t);
+            uint32_t v3len = sizeof(AFTERGLOW_CFG_t);
+            if (rlen == v1len)
             {
                 int cfgSize = sizeof(AFTERGLOW_CFG_V1_t);
                 const AFTERGLOW_CFG_V1_t *pkCfgV1 = (const AFTERGLOW_CFG_V1_t*)responseData.constData();
@@ -167,14 +174,42 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
                         for (int c=0; c<NUM_COL; c++)
                         {
                             memcpy(pCfg->lampBrightness[c], pkCfgV1->lampBrightness[c], sizeof(pkCfgV1->lampBrightness[c]));
-                            memcpy(pCfg->lampGlowDur[c], pkCfgV1->lampGlowDur[c], sizeof(pkCfgV1->lampGlowDur[c]));
+                            // only one glow duration, use for both on and off time
+                            memcpy(pCfg->lampGlowDurOn[c], pkCfgV1->lampGlowDur[c], sizeof(pkCfgV1->lampGlowDur[c]));
+                            memcpy(pCfg->lampGlowDurOff[c], pkCfgV1->lampGlowDur[c], sizeof(pkCfgV1->lampGlowDur[c]));
                         }
                         res = true;
                     }
                 }
             }
             // check for v2 configuration
-            else if (responseData.length() == sizeof(AFTERGLOW_CFG_t))
+            else if (rlen == v2len)
+            {
+                int cfgSize = sizeof(AFTERGLOW_CFG_V2_t);
+                const AFTERGLOW_CFG_V2_t *pkCfgV2 = (const AFTERGLOW_CFG_V2_t*)responseData.constData();
+                if (pkCfgV2->version == 2)
+                {
+                    // check the crc
+                    uint32_t crc = calculateCRC32((const uint8_t*)responseData.constData(), cfgSize-4);
+                    uint32_t crcInCfg = qFromLittleEndian(pkCfgV2->crc);
+                    if (crc == crcInCfg)
+                    {
+                        // copy the data, converting to current version
+                        pCfg->version = pkCfgV2->version;
+                        pCfg->crc = pkCfgV2->crc;
+                        for (int c=0; c<NUM_COL; c++)
+                        {
+                            memcpy(pCfg->lampBrightness[c], pkCfgV2->lampBrightness[c], sizeof(pkCfgV2->lampBrightness[c]));
+                            // only one glow duration, use for both on and off time
+                            memcpy(pCfg->lampGlowDurOn[c], pkCfgV2->lampGlowDur[c], sizeof(pkCfgV2->lampGlowDur[c]));
+                            memcpy(pCfg->lampGlowDurOff[c], pkCfgV2->lampGlowDur[c], sizeof(pkCfgV2->lampGlowDur[c]));
+                        }
+                        res = true;
+                    }
+                }
+            }
+            // check for v3 configuration
+            else if (rlen == v3len)
             {
                 int cfgSize = sizeof(AFTERGLOW_CFG_t);
 
@@ -195,12 +230,20 @@ bool SerialCommunicator::loadCfg(AFTERGLOW_CFG_t *pCfg)
     return res;
 }
 
+uint32_t SerialCommunicator::serialPortError()
+{
+    return mSerialPort.error();
+}
+
 bool SerialCommunicator::defaultCfg()
 {
     bool res = false;
 
     // clear the port
-    mSerialPort.clear();
+    if (!mSerialPort.clear())
+    {
+        return false;
+    }
 
     // send the request
     QString cmd(AG_CMD_CFG_DEFAULT);
@@ -233,6 +276,7 @@ bool SerialCommunicator::defaultCfg()
 bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
 {
     AFTERGLOW_CFG_V1_t cfgV1;
+    AFTERGLOW_CFG_V2_t cfgV2;
     const char *pkData = (const char*)pCfg;
     int cfgSize = sizeof(AFTERGLOW_CFG_t);
     bool res = false;
@@ -244,7 +288,7 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
         for (int c=0; c<NUM_COL; c++)
         {
             memcpy(cfgV1.lampBrightness[c], pCfg->lampBrightness[c], sizeof(cfgV1.lampBrightness[c]));
-            memcpy(cfgV1.lampGlowDur[c], pCfg->lampGlowDur[c], sizeof(cfgV1.lampGlowDur[c]));
+            memcpy(cfgV1.lampGlowDur[c], pCfg->lampGlowDurOn[c], sizeof(cfgV1.lampGlowDur[c]));
         }
         pkData = (const char*)&cfgV1;
         cfgSize = sizeof(cfgV1);
@@ -253,6 +297,23 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
         uint32_t crc = calculateCRC32((const uint8_t*)&cfgV1, cfgSize-sizeof(cfgV1.crc));
         cfgV1.crc = qToLittleEndian(crc);
     }
+    // convert to config v2 if necessary
+    else if (pCfg->version == 2)
+    {
+        cfgV2.version = pCfg->version;
+        for (int c=0; c<NUM_COL; c++)
+        {
+            memcpy(cfgV2.lampBrightness[c], pCfg->lampBrightness[c], sizeof(cfgV1.lampBrightness[c]));
+            memcpy(cfgV2.lampGlowDur[c], pCfg->lampGlowDurOn[c], sizeof(cfgV2.lampGlowDur[c]));
+        }
+        pkData = (const char*)&cfgV2;
+        cfgSize = sizeof(cfgV2);
+
+        // update the crc
+        uint32_t crc = calculateCRC32((const uint8_t*)&cfgV2, cfgSize-sizeof(cfgV2.crc));
+        cfgV2.crc = qToLittleEndian(crc);
+    }
+    // current config version
     else
     {
         // update the crc
@@ -263,14 +324,16 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
     // clear the port
     mSerialPort.clear();
 
+    int size = 0;
+
     // send the request
     QString cmd(AG_CMD_CFG_SAVE);
     cmd += AG_CMD_TERMINATOR;
     mSerialPort.write(cmd.toUtf8());
 
     // send the configuration in small chunks
-    int size = 0;
-    while (size < cfgSize)
+    bool failed = false;
+    while ((size < cfgSize) && !failed)
     {
         // wait for the data to be written
         if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
@@ -295,6 +358,10 @@ bool SerialCommunicator::saveCfg(AFTERGLOW_CFG_t *pCfg)
                     size += wb;
                 }
             }
+        }
+        else
+        {
+            failed = true;
         }
     }
 
