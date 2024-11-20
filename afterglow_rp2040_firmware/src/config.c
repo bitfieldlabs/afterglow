@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include "pico/stdlib.h"
+#include "hardware/watchdog.h"
 #include "hardware/flash.h"
 #include "config.h"
 #include "afterglow.h"
@@ -285,21 +286,24 @@ bool cfg_saveToFlash()
 {
     bool saved = false;
 
+    // still alive
+    watchdog_update();
+
     // stop all interrupts
-    // not needed when running from RAM
-    //uint32_t ints = save_and_disable_interrupts();
+    uint32_t ints = save_and_disable_interrupts();
 
     // erase a 4kb flash sector
     flash_range_erase(CFG_FLASH_OFFSET, FLASH_SECTOR_SIZE);
 
     // Write the configuration to flash. The number of bytes written must be a
     // multiple of FLASH_PAGE_SIZE (256b)
+    watchdog_update();
     memcpy(sFlashWriteBuf, &sCfg, sizeof(sCfg));
     flash_range_program(CFG_FLASH_OFFSET, sFlashWriteBuf, sizeof(sFlashWriteBuf));
+    watchdog_update();
 
     // restore interrupts
-    // not needed when running from RAM
-    //restore_interrupts(ints);
+    restore_interrupts(ints);
 
     // verify the data
     if (memcmp(&sCfg, pkFlashCfg, sizeof(sCfg)) == 0)
