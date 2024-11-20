@@ -175,7 +175,7 @@ void MainWindow::connectAG()
         else
         {
             // the connection will reset the arduino - allow some time for startup
-            ticker("Rebooting the device...", QColor("orange"), QFont::Normal);
+            ticker("Connecting to the device...", QColor("orange"), QFont::Normal);
             QThread::sleep(2);
 
             // poll the afterglow version to verify the connection
