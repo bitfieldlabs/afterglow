@@ -71,11 +71,19 @@ bool SerialCommunicator::openPort(const QString &portName)
     // port setup
     mSerialPort.setPortName(portName);
     mSerialPort.setBaudRate(115200);
+    mSerialPort.setDataBits(QSerialPort::Data8);
+    mSerialPort.setStopBits(QSerialPort::OneStop);
+    mSerialPort.setParity(QSerialPort::NoParity);
+    mSerialPort.setFlowControl(QSerialPort::SoftwareControl);
 
     // open the port
     if (mSerialPort.open(QIODevice::ReadWrite) == false)
     {
         res = false;
+    }
+    else
+    {
+        mSerialPort.setDataTerminalReady(true); // needed for Windows connection to the rp2040
     }
     return res;
 }
