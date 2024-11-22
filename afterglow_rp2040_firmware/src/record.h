@@ -31,9 +31,6 @@
 // RAM data buffer [data words]
 #define REC_RAMBUF_SIZE (1024)
 
-// recording command string
-#define AG_CMD_RECORD "AGRC"
-
 void record_init();
 void record_start();
 void record_stop();
@@ -46,3 +43,4 @@ uint32_t record_percentage();
 uint32_t record_replay();
 uint32_t replay_percentage();
 uint32_t record_replay_size();
+const uint8_t *record_data();

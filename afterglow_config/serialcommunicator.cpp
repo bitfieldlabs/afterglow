@@ -55,6 +55,12 @@
 // NOT acknowledge string
 #define AG_CMD_NACK "AGCNACK"
 
+// recording size poll command string
+#define AG_CMD_REC_SIZE "AGRS"
+
+// recording download command string
+#define AG_CMD_REC_DOWNLOAD "AGRD"
+
 
 SerialCommunicator::SerialCommunicator()
 {
@@ -74,7 +80,7 @@ bool SerialCommunicator::openPort(const QString &portName)
     mSerialPort.setDataBits(QSerialPort::Data8);
     mSerialPort.setStopBits(QSerialPort::OneStop);
     mSerialPort.setParity(QSerialPort::NoParity);
-    mSerialPort.setFlowControl(QSerialPort::SoftwareControl);
+    mSerialPort.setFlowControl(QSerialPort::NoFlowControl);
 
     // open the port
     if (mSerialPort.open(QIODevice::ReadWrite) == false)
@@ -418,4 +424,65 @@ uint32_t SerialCommunicator::calculateCRC32(const uint8_t *data, uint16_t length
         }
     }
     return crc;
+}
+
+uint32_t SerialCommunicator::pollRecSize()
+{
+    int recSize = 0;
+
+    // clear the port
+    mSerialPort.clear();
+
+    // send the request
+    QString cmd(AG_CMD_REC_SIZE);
+    cmd += AG_CMD_TERMINATOR;
+    mSerialPort.write(cmd.toUtf8());
+
+    // check the response
+    if (mSerialPort.waitForBytesWritten(AG_SERIAL_TIMEOUT))
+    {
+        // read response
+        if (mSerialPort.waitForReadyRead(AG_SERIAL_TIMEOUT))
+        {
+            QByteArray responseData = mSerialPort.readAll();
+            while (mSerialPort.waitForReadyRead(100))
+            {
+                responseData += mSerialPort.readAll();
+            }
+
+            // parse the version
+            const QString response = QString::fromUtf8(responseData);
+            QString regExpStr = QString(AG_CMD_REC_SIZE)+"\\s(\\d+)";
+            QRegularExpression re(regExpStr);
+            QRegularExpressionMatch match = re.match(response);
+            if (match.hasMatch())
+            {
+                recSize = match.captured(1).toInt();
+            }
+        }
+    }
+    return recSize;
+}
+
+uint32_t SerialCommunicator::recDownloadChunk(char *pBuf, uint32_t bufSize, bool firstChunk)
+{
+    uint32_t bytesRead = 0;
+
+    if (firstChunk)
+    {
+        // clear the port
+        mSerialPort.clear();
+
+        // send the request
+        QString cmd(AG_CMD_REC_DOWNLOAD);
+        cmd += AG_CMD_TERMINATOR;
+        mSerialPort.write(cmd.toUtf8());
+    }
+
+    if (mSerialPort.waitForReadyRead(100))
+    {
+        bytesRead += mSerialPort.read(pBuf, bufSize);
+    }
+
+    return bytesRead;
 }

@@ -144,11 +144,6 @@ uint32_t record_replay()
     // return the current data record
     uint32_t rec = *((const uint32_t*)(pkFlashRec + REC_HEADER_SIZE + sReplayPos));
 
-    if (sReplayPos == 0)
-    {
-        printf("REP %lX\n", rec);
-    }
-
     // advance to next record
     sReplayPos += sizeof(uint32_t);
     if (sReplayPos >= record_replay_size())
@@ -272,4 +267,10 @@ bool record_write_flash(const uint8_t *pkData, uint32_t size)
     }
 
     return full;
+}
+
+//------------------------------------------------------------------------------
+const uint8_t *record_data()
+{
+    return pkFlashRec;
 }

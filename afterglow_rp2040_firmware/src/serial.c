@@ -53,6 +53,7 @@ static uint32_t sLastDebugTTag = 0;
 static char sCmd[SER_INPUT_BUF_SIZE] = { 0 };
 static uint32_t sCmdPos = 0;
 static bool sCmdComplete = false;
+static bool sSuspended = false;
 
 
 //------------------------------------------------------------------------------
@@ -61,6 +62,8 @@ static bool sCmdComplete = false;
 void serial_debug(uint32_t ttag);
 void serial_input();
 void serial_receiveCfg();
+void serial_recSizePoll();
+void serial_recSend();
 
 
 //------------------------------------------------------------------------------
@@ -71,7 +74,10 @@ void serial_comm(uint32_t ttag)
 
 #if DEBUG_SERIAL
     // debug output
-    serial_debug(ttag);
+    if (!sSuspended)
+    {
+        serial_debug(ttag);
+    }
 #endif
 }
 
@@ -230,6 +236,20 @@ void serial_input()
             record_start();
         }
 
+        // recording size poll
+        else if (strncmp(sCmd, AG_CMD_REC_SIZE, 4) == 0)
+        {
+            // start a recording
+            serial_recSizePoll();
+        }
+
+        // recording download
+        else if (strncmp(sCmd, AG_CMD_REC_DOWNLOAD, 4) == 0)
+        {
+            // start a recording
+            serial_recSend();
+        }
+
         sCmdPos = 0;
         sCmdComplete = false;
     }
@@ -305,4 +325,65 @@ void serial_receiveCfg()
 
     // send ACK/NACK
     printf("%s\n", res ? AG_CMD_ACK : AG_CMD_NACK);
+}
+
+//------------------------------------------------------------------------------
+void serial_recSizePoll()
+{
+    uint32_t recSize = record_replay_size();
+    printf("%s %lu\n", AG_CMD_REC_SIZE, recSize);
+}
+
+//------------------------------------------------------------------------------
+void serial_recSend()
+{
+    const uint8_t *pkRecData = record_data();
+    uint32_t recSize = record_replay_size();
+    uint32_t sent = 0;
+    uint32_t chunkSize = 4096*8;
+
+    // suspend serial output as we're sending the data non-blocking
+    serial_suspend();
+
+    // send all data in chunks
+    while (sent < recSize)
+    {
+        // crop the last chunk
+        uint32_t s = chunkSize;
+        uint32_t newSent = (sent+s);
+        if (newSent > recSize)
+        {
+            s -= (newSent-recSize);
+        }
+
+        // send the data
+        //fwrite(pkRecData, sizeof(uint8_t), s, stdout);
+        //pkRecData += chunkSize;
+        for (uint i=0; i<s; i++)
+        {
+            putchar_raw(*pkRecData++);
+        }
+        
+        sent += chunkSize;
+        
+
+        // still alive
+        watchdog_update();
+    }
+
+    // resume serial output
+    sleep_ms(200);
+    serial_resume();
+}
+
+//------------------------------------------------------------------------------
+void serial_suspend()
+{
+    sSuspended = true;
+}
+
+//------------------------------------------------------------------------------
+void serial_resume()
+{
+    sSuspended = false;
 }

@@ -13,5 +13,6 @@
         <file>icons/network-disconnect.svg</file>
         <file>icons/view-refresh.svg</file>
         <file>icons/circular-arrow-shape.svg</file>
+        <file>icons/media-record.svg</file>
     </qresource>
 </RCC>

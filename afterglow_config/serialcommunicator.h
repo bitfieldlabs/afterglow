@@ -38,6 +38,8 @@ public:
     bool loadCfg(AFTERGLOW_CFG_t *pCfg);
     bool defaultCfg();
     bool saveCfg(AFTERGLOW_CFG_t *pCfg);
+    uint32_t pollRecSize();
+    uint32_t recDownloadChunk(char *buf, uint32_t bufSize, bool firstChunk);
     uint32_t serialPortError();
 
 private:

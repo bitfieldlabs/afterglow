@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void ticker(const QString &text, const QColor &c, int weight);
+    void ticker(const QString &text, const QColor &c, int weight, bool replaceLastLine=false);
     ~MainWindow();
 
 private slots:
@@ -51,6 +51,7 @@ private slots:
     void loadAG();
     void saveAG();
     void defaultAG();
+    void recDownload();
     void updateTable(int parameter);
     void tableChanged(QTableWidgetItem *item);
     void editSelected();

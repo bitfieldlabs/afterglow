@@ -50,6 +50,15 @@
 // configuration reset to default command string
 #define AG_CMD_CFG_DEFAULT "AGCD"
 
+// recording command string
+#define AG_CMD_RECORD "AGRC"
+
+// recording size poll command string
+#define AG_CMD_REC_SIZE "AGRS"
+
+// recording download command string
+#define AG_CMD_REC_DOWNLOAD "AGRD"
+
 // data ready string
 #define AG_CMD_CFG_DATA_READY "AGDR"
 

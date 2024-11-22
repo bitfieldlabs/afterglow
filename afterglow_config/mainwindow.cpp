@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->connectButton->setEnabled(false);
     ui->defaultButton->setEnabled(false);
     ui->updateFWButton->setEnabled(false);
+    ui->recDownloadButton->setEnabled(false);
     ui->lampMatrix->setEnabled(false);
 
     // format the lamp matrix list
@@ -98,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveAG()));
     connect(ui->defaultButton, SIGNAL(clicked()), SLOT(defaultAG()));
     connect(ui->updateFWButton, SIGNAL(clicked()), SLOT(updateFW()));
+    connect(ui->recDownloadButton, SIGNAL(clicked()), SLOT(recDownload()));
     connect(ui->lampMatrix, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(tableChanged(QTableWidgetItem*)));
     connect(&mTimer, SIGNAL(timeout()), SLOT(enumSerialPorts()));
     //connect(&mGlowTimer, SIGNAL(timeout()), SLOT(glow()));         // glowing breaks the matrix values (changes selected cell value when glowing)
@@ -436,6 +438,7 @@ void MainWindow::setConnected(bool connected)
     ui->defaultButton->setEnabled(connected);
     ui->connectButton->setText(connected ? "Disconnect" : "Connect");
     ui->connectButton->setIcon(connected ? QIcon(":/icon/icons/network-disconnect.svg"): QIcon(":/icon/icons/network-connect.svg"));
+    ui->recDownloadButton->setEnabled(connected && (mAGVersion >= 300));
 
     // FW update only available for Arduino based boards
     ui->updateFWButton->setEnabled(connected && (mAGVersion < 300));
@@ -813,10 +816,109 @@ void MainWindow::updateFW()
     }
 }
 
-void MainWindow::ticker(const QString &text, const QColor &c, int weight)
+void MainWindow::ticker(const QString &text, const QColor &c, int weight, bool replaceLastLine)
 {
     ui->tickerText->setFontWeight(weight);
     ui->tickerText->setTextColor(c);
+
+    if (replaceLastLine)
+    {
+        // remove the last line for replacement
+        QTextCursor cursor = ui->tickerText->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        cursor.movePosition(QTextCursor::PreviousBlock, QTextCursor::KeepAnchor, 1);
+        cursor.removeSelectedText();
+        ui->tickerText->setTextCursor(cursor);
+    }
+
     ui->tickerText->append(text);
     ui->tickerText->repaint();
+}
+
+void MainWindow::recDownload()
+{
+    // poll the record size
+    uint32_t recSize = mSerialCommunicator.pollRecSize();
+    if (recSize)
+    {
+        QString recSizeStr = "Record size on device: " + QString::number(recSize) + " bytes";
+        ticker(recSizeStr, QColor("green"), QFont::Normal);
+        ticker("Start downloading..", QColor("orange"), QFont::Normal);
+
+        char *pRecData = new char[recSize];
+        if (pRecData == NULL)
+        {
+            ticker("Failed to allocate memory for the recording!", QColor("red"), QFont::Normal);
+            return;
+        }
+
+        const uint32_t nomChunkSize = 4096*8;
+
+        // download the data
+        char *pCurrChunkData = pRecData;
+        uint32_t downloadedSize = 0;
+        uint32_t chunkSize = mSerialCommunicator.recDownloadChunk(pCurrChunkData, nomChunkSize, true);
+        bool firstProgress = true;
+        while (chunkSize > 0)
+        {
+            downloadedSize += chunkSize;
+            pCurrChunkData += chunkSize;
+
+            // progress update
+            QString progressStr = "Downloading [";
+            uint32_t barLength = 10;
+            float p = ((float)downloadedSize / (float)recSize);
+            uint32_t pc = (uint32_t)((float)barLength * p);
+            for (uint32_t i=0; i<barLength; i++)
+            {
+                if (i<=pc)
+                {
+                    progressStr += "█";
+                }
+                else
+                {
+                    progressStr += "▒";
+                }
+            }
+            progressStr += "] ";
+            uint32_t perc = (uint32_t)(p*100.0);
+            progressStr += QString::number(perc);
+            progressStr += "%";
+            ticker(progressStr, QColor("orange"), QFont::Normal, !firstProgress);
+            firstProgress = false;
+
+            // next chunk
+            chunkSize = mSerialCommunicator.recDownloadChunk(pCurrChunkData, nomChunkSize, false);
+        }
+
+        if (downloadedSize == recSize)
+        {
+            // store the data to a file
+            QString fileName = QFileDialog::getSaveFileName(this, tr("Save Recorded Data"), "recording.bin", tr("Binary files (*.bin)"));
+            QSaveFile file(fileName);
+            if (file.open(QIODevice::WriteOnly))
+            {
+                file.write(pRecData, downloadedSize);
+                file.commit();
+                QString storeStr = "Recording stored to " + fileName;
+                ticker(storeStr, QColor("green"), QFont::Normal);
+            }
+            else
+            {
+                ticker("Error saving the file"+fileName, QColor("red"), QFont::Normal);
+            }
+        }
+        else
+        {
+            QString downloadErrStr = "Download size mismatch " + QString::number(downloadedSize) + " / " + QString::number(recSize);
+            ticker(downloadErrStr, QColor("red"), QFont::Normal);
+        }
+
+        // free the buffer
+        delete [] pRecData;
+    }
+    else
+    {
+        ticker("No recording found on the device!", QColor("red"), QFont::Normal);
+    }
 }

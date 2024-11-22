@@ -30,3 +30,5 @@
 
 // Handle serial communication via the USB port
 void serial_comm(uint32_t ttag);
+void serial_suspend();
+void serial_resume();
