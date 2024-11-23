@@ -4,7 +4,7 @@
 #include <QtGlobal>
 
 // Current version
-#define AGCONFIG_VERSION "0.6.0"
+#define AGCONFIG_VERSION "0.7.0"
 
 // number of columns in the lamp matrix
 #define NUM_COL 8
