@@ -866,7 +866,7 @@ void MainWindow::recDownload()
 
             // progress update
             QString progressStr = "Downloading [";
-            uint32_t barLength = 10;
+            uint32_t barLength = 20;
             float p = ((float)downloadedSize / (float)recSize);
             uint32_t pc = (uint32_t)((float)barLength * p);
             for (uint32_t i=0; i<barLength; i++)
