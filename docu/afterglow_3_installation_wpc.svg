@@ -7,7 +7,7 @@
    viewBox="0 0 173.47858 184.48301"
    version="1.1"
    id="svg8"
-   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
    sodipodi:docname="afterglow_3_installation_wpc.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -56,13 +56,32 @@
        refX="0"
        id="Arrow2Lend-3"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       viewBox="0 0 12.70584107 9.5264135"
+       markerWidth="12.70584107"
+       markerHeight="9.5264135"
+       preserveAspectRatio="xMidYMid">
       <path
          inkscape:connector-curvature="0"
          id="path2075-8"
          style="fill:#040404;fill-opacity:1;fill-rule:evenodd;stroke:#040404;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
          d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
          transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2075-84"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         inkscape:connector-curvature="0" />
     </marker>
   </defs>
   <sodipodi:namedview
@@ -72,9 +91,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="212.13203"
-     inkscape:cy="500.53059"
+     inkscape:zoom="3.959798"
+     inkscape:cx="586.26729"
+     inkscape:cy="412.26851"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -139,7 +158,7 @@
        id="guide1896"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="83.52173,30.55998"
+       position="114.76358,79.56271"
        orientation="0,1"
        id="guide1898"
        inkscape:locked="false" />
@@ -1105,6 +1124,25 @@
        inkscape:export-xdpi="149.92999"
        inkscape:export-ydpi="149.92999"
        sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="176.8501"
+       y="159.68129"
+       id="text1065-2-4-6"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"><tspan
+         sodipodi:role="line"
+         id="tspan1063-5-0-7"
+         x="176.8501"
+         y="159.68129"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.18902px">GND</tspan><tspan
+         sodipodi:role="line"
+         x="176.8501"
+         y="165.8549"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:0.18902px"
+         id="tspan1711-5-5">SCREW</tspan></text>
     <rect
        style="fill:#bfbfbf;fill-opacity:1;stroke:none;stroke-width:0.226493;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect1016-0"
@@ -1194,6 +1232,15 @@
        inkscape:export-xdpi="149.92999"
        inkscape:export-ydpi="149.92999"
        sodipodi:nodetypes="csc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#110101;stroke-width:0.7;stroke-miterlimit:4;stroke-dasharray:0.7, 0.7;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 134.45823,178.73532 c 0.52593,-7.9283 -1.07344,-17.26311 17.54477,-21.45663 22.70076,-5.11308 35.1225,-1.20966 37.41255,-10.0212"
+       id="path2032-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"
+       sodipodi:nodetypes="csc" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.18902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1216,6 +1263,15 @@
        inkscape:export-filename="/home/smyp/tmp/ag_install.png"
        inkscape:export-xdpi="149.92999"
        inkscape:export-ydpi="149.92999" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow2Lend-3)"
+       d="m 188.70462,156.97856 1.23407,-7.31367"
+       id="path2052-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/smyp/tmp/ag_install.png"
+       inkscape:export-xdpi="149.92999"
+       inkscape:export-ydpi="149.92999"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.47387;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow2Lend-8)"
        d="m 157.99024,132.26573 1.49561,9.4926"
@@ -1507,5 +1563,11 @@
          y="179.93158"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;font-family:Sans;-inkscape-font-specification:'Sans, ';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.129598px"
          id="tspan1">3.0</tspan></text>
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:0.599605;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:41.9723, 41.9723;stroke-dashoffset:0;paint-order:fill markers stroke"
+       id="path1"
+       cx="189.95996"
+       cy="146.12634"
+       r="1.2553443" />
   </g>
 </svg>
