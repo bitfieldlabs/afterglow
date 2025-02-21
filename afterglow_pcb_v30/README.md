@@ -1,6 +1,6 @@
 # Afterglow PCB v3.0
 
-This is the newest generation of afterglow boards, supporting WPC, Data East, System 11 and Stern Whitestar/S.A.M. games.
+This is the newest generation of afterglow boards for the switched playfield lamps (not the GI), supporting WPC, Data East, System 11 and Stern Whitestar/S.A.M. games.
 
 ## What's new
 
