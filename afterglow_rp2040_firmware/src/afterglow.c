@@ -37,7 +37,7 @@
 // local definitions
 
 // Maximum number of allowed invalid data readings before changing status to invalid
-#define INV_DATA_THRES 32
+#define INV_DATA_THRES 255
 
 
 //------------------------------------------------------------------------------

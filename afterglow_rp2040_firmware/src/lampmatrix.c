@@ -205,10 +205,13 @@ void lm_modeDetection(uint c, uint r)
     // be set at any time.
     if (skBitsPerByte[(uint8_t)c] == 1)
     {
-        // check if this is the expected column value
-        if (c != sLastCol)
+        // Check if this is the expected column value.
+        // It was observed in a AfM game that in power saving mode (attract mode
+        // after some minutes) there are additional 4ms of zero data inserted
+        // into the column pattern. We need to ignore them.
+        if ((c != sLastCol) && (c != 0x00))
         {
-            uint expectedColValue = (sLastCol == 0x80) ? 0x01 : (sLastCol << 1);
+            uint expectedColValue = ((sLastCol == 0x80) || (sLastCol == 0x00)) ? 0x01 : (sLastCol << 1);
             sWPCModeCounter = (c == expectedColValue) ? (sWPCModeCounter+1) : 0;
         }
     }
