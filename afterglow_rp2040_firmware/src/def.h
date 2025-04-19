@@ -71,6 +71,7 @@
 #define SINGLE_UPDATE_CONS 4
 
 // Duration of anti ghosting [us] (turning off all lamps briefly)
+// The rows are turned off for 2x this value, the columns only for 1x.
 #define ANTIGHOST_DURATION 20
 
 // Turn debug output via serial on/off

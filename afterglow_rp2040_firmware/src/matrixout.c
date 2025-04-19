@@ -456,6 +456,8 @@ void matrixout_prepareBrightnessSteps()
 
             // maximum brightness (32 bits), 8 steps only
             uint32_t maxBr = ((uint32_t)0xffffffff >> 3) * (uint32_t)(pkCfg->lampBrightness[c][r] + 1);
+            double agRatio = ((double)PWM_RES / (double)pkPar->matrixPIOSteps);
+            maxBr = (uint32_t)((double)maxBr * agRatio);
             sLampMatrixMaxBr[c][r] = maxBr;
 
             // override lamp duration in smart mode
