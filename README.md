@@ -22,7 +22,18 @@ Apache License 2.0
 Hardware designs:
 CERN Open Hardware License - Permissive 2.0
 
-See LICENSES/ for details.
+See LICENSES/ for details
+
+### Licensing change
+
+As of August 2026:
+
+- Firmware and configuration software are licensed under Apache-2.0.
+- Hardware designs are licensed under CERN-OHL-P-2.0.
+
+All contributors with copyrightable contributions
+have consented to the relicensing, or their
+contributions have been replaced.
 
 ### Quick guide to the board revisions
 
