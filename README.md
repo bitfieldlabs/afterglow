@@ -14,6 +14,16 @@ While the effect is hard to catch on camera, this video gives an idea:
 
 https://github.com/bitfieldlabs/afterglow/assets/999857/57093b11-0a40-46fb-a978-5d42df743db6
 
+## Licensing
+
+Firmware and configuration software:
+Apache License 2.0
+
+Hardware designs:
+CERN Open Hardware License - Permissive 2.0
+
+See LICENSES/ for details.
+
 ### Quick guide to the board revisions
 
 #### All in one
